@@ -1,0 +1,23 @@
+.head-1{
+    font-weight: bold;
+    text-align: center;
+}
+.head-1 span{
+    color: #007bff;
+}
+.btn-signup{
+    margin: 0 auto;
+    margin-top: 10px;
+}
+
+form{
+    margin-top: 50px;
+}
+
+form input{
+    border-radius: 0px !important;
+}
+
+form label{
+    font-size: 12px;
+}

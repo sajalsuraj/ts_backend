@@ -156,6 +156,14 @@
             return $query->result();
         }
 
+        public function getBookingInfoByCustomerID($id, $booking_id){
+            $this->db->select('b.customer_id, b.booking_id, b.vendor_id, c.name as customer_name, c.phone as customer_phone, r.lat as customer_lat, r.lng as customer_lng, l.lat as vendor_lat, l.lng as vendor_lng, b.amount, b.booking_status, b.created_at');
+            $this->db->from('customer as c, worker as v, booking as b, request as r, vendor_booking_location as l');
+            $this->db->where('b.vendor_id = v.id and l.req_no = b.req_no and b.booking_id = '.$booking_id.' and b.customer_id= c.id and c.id='.$id.' and r.req_no = b.req_no');
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         public function getVendorLocation($booking_id){
             $this->db->select('l.lat as vendor_lat, l.lng as vendor_lng, r.lat as customer_lat, r.lng as customer_lng');
             $this->db->from('booking as b, vendor_booking_location as l, request as r');

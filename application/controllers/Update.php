@@ -445,4 +445,95 @@
             }
             echo json_encode($response);
         }
+
+        public function customerbookingstatus(){
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $data['booking_status'] = $_POST['booking_status'];
+                if($this->admin->updateBookingStatus($data, $_POST['booking_id'])){
+                    $message = "";
+                    $booking_detail = $this->admin->getBookingInfoByCustomerID($_POST['user_id'], $_POST['booking_id']);
+                    $vendor = $this->user->getProfileData($booking_detail[0]->vendor_id);
+                    $apiKey = "AAAA0W6cR-g:APA91bGr4S_9LPdoWVc9k3aY5_6Nh3e_orRbsj6dLOq59nAC5GmLS9-21Au2figrAoCu9VjrsgWsd3taKiPvj2s2-niwWGDGA0B5KGGjFdCCZMQMcKdelOcexyXyuNcmcm_iRW9qGEJr";
+                    if($_POST['booking_status'] == 2){
+                        $message = "Task started/In Progress";
+                    }
+                    else if($_POST['booking_status'] == 3){
+                        $message = "Task paused";
+                    }
+                    else if($_POST['booking_status'] == 4){
+                        $to = $vendor->device_id;
+                        $notificationMsg = array
+                        (
+                            'body' 	=> $booking_detail[0]->customer_name.' has cancelled the booking!!',
+                            'title'	=> '[Troubleshooter]:Booking Cancelled!',    
+                        );
+                        $bodyData = array(
+                            'action'=> "booking_cancelled"
+                        );
+                        $this->send_notification($apiKey, $to, $notificationMsg, $bodyData);
+                        $message = "Booking Cancelled";
+                    }
+                    else if($_POST['booking_status'] == 5){
+                        $message = "Task completed";
+                    }
+                    $response = array('status' => true, 'message' => $message);
+                }
+                else{
+                    $response = array('status' => false, 'message' => "Error occurred while updating");
+                }
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'customer')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
+
+        public function vendortokenupdate(){
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                if($this->user->userupdate("worker", array("device_id"=>$_POST['token']), $_POST['user_id'])){
+                    $response = array(
+                        "status" => true,
+                        "message" => "Token updated successfully"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Error occurred while updating token, kindly restart the app"
+                    );
+                }
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'worker')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
     }

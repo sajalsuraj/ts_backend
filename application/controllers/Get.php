@@ -75,6 +75,7 @@
                 $data = $this->user->login($post);
     
                 if($data){
+                    $this->user->userupdate("worker",array("device_id" => $post['device_id']),$data->id);
                     $newdata = array(
                         'name'  =>  $data->name,
                         'user_id'     => $data->id,

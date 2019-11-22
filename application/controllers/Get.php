@@ -664,6 +664,38 @@
 
         }
 
+        public function customerinfo(){
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $userData = $this->user->getCustomerData($_POST['user_id']);
+
+                if($userData != NULL){
+                    $response = array(
+                        "status" => true,
+                        "message" => "User info available",
+                        "data" => $userData
+                    );
+                }
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'customer')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
+
     }
 
     

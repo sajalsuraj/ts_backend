@@ -536,4 +536,41 @@
             }
             echo json_encode($response);
         }
+
+        public function customerinfo(){
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $id = $_POST['user_id'];
+                unset($_POST['user_id']);
+                if($this->user->userupdate('customer', $_POST, $id)){  
+                    $response = array(
+                        "status" => true,
+                        "message" => "User info updated"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => true,
+                        "message" => "Error occurred while updating"
+                    );
+                }
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'customer')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
     }

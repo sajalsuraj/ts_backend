@@ -573,4 +573,23 @@
             }
             echo json_encode($response);
         }
+
+        public function vendorpassword(){
+            $phone = $_POST['phone'];
+            unset($_POST['phone']);
+            $_POST['password'] = md5($_POST['password']);
+            if($this->user->userupdatebyphone('worker', $_POST, $phone)){
+                $response = array(
+                    "status" => true,
+                    "message" => "Password updated"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while updating password"
+                );
+            }
+            echo json_encode($response);
+        }
     }

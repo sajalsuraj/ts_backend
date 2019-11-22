@@ -68,6 +68,12 @@
             return true;
         }
 
+        public function userupdatebyphone($table, $data, $phone){
+            $this->db->where('phone', $phone);
+            $this->db->update($table, $data); 
+            return true;
+        }
+
         public function aboutupdate($table, $data, $id){
             $this->db->where('user_id', $id);
             $this->db->update($table, $data); 

@@ -13,6 +13,28 @@
             header('Access-Control-Allow-Methods: GET, HEAD, POST, PUT, DELETE');
         }
 
+        public function otp($otp, $phone){
+           
+            $msg = rawurlencode("Verify your account. OTP-".$otp);    //Message Here
+
+            $url = "http://sms99.co.in/pushsms.php?username=trjhalakr&password=incorrecthaibhai&sender=webacc&message=".$msg."&numbers=".$phone;  //Store data into URL variable
+
+            // $ret = file($url);    //Call Url variable by using file() function
+
+            // return $ret[0];    //$ret stores the msg-id
+            $ch = curl_init();
+
+            curl_setopt_array(
+                $ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true
+            ));
+                
+            $output = curl_exec($ch);
+            return $output;
+
+        }
+
         public function send_notification($apiKey, $to, $notification, $data)
         {
             $fields = array
@@ -694,6 +716,53 @@
                 }
             }
             echo json_encode($response);
+        }
+
+        public function verifyvendorbyotp(){
+            if($this->admin->checkIfUserExists($_POST['phone'], "worker")){
+
+                if($this->admin->checkIfUserExists($_POST['phone'], "otp")){//Checking previous records in otp table
+                    $this->user->deleteOTP("otp", $_POST['phone']);
+                }
+
+                $otp = rand(1000,9999);
+                $otpArr = array(
+                    "otp" => $otp,
+                    "phone" => $_POST['phone']
+                );
+
+                $otpData = $this->admin->addData($otpArr, "otp");
+
+                $this->otp($otp,$_POST['phone']);
+                $response = array(
+                    "status" => true,
+                    "message" => "User exists"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "User doesn't exist"
+                );
+            }
+            echo json_encode($response);
+        }
+
+        public function verifyotpvendor(){
+            if(isset($_POST['phone']) && isset($_POST['otp'])){
+                if($this->user->checkUserOtp($_POST['phone'], $_POST['otp'], 'otp')){
+                    $phone = $_POST['phone'];
+                    if($this->user->deleteOTP('otp', $phone)){
+                        echo json_encode(['status' => true, 'phone'=>$phone, 'message' => "User verified"]);
+                    }
+                }
+                else{
+                    echo json_encode(['status' => false, 'message' => "OTP didn't match"]);
+                }
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Please provide both phone number and OTP"]);
+            }
         }
 
     }

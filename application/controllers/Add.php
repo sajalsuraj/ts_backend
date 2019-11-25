@@ -341,6 +341,43 @@
 
         }
 
+        public function banner(){
+            if(isset($_FILES["banner_image"])){
+                if(!empty($_FILES["banner_image"])){
+                    $folder= './assets/admin/images/banner/';
+                    $temp = explode(".", $_FILES["banner_image"]["name"]);
+                    $target_file_img = $folder. round(microtime(true)).'front.'.$temp[1]; 
+                    $_POST['banner_image'] = round(microtime(true)).'front.'.$temp[1];
+                    move_uploaded_file($_FILES["banner_image"]["tmp_name"], $target_file_img);
+
+                    $_POST['status'] = "true";
+
+                    $data = $this->admin->addData($_POST, "banner");
+
+                    if($data){
+                        $response = array(
+                            "status" => true,
+                            "message" => "Banner uploaded succesfully"
+                        );
+                    }
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Error occurred while uploading, image file should not be empty"
+                    );
+                }
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while uploading, image file is mandatory"
+                );
+            }
+
+            echo json_encode($response);
+        }
+
         public function bankdetails(){
             $received_Token = $this->input->request_headers('Authorization');
             $tokenData = $this->user->getTokenData($received_Token);

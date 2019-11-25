@@ -47,7 +47,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="exampleInputEmail4">YOUR PRIMARY PROFESSION</label>
-                        <?php $allServices = $this->admin->getAllServices(); ?>
+                        <?php $allServices = $this->admin->getAllParentServices(); ?>
                         <select class="form-control" name="primary_profession">
                         <?php foreach ($allServices['result'] as $service) { ?>
                             <option value="<?php echo $service->service_name; ?>"><?php echo $service->service_name; ?></option>

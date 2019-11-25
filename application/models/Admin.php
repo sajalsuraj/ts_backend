@@ -32,6 +32,19 @@
             return $data; 
         }
 
+        public function getAllBanners(){
+            $query = $this->db->get('banner');
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
+        public function getServicesExceptLevel3(){
+            $this->db->select('*');
+            $query = $this->db->get_where("services", array("level!="=>'3'));
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
         public function getServiceById($id){
             $this->db->select('*');
             $query = $this->db->get_where("services", array('id' => $id));

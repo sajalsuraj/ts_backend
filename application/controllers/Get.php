@@ -500,7 +500,7 @@
         }
 
         public function services(){
-            $data = $this->admin->getAllServices();
+            $data = $this->admin->getAllParentServices();
 
             if($data){
                 echo json_encode(['status' => true, 'data' => $data['result'], 'message' => 'Service list']);
@@ -509,6 +509,17 @@
                 echo json_encode(['status' => false, 'message' => 'Services not available']);
             }
         }
+
+        public function subcategories(){
+            $data = $this->admin->checkIfServiceIsParent($_POST['id']);
+            if($data){
+                echo json_encode(['status' => true, 'data' => $data, 'message' => 'Subcategories List']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Subcategories not available']);
+            }
+        }
+
         function distance($lat1, $lon1, $lat2, $lon2, $unit) {
             if (($lat1 == $lat2) && ($lon1 == $lon2)) {
                 return 0;

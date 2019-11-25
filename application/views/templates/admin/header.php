@@ -106,7 +106,7 @@ if ($this->session->has_userdata('type') == true) {
 
       <li class="nav-item active">
         <a class="nav-link" href="profile">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
+        <i class="far fa-id-badge"></i>
           <span>Profile</span>
         </a>
       </li>
@@ -114,14 +114,25 @@ if ($this->session->has_userdata('type') == true) {
       <?php if($usertype){ ?>
       <li class="nav-item active">
         <a class="nav-link" href="kyc-verify">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
+        <i class="far fa-address-card"></i>
           <span>Verify KYCs</span>
         </a>
       </li>
 
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown active">
         <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-photo-video"></i>
+        <i class="fas fa-images"></i>
+          <span>Banner</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+          <a class="dropdown-item" href="add-banner">Add a banner</a>
+          <a class="dropdown-item" href="all-banners">View All</a>
+        </div>
+      </li>
+
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-hands-helping"></i>
           <span>Services</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">

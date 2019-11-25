@@ -29,7 +29,7 @@
     <li class="breadcrumb-item active">Add a new one</li>
 </ol>
 <?php 
-    $parentCategories =  $this->admin->getAllServices();
+    $parentCategories =  $this->admin->getServicesExceptLevel3();
 ?>
 <!--Add testimonial form starts -->
 <div class="row">
@@ -92,17 +92,18 @@
 
                 var formData = new FormData();
                 if($('#parent').val() == "parent"){
-                    
+                    formData.append('level', "1");
                 }
                 else{
                     if($('#parent').find(':selected').attr('data-parent') === ""){
-
+                        formData.append('level', "2");
                     }
                     else{
                         if($('input[name="rate_per_min"]').val() == ""){
                             alert("Rate per minute is required");
                         return false;
                         }
+                        formData.append('level', "3");
                     }
                     formData.append('parent_category', $('#parent').val());
                     formData.append('rate_per_min', $('input[name="rate_per_min"]').val());

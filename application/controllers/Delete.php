@@ -42,6 +42,15 @@
             $this->deleteservice($_POST['id']);
         }
 
+        public function banner(){
+            if($this->admin->deleteEntity("banner", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'Banner deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
     }
 
 ?>

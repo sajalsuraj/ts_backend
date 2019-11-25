@@ -106,7 +106,7 @@ $("#updateProfile").submit(function(event) {
         formData.append('user_id', <?php echo $this->session->userdata('user_id'); ?>);
         
         $.ajax({
-            url:'<?php echo base_url(); ?>update/profile',
+            url:'<?php echo base_url(); ?>update/userprofile',
             type: 'POST',
             data: formData,
             dataType:'json',

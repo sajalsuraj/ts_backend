@@ -51,7 +51,7 @@
                 curl_close( $ch );
         }
 
-        public function profile(){
+        public function userprofile(){
 
             if(isset($_FILES["face_photo"])){
                 $folder= './assets/admin/images/profile/';
@@ -186,7 +186,7 @@
         }
 
         
-        public function userprofile(){
+        public function profile(){
 
             $received_Token = $this->input->request_headers('Authorization');
             $tokenData = $this->user->getTokenData($received_Token);
@@ -588,6 +588,43 @@
                 $response = array(
                     "status" => false,
                     "message" => "Error occurred while updating password"
+                );
+            }
+            echo json_encode($response);
+        }
+
+        public function customerpassword(){
+            $phone = $_POST['phone'];
+            unset($_POST['phone']);
+            $_POST['password'] = md5($_POST['password']);
+            if($this->user->userupdatebyphone('customer', $_POST, $phone)){
+                $response = array(
+                    "status" => true,
+                    "message" => "Password updated"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while updating password"
+                );
+            }
+            echo json_encode($response);
+        }
+
+        public function service(){
+            $service_id = $_POST['id'];
+            unset($_POST['id']);
+            if($this->user->userupdate('services', $_POST, $service_id)){
+                $response = array(
+                    "status" => true,
+                    "message" => "Service Updated"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while updating service"
                 );
             }
             echo json_encode($response);

@@ -23,6 +23,25 @@
             }
         }
 
+        public function deleteservice($id){
+            $data = $this->admin->checkIfServiceIsParent($id);
+            if($data){
+                foreach ($data as $row)
+                {
+                    $this->deleteservice($row->id);
+                }
+            }
+
+            $this->admin->deleteEntity('services', $id);
+            if(!$data){
+                echo json_encode(['status' => true, 'message' => 'Service successfully deleted']);
+            }
+        }
+
+        public function service(){
+            $this->deleteservice($_POST['id']);
+        }
+
     }
 
 ?>

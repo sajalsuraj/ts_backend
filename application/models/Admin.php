@@ -32,6 +32,30 @@
             return $data; 
         }
 
+        public function getServiceById($id){
+            $this->db->select('*');
+            $query = $this->db->get_where("services", array('id' => $id));
+            return $query->num_rows() > 0 ? $query->row(): "None";
+        }
+
+        public function checkIfServiceHasCharge($id){
+            $this->db->select('*');
+            $query = $this->db->get_where("services", array('id' => $id, "rate_per_min!="=>""));
+            return $query->num_rows() > 0 ? true : false;
+        }
+
+        public function checkIfServiceIsParent($id){
+            $this->db->select('*');
+            $query = $this->db->get_where("services", array("parent_category"=> $id));
+            return $query->num_rows() > 0 ? $query->result(): false;
+        }
+
+        public function getAllParentServices(){
+            $query = $this->db->get_where('services', array('parent_category' => ''));
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
         public function getAllKYC(){
             $this->db->select('k.*, w.name as username');
             $this->db->from('worker as w, kyc as k');
@@ -61,7 +85,7 @@
         }
 
         public function getUserByPhone($phone, $type){
-            $this->db->select('otp_verified');
+            $this->db->select('*');
             $query = $this->db->get_where($type, array('phone' => $phone));
             return $query->num_rows() > 0 ?  $query->row(): false;
         }

@@ -104,7 +104,38 @@
                         'type' => $data->type 
                     );
                     $jwtToken = $this->objOfJwt->GenerateToken($newdata);
-                    echo json_encode(['status' => true, 'access_token'=>$jwtToken, 'message' => 'Successful Login']);
+                    if($this->admin->checkKYCById($data->id, "kyc")){
+
+                        $is_verified = $this->admin->checkIfKYCVerified($data->id, 'kyc');
+                        if($is_verified->is_verified == 1){
+                            $success_resp = array(
+                                'status' => true,
+                                'access_token'=>$jwtToken,
+                                'message' => 'Successful Login',
+                                'is_kyc_verified' => true,
+                                'is_kyc_available' => true
+                            );
+                        }
+                        else{
+                            $success_resp = array(
+                                'status' => true,
+                                'access_token'=>$jwtToken,
+                                'message' => 'Successful Login',
+                                'is_kyc_verified' => false,
+                                'is_kyc_available' => true
+                            );
+                        }
+                    }
+                    else{
+                        $success_resp = array(
+                            'status' => true,
+                            'access_token'=>$jwtToken,
+                            'message' => 'Successful Login',
+                            'is_kyc_verified' => false,
+                            'is_kyc_available' => false
+                        );
+                    }
+                    echo json_encode($success_resp);
     
                 }
                 else{
@@ -749,6 +780,53 @@
         }
 
         public function verifyotpvendor(){
+            if(isset($_POST['phone']) && isset($_POST['otp'])){
+                if($this->user->checkUserOtp($_POST['phone'], $_POST['otp'], 'otp')){
+                    $phone = $_POST['phone'];
+                    if($this->user->deleteOTP('otp', $phone)){
+                        echo json_encode(['status' => true, 'phone'=>$phone, 'message' => "User verified"]);
+                    }
+                }
+                else{
+                    echo json_encode(['status' => false, 'message' => "OTP didn't match"]);
+                }
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Please provide both phone number and OTP"]);
+            }
+        }
+
+        public function verifycustomerbyotp(){
+            if($this->admin->checkIfUserExists($_POST['phone'], "customer")){
+
+                if($this->admin->checkIfUserExists($_POST['phone'], "otp")){//Checking previous records in otp table
+                    $this->user->deleteOTP("otp", $_POST['phone']);
+                }
+
+                $otp = rand(1000,9999);
+                $otpArr = array(
+                    "otp" => $otp,
+                    "phone" => $_POST['phone']
+                );
+
+                $otpData = $this->admin->addData($otpArr, "otp");
+
+                $this->otp($otp,$_POST['phone']);
+                $response = array(
+                    "status" => true,
+                    "message" => "User exists"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "User doesn't exist"
+                );
+            }
+            echo json_encode($response);
+        }
+
+        public function verifyotpuser(){
             if(isset($_POST['phone']) && isset($_POST['otp'])){
                 if($this->user->checkUserOtp($_POST['phone'], $_POST['otp'], 'otp')){
                     $phone = $_POST['phone'];

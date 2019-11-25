@@ -11,6 +11,16 @@
     redirect('users/login');
   }
 ?> 
+<style>
+@media only screen and (min-width: 900px){
+    .rate{
+        display:none;
+    }
+    #parent{
+        width: 50%;
+    }
+}
+</style>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
@@ -18,18 +28,35 @@
     </li>
     <li class="breadcrumb-item active">Add a new one</li>
 </ol>
-
+<?php 
+    $parentCategories =  $this->admin->getAllServices();
+?>
 <!--Add testimonial form starts -->
 <div class="row">
     <div class="col-md-12">
         <form id="addServices">
             <div class="form-group">
-                <label>Service Name:</label>
-                <input type="text" class="form-control" placeholder="Plumber, Carpenter, etc" name="service_name" />
+                <label>Category:</label>
+                <select class="form-control" id="parent">
+                    <option value="parent">Parent Category</option>
+                    <?php 
+                    foreach($parentCategories['result'] as $parent){
+                    ?>
+                    <option data-parent="<?php echo $parent->parent_category; ?>" value="<?php echo $parent->id; ?>"><?php echo $parent->service_name; ?></option>
+                    <?php } ?>  
+                </select>
             </div>
             <div class="form-group">
+                <label>Service Name:</label>
+                <input type="text" class="form-control" required placeholder="Plumber, Carpenter, etc" name="service_name" />
+            </div>
+            <div class="form-group rate">
                 <label>Rate per minute:</label>
                 <input type="text" class="form-control" placeholder="30, 40, 50, etc" name="rate_per_min" />
+            </div>
+            <div class="form-group rate">
+                <label>Details (Optional):</label>
+                <input type="text" class="form-control" placeholder="Installation, Repair, Replace, etc." name="detail" />
             </div>
             <div class="form-group">
                 <button class="btn btn-primary" type="submit">Submit</button>
@@ -39,23 +66,54 @@
 </div>
 <script>
     window.onload = function(){
+
+        $('#parent').change(function(){
+            if($(this).val() === "parent"){
+                $('.rate').hide();
+            }
+            else{
+                if($(this).find(':selected').attr('data-parent') === ""){
+                    $('.rate').hide();
+                }
+                else{
+                    $('.rate').show();
+                }
+            }
+        });
+
         $("#addServices").submit(function(event) { 
             event.preventDefault();
         }).validate({
             rules: {
-                name:{
-                    required:true
-                },
-                rate_per_min:{
-                    required:true
-                }
+
             },
             submitHandler: function(form) {
+
+
+                var formData = new FormData();
+                if($('#parent').val() == "parent"){
+                    
+                }
+                else{
+                    if($('#parent').find(':selected').attr('data-parent') === ""){
+
+                    }
+                    else{
+                        if($('input[name="rate_per_min"]').val() == ""){
+                            alert("Rate per minute is required");
+                        return false;
+                        }
+                    }
+                    formData.append('parent_category', $('#parent').val());
+                    formData.append('rate_per_min', $('input[name="rate_per_min"]').val());
+                    formData.append('detail', $('input[name="detail"]').val());
+                }
+                formData.append('service_name', $('input[name="service_name"]').val());
                 
                 $.ajax({
                     url:'<?php echo base_url(); ?>add/service',
                     type: 'POST',
-                    data: new FormData(form),
+                    data: formData,
                     dataType:'json',
                     processData: false,
                     contentType: false,

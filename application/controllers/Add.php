@@ -341,6 +341,26 @@
 
         }
 
+        public function city(){
+            if(isset($_POST['name'])){
+                $data = $this->admin->addData($_POST, "city");
+                if($data){
+                    $response = array(
+                        "status" => true,
+                        "id" => $this->admin->last_record('id', 'city')->id,
+                        "message" => "City added successfully"
+                    );
+                }
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "City name is empty"
+                );
+            }
+            echo json_encode($response);
+        }
+
         public function banner(){
             if(isset($_FILES["banner_image"])){
                 if(!empty($_FILES["banner_image"])){

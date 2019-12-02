@@ -20,6 +20,11 @@
             return $this->db->insert($type, $data) ? true : false ;
         }
 
+        public function last_record($field, $table)
+        { 
+            return $this->db->select($field)->from($table)->limit(1)->order_by($field,'DESC')->get()->row();
+        } 
+
         public function getAllWorkers(){
             $query = $this->db->get_where('worker', array('type' => 'worker'));
             $data['result'] = $query->result();
@@ -34,6 +39,12 @@
 
         public function getAllBanners(){
             $query = $this->db->get('banner');
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
+        public function getAllCities(){
+            $query = $this->db->get('city');
             $data['result'] = $query->result();
             return $data; 
         }

@@ -837,6 +837,17 @@
             echo json_encode($response);
         }
 
+        public function cities(){
+            $cities = $this->admin->getAllCities();
+            
+            if($cities['result']){
+                echo json_encode(['status' => true, 'cities'=> $cities['result'], 'message' => "City List"]);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Cities not available"]);
+            }
+        }
+
         public function verifyotpuser(){
             if(isset($_POST['phone']) && isset($_POST['otp'])){
                 if($this->user->checkUserOtp($_POST['phone'], $_POST['otp'], 'otp')){

@@ -51,6 +51,15 @@
             }
         }
 
+        public function city(){
+            if($this->admin->deleteEntity("city", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'City deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
     }
 
 ?>

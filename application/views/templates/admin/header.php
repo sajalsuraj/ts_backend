@@ -140,6 +140,13 @@ if ($this->session->has_userdata('type') == true) {
           <a class="dropdown-item" href="all-services">View All</a>
         </div>
       </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="cities">
+        <i class="fa fa-location-arrow" aria-hidden="true"></i>
+          <span>Cities</span>
+        </a>
+      </li>
       <?php }else{ ?>
       <li class="nav-item active">
         <a class="nav-link" href="about-me">

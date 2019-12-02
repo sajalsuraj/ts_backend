@@ -38,6 +38,13 @@
             return $data; 
         }
 
+        public function getActivatedBanners(){
+            $this->db->select('*');
+            $query = $this->db->get_where("banner", array("status"=>'true'));
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
         public function getServicesExceptLevel3(){
             $this->db->select('*');
             $query = $this->db->get_where("services", array("level!="=>'3'));

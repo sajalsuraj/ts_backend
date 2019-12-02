@@ -854,6 +854,21 @@
             }
         }
 
+        public function banners(){
+            $banners = $this->admin->getActivatedBanners();
+            
+            if($banners['result']){
+                for($i=0; $i < count($banners['result']); $i++){
+                    $banners['result'][$i]->banner_image = base_url()."assets/admin/images/banner/".$banners['result'][$i]->banner_image;
+                }
+                echo json_encode(['status' => true, 'banners'=> $banners['result'], 'message' => "Banners list"]);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Banners not available"]);
+            }
+            
+        }
+
     }
 
     

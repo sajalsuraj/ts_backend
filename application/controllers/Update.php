@@ -647,4 +647,22 @@
             }
             echo json_encode($response);
         }
+
+        public function city(){
+            $banner_id = $_POST['id'];
+            unset($_POST['id']);
+            if($this->user->userupdate('city', $_POST, $banner_id)){
+                $response = array(
+                    "status" => true,
+                    "message" => "City name updated"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while updating city name"
+                );
+            }
+            echo json_encode($response);
+        }
     }

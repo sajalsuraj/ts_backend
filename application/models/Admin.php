@@ -20,6 +20,11 @@
             return $this->db->insert($type, $data) ? true : false ;
         }
 
+        public function getTerms(){
+            $query = $this->db->get_where('static', array('type' => 'terms'));
+            return $query->row();
+        }
+
         public function last_record($field, $table)
         { 
             return $this->db->select($field)->from($table)->limit(1)->order_by($field,'DESC')->get()->row();

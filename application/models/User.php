@@ -68,6 +68,12 @@
             return true;
         }
 
+        public function staticupdate($table, $data, $type){
+            $this->db->where('type', $type);
+            $this->db->update($table, $data); 
+            return true;
+        }
+
         public function userupdatebyphone($table, $data, $phone){
             $this->db->where('phone', $phone);
             $this->db->update($table, $data); 

@@ -21,6 +21,9 @@
   <link href="<?php echo base_url(); ?>assets/admin/css/sb-admin.css" rel="stylesheet">
   <link href="<?php echo base_url(); ?>assets/admin/css/style.css" rel="stylesheet">
 
+  <!-- Editor style -->
+  <link href="<?php echo base_url(); ?>assets/admin/css/richtext.min.css" rel="stylesheet">
+
   <!-- Bootstrap core JavaScript-->
   <script src="<?php echo base_url(); ?>assets/admin/vendor/jquery/jquery.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -36,6 +39,9 @@
   <!-- Validation library-->
   <script src="<?php echo base_url(); ?>assets/admin/js/jquery.validate.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/admin/js/additional-methods.min.js"></script>
+
+  <!-- Editor style -->
+  <script src="<?php echo base_url(); ?>assets/admin/js/jquery.richtext.min.js"></script>
 
 </head>
 <?php 
@@ -147,6 +153,19 @@ if ($this->session->has_userdata('type') == true) {
           <span>Cities</span>
         </a>
       </li>
+
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-file"></i>
+          <span>Static Pages</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+          <a class="dropdown-item" href="terms">Terms & Conditions</a>
+          <a class="dropdown-item" href="privacy-policy">Privacy Policy</a>
+          <a class="dropdown-item" href="disclaimer">Disclaimer</a>
+        </div>
+      </li>
+
       <?php }else{ ?>
       <li class="nav-item active">
         <a class="nav-link" href="about-me">

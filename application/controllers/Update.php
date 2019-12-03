@@ -665,4 +665,20 @@
             }
             echo json_encode($response);
         }
+
+        public function static(){
+            if($this->user->staticupdate('static', $_POST, $_POST['type'])){
+                $response = array(
+                    "status" => true,
+                    "message" => "Data updated"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while updating"
+                );
+            }
+            echo json_encode($response);
+        }
     }

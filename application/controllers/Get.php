@@ -880,6 +880,18 @@
             
         }
 
+        public function terms(){
+            $terms = $this->admin->getTerms();
+            
+            if($terms != NULL){
+                echo json_encode(['status' => true, 'paragraph'=> $terms->paragraph, 'message' => "Terms & conditions"]);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Terms & conditions not available"]);
+            }
+            
+        }
+
     }
 
     

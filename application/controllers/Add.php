@@ -475,5 +475,17 @@
                 echo json_encode(['status' => false, 'message' => 'Error while adding']);
              }
         }
+
+        public function static(){
+
+            $data = $this->admin->addData($_POST, "static");
+          
+             if($data){
+                echo json_encode(['status' => true, 'message' => 'Data added successfully']);
+             }
+             else{
+                echo json_encode(['status' => false, 'message' => 'Error while adding']);
+             }
+        }
     
     }

@@ -68,6 +68,13 @@
             return $data; 
         }
 
+        public function getServicesLevelWise($level){
+            $this->db->select('*');
+            $query = $this->db->get_where("services", array("level="=>$level));
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
         public function getServiceById($id){
             $this->db->select('*');
             $query = $this->db->get_where("services", array('id' => $id));

@@ -329,7 +329,23 @@
                 unset($_POST['phone']);
                 if($this->user->updateUserIfVerified('worker', $POST, $phone)){
                     if($this->user->deleteOTP('otp', $phone)){
-                        echo json_encode(['status' => true, 'message' => "User verified"]);
+
+                        $user = $this->admin->getUserByPhone($phone, "worker");
+                        $msg = "Congratulations, you are successfully registered with Troubleshooters Services";
+                        // use wordwrap() if lines are longer than 70 characters
+                        $msg = wordwrap($msg,70);
+                        $headers = "From: noreply@troubleshooters.services". "\r\n" .
+                                    'X-Mailer: PHP/' . phpversion();
+                        // send email
+                        
+                        $mail = mail($user->email,"Registration successful with Troubleshooters Services",$msg, $headers);
+                        
+                        if(!$mail) {   
+                            echo json_encode(['status'=> true, 'data' => "User verified, error occurred while sending email"]);   
+                        } else {
+                            
+                            echo json_encode(['status'=> true, 'data' => "User verified, Email sent successfully to the user"]);
+                        }
                     }
                 }
             }
@@ -900,6 +916,44 @@
             else{
                 echo json_encode(['status' => false, 'message' => "Privacy Policy not available"]);
             }  
+        }
+
+        public function categories(){
+            $level1 = $this->admin->getServicesLevelWise("1");
+            $level2 = $this->admin->getServicesLevelWise("2");
+            $level3 = $this->admin->getServicesLevelWise("3");
+
+            $catArr = array();
+            $level1 = $level1['result'];
+            $level2 = $level2['result'];
+            $level3 = $level3['result'];
+
+            for($i = 0; $i < count($level2); $i++){
+                $catArr = array();
+                for($j = 0; $j < count($level3); $j++){
+                    if($level3[$j]->parent_category == $level2[$i]->id){
+                        array_push($catArr, $level3[$j]);
+                    }
+                }
+                $level2[$i]->subcategories = $catArr;
+            }
+
+            for($i = 0; $i < count($level1); $i++){
+                $catArr = array();
+                for($j = 0; $j < count($level2); $j++){
+                    if($level2[$j]->parent_category == $level1[$i]->id){
+                        array_push($catArr, $level2[$j]);
+                    }
+                }
+                $level1[$i]->subcategories = $catArr;
+            }
+
+            if($level1){
+                echo json_encode(['status' => true, 'data' => $level1, 'message' => 'Service list']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Services not available']);
+            }
         }
 
     }

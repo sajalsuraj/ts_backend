@@ -881,15 +881,25 @@
         }
 
         public function terms(){
-            $terms = $this->admin->getTerms();
+            $terms = $this->admin->getTerms("terms");
             
             if($terms != NULL){
                 echo json_encode(['status' => true, 'paragraph'=> $terms->paragraph, 'message' => "Terms & conditions"]);
             }
             else{
                 echo json_encode(['status' => false, 'message' => "Terms & conditions not available"]);
-            }
+            }  
+        }
+
+        public function privacypolicy(){
+            $terms = $this->admin->getTerms("privacy");
             
+            if($terms != NULL){
+                echo json_encode(['status' => true, 'paragraph'=> $terms->paragraph, 'message' => "Privacy Policy"]);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Privacy Policy not available"]);
+            }  
         }
 
     }

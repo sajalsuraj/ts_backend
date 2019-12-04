@@ -20,8 +20,8 @@
             return $this->db->insert($type, $data) ? true : false ;
         }
 
-        public function getTerms(){
-            $query = $this->db->get_where('static', array('type' => 'terms'));
+        public function getTerms($type){
+            $query = $this->db->get_where('static', array('type' => $type));
             return $query->row();
         }
 

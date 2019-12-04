@@ -19,10 +19,10 @@ textarea{
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="#">Terms and conditions</a>
+        <a href="#">Privacy Policy</a>
     </li>
 </ol>
-<?php $terms = $this->admin->getTerms("terms"); ?>
+<?php $terms = $this->admin->getTerms("privacy"); ?>
 <div class="row">
     <div class="col-md-12">
         <form id="addParagraph">
@@ -44,10 +44,13 @@ $(document).ready(function(){
             event.preventDefault();
         }).validate({
             rules: {
+                paragraph:{
+                    required:true
+                }
             },
         submitHandler: function(form) {
             var fd = new FormData(form);
-            fd.append("type", "terms");
+            fd.append("type", "privacy");
             <?php $url = ""; if($terms != NULL){ $url = "update/static"; }else{ $url = "add/static"; } ?>
             var url = "<?php echo base_url().$url; ?>";
             <?php if($terms != NULL){ ?>

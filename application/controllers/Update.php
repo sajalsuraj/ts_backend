@@ -14,6 +14,28 @@
             parent::__construct();
         }
 
+        public function sendsms($msg, $phone){
+           
+            $msg = rawurlencode($msg);    //Message Here
+
+            $url = "http://sms99.co.in/pushsms.php?username=trjhalakr&password=incorrecthaibhai&sender=webacc&message=".$msg."&numbers=".$phone;  //Store data into URL variable
+
+            // $ret = file($url);    //Call Url variable by using file() function
+
+            // return $ret[0];    //$ret stores the msg-id
+            $ch = curl_init();
+
+            curl_setopt_array(
+                $ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true
+            ));
+                
+            $output = curl_exec($ch);
+            return $output;
+
+        }
+
         public function kyc(){
             if($this->user->kyc($_POST['type'], $_POST['status'], $_POST['id'])){  
                 echo json_encode(['status' => true, 'message' => "KYC verified"]);
@@ -579,10 +601,28 @@
             unset($_POST['phone']);
             $_POST['password'] = md5($_POST['password']);
             if($this->user->userupdatebyphone('worker', $_POST, $phone)){
-                $response = array(
-                    "status" => true,
-                    "message" => "Password updated"
-                );
+                
+                $user = $this->admin->getUserByPhone($phone, "worker");
+                $msg = "Your password has been updated successfully";
+            
+                $headers = "From: noreply@troubleshooters.services". "\r\n" .
+                            'X-Mailer: PHP/' . phpversion();
+                // send email
+                
+                $mail = mail($user->email,"Password updated - Troubleshooters",$msg, $headers);
+                
+                if(!$mail) {   
+                    $response = array(
+                        "status" => true,
+                        "message" => "Password updated, error occurred while sending email"
+                    );
+                } else {
+                    $response = array(
+                        "status" => true,
+                        "message" => "Password updated, email sent to the vendor"
+                    );
+                }
+                $this->sendsms($msg, $phone);
             }
             else{
                 $response = array(
@@ -598,10 +638,28 @@
             unset($_POST['phone']);
             $_POST['password'] = md5($_POST['password']);
             if($this->user->userupdatebyphone('customer', $_POST, $phone)){
-                $response = array(
-                    "status" => true,
-                    "message" => "Password updated"
-                );
+
+                $user = $this->admin->getUserByPhone($phone, "customer");
+                $msg = "Your password has been updated successfully";
+            
+                $headers = "From: noreply@troubleshooters.services". "\r\n" .
+                            'X-Mailer: PHP/' . phpversion();
+                // send email
+                
+                $mail = mail($user->email,"Password updated - Troubleshooters",$msg, $headers);
+                
+                if(!$mail) {   
+                    $response = array(
+                        "status" => true,
+                        "message" => "Password updated, error occurred while sending email"
+                    );
+                } else {
+                    $response = array(
+                        "status" => true,
+                        "message" => "Password updated, email sent to the user"
+                    );
+                }
+                $this->sendsms($msg, $phone);
             }
             else{
                 $response = array(

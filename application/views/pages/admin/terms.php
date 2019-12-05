@@ -38,7 +38,7 @@ textarea{
 </div>
 <script>
 $(document).ready(function(){
-    $('#terms').richText();
+    CKEDITOR.replace( 'paragraph' );
     var isFirstTime = 0;
     $("#addParagraph").submit(function(event) { 
             event.preventDefault();

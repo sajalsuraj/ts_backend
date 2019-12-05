@@ -42,6 +42,7 @@
 
   <!-- Editor style -->
   <script src="<?php echo base_url(); ?>assets/admin/js/jquery.richtext.min.js"></script>
+  <script src="https://cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
 
 </head>
 <?php 

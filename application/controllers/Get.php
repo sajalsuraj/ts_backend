@@ -332,8 +332,7 @@
 
                         $user = $this->admin->getUserByPhone($phone, "worker");
                         $msg = "Congratulations, you are successfully registered with Troubleshooters Services";
-                        // use wordwrap() if lines are longer than 70 characters
-                        $msg = wordwrap($msg,70);
+            
                         $headers = "From: noreply@troubleshooters.services". "\r\n" .
                                     'X-Mailer: PHP/' . phpversion();
                         // send email
@@ -341,10 +340,10 @@
                         $mail = mail($user->email,"Registration successful with Troubleshooters Services",$msg, $headers);
                         
                         if(!$mail) {   
-                            echo json_encode(['status'=> true, 'data' => "User verified, error occurred while sending email"]);   
+                            echo json_encode(['status'=> true, 'message' => "User verified, error occurred while sending email"]);   
                         } else {
                             
-                            echo json_encode(['status'=> true, 'data' => "User verified, Email sent successfully to the user"]);
+                            echo json_encode(['status'=> true, 'message' => "User verified, Email sent successfully to the user"]);
                         }
                     }
                 }
@@ -477,7 +476,21 @@
                 unset($_POST['phone']);
                 if($this->user->updateUserIfVerified('customer', $POST, $phone)){
                     if($this->user->deleteOTP('otp', $phone)){
-                        echo json_encode(['status' => true, 'message' => "User verified"]);
+                        $user = $this->admin->getUserByPhone($phone, "customer");
+                        $msg = "Congratulations, you are successfully registered with Troubleshooters Services";
+            
+                        $headers = "From: noreply@troubleshooters.services". "\r\n" .
+                                    'X-Mailer: PHP/' . phpversion();
+                        // send email
+                        
+                        $mail = mail($user->email,"Registration successful with Troubleshooters Services",$msg, $headers);
+                        
+                        if(!$mail) {   
+                            echo json_encode(['status'=> true, 'message' => "User verified, error occurred while sending email"]);   
+                        } else {
+                            
+                            echo json_encode(['status'=> true, 'message' => "User verified, Email sent successfully to the user"]);
+                        }
                     }
                 }
             }

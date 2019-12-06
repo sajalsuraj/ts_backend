@@ -38,7 +38,7 @@ textarea{
 </div>
 <script>
 $(document).ready(function(){
-    $('#terms').richText();
+    CKEDITOR.replace( 'paragraph' );
     var isFirstTime = 0;
     $("#addParagraph").submit(function(event) { 
             event.preventDefault();
@@ -49,7 +49,8 @@ $(document).ready(function(){
                 }
             },
         submitHandler: function(form) {
-            var fd = new FormData(form);
+            var fd = new FormData();
+            fd.append("paragraph", CKEDITOR.instances.terms.getData());
             fd.append("type", "privacy");
             <?php $url = ""; if($terms != NULL){ $url = "update/static"; }else{ $url = "add/static"; } ?>
             var url = "<?php echo base_url().$url; ?>";

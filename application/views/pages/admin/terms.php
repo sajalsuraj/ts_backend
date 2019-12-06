@@ -46,7 +46,8 @@ $(document).ready(function(){
             rules: {
             },
         submitHandler: function(form) {
-            var fd = new FormData(form);
+            var fd = new FormData();
+            fd.append("paragraph", CKEDITOR.instances.terms.getData());
             fd.append("type", "terms");
             <?php $url = ""; if($terms != NULL){ $url = "update/static"; }else{ $url = "add/static"; } ?>
             var url = "<?php echo base_url().$url; ?>";

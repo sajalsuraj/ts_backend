@@ -688,6 +688,24 @@
             echo json_encode($response);
         }
 
+        public function contact(){
+            $id = $_POST['id'];
+            unset($_POST['id']);
+            if($this->user->userupdate('contact', $_POST, $id)){
+                $response = array(
+                    "status" => true,
+                    "message" => "Contact us updated"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while updating contact"
+                );
+            }
+            echo json_encode($response);
+        }
+
         public function banner(){
             $banner_id = $_POST['id'];
             unset($_POST['id']);

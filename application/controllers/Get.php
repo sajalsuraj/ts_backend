@@ -931,6 +931,17 @@
             }  
         }
 
+        public function howitworks(){
+            $terms = $this->admin->getTerms("howitworks");
+            
+            if($terms != NULL){
+                echo json_encode(['status' => true, 'paragraph'=> $terms->paragraph, 'message' => "How it works paragraph"]);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Paragraph not available"]);
+            }  
+        }
+
         public function categories(){
             $level1 = $this->admin->getServicesLevelWise("1");
             $level2 = $this->admin->getServicesLevelWise("2");
@@ -975,10 +986,12 @@
             $is_kyc_available = false;
             $is_kyc_verified = false;
             $is_bank_details_available = false;
+            $is_user_info_available = false;
 
             $basicDetail = $this->user->getProfileData($_POST['user_id']);
             $is_kyc_available = $this->admin->checkKYCById($_POST['user_id'], 'kyc');
             $is_bank_details_available = $this->admin->checkIfBankDetailsExistById($_POST['user_id'], 'bank_details');
+            $is_user_info_available =  $this->admin->isUserInfoAvailable($_POST['user_id']);
             
             if($basicDetail->otp_verified == "1"){
                 $user_verified = true;
@@ -991,11 +1004,56 @@
                 }
             }
 
-            $statusArr = array("is_user_verified"=>$user_verified, "is_kyc_available"=>$is_kyc_available, "is_kyc_verified"=>$is_kyc_verified, "is_bank_details_available"=>$is_bank_details_available);
+            $statusArr = array("is_user_verified"=>$user_verified, "is_user_about_available"=>$is_user_info_available, "is_kyc_available"=>$is_kyc_available, "is_kyc_verified"=>$is_kyc_verified, "is_bank_details_available"=>$is_bank_details_available);
 
             $resp = array("message"=>"User status", "status"=> $statusArr);
 
             echo json_encode($resp);
+        }
+
+        public function contact(){
+            $contact = $this->admin->getContact();
+            
+            if($contact != NULL){
+                echo json_encode(['status' => true, 'details'=> $contact, 'message' => "Contact details"]);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Contact details not available"]);
+            }  
+        }
+
+        public function awards(){
+
+            if(!isset($_POST['user_id']) || empty($_POST['user_id'])){
+                $response = array(
+                    "status" => false,
+                    "message" => "User ID is mandatory"
+                );
+            }
+            else{
+                $awards = $this->admin->getAwards($_POST['user_id']);
+
+                if($awards['result']){
+                    foreach ($awards['result'] as $key => $value) {
+                        $value->file = base_url().'assets/images/documents/'.$value->file;
+                    }
+
+                    $response = array(
+                        "status" => true,
+                        "data" => $awards['result'],
+                        "message" => "Awards/Certificates available"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Awards/Certificates not available"
+                    );
+                }
+            }
+
+            echo json_encode($response);
+            
         }
 
     }

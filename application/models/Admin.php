@@ -25,6 +25,17 @@
             return $query->row();
         }
 
+        public function getContact(){
+            $query = $this->db->get('contact');
+            return $query->row();
+        }
+
+        public function getAwards($id){
+            $query = $this->db->get_where('award', array('user_id' => $id));
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
         public function last_record($field, $table)
         { 
             return $this->db->select($field)->from($table)->limit(1)->order_by($field,'DESC')->get()->row();
@@ -173,6 +184,12 @@
             $this->db->select('year, month, business, phone, website, intro');
             $query = $this->db->get_where($type, array('user_id' => $id));
             return $query->num_rows() > 0 ?  $query->row(): false;
+        }
+
+        public function isUserInfoAvailable($id){
+            $this->db->select('*');
+            $query = $this->db->get_where('about', array('user_id' => $id));
+            return $query->num_rows() > 0 ? true: false;
         }
 
         public function getAllVerifiedWorkers($profession){

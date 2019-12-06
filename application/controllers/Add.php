@@ -487,5 +487,62 @@
                 echo json_encode(['status' => false, 'message' => 'Error while adding']);
              }
         }
+
+        public function contact(){
+
+            $data = $this->admin->addData($_POST, "contact");
+          
+             if($data){
+                echo json_encode(['status' => true, 'message' => 'Contact details added successfully']);
+             }
+             else{
+                echo json_encode(['status' => false, 'message' => 'Error while adding']);
+             }
+        }
+
+        public function award(){
+            if(isset($_FILES["file"])){
+                if(!empty($_FILES["file"])){
+                    
+
+                    if(!isset($_POST['user_id']) || empty($_POST['user_id'])){
+                        $response = array(
+                            "status" => false,
+                            "message" => "User ID is mandatory"
+                        );
+                    }
+                    else{
+                        $folder= './assets/admin/images/documents/';
+                        $temp = explode(".", $_FILES["file"]["name"]);
+                        $target_file_img = $folder. round(microtime(true)).'front.'.$temp[1]; 
+                        $_POST['file'] = round(microtime(true)).'front.'.$temp[1];
+                        move_uploaded_file($_FILES["file"]["tmp_name"], $target_file_img);
+
+                        $data = $this->admin->addData($_POST, "award");
+
+                        if($data){
+                            $response = array(
+                                "status" => true,
+                                "message" => "Award/Certificate uploaded succesfully"
+                            );
+                        }
+                    } 
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Error occurred while uploading, image file should not be empty"
+                    );
+                }
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while uploading, image file is mandatory"
+                );
+            }
+
+            echo json_encode($response);
+        }
     
     }

@@ -163,7 +163,15 @@ if ($this->session->has_userdata('type') == true) {
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
           <a class="dropdown-item" href="terms">Terms & Conditions</a>
           <a class="dropdown-item" href="privacy-policy">Privacy Policy</a>
+          <a class="dropdown-item" href="how-it-works">How it works</a>
         </div>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="contact-us">
+        <i class="fas fa-phone-square-alt"></i>
+          <span>Contact Us</span>
+        </a>
       </li>
 
       <?php }else{ ?>

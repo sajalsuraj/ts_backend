@@ -1032,7 +1032,8 @@
             }
             else{
                 $awards = $this->admin->getAwards($_POST['user_id']);
-
+                $award_count = $this->admin->getAwardsCount($_POST['user_id']);
+                
                 if($awards['result']){
                     foreach ($awards['result'] as $key => $value) {
                         $value->file = base_url().'assets/images/documents/'.$value->file;
@@ -1041,12 +1042,14 @@
                     $response = array(
                         "status" => true,
                         "data" => $awards['result'],
+                        "total_count"=> $award_count->total_awards,
                         "message" => "Awards/Certificates available"
                     );
                 }
                 else{
                     $response = array(
                         "status" => false,
+                        "total_count"=> $award_count->total_awards,
                         "message" => "Awards/Certificates not available"
                     );
                 }

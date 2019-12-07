@@ -31,9 +31,16 @@
         }
 
         public function getAwards($id){
+            $this->db->select('*');
             $query = $this->db->get_where('award', array('user_id' => $id));
             $data['result'] = $query->result();
             return $data; 
+        }
+
+        public function getAwardsCount($id){
+            $this->db->select('count(*) as total_awards');
+            $query = $this->db->get_where('award', array('user_id' => $id));
+            return $query->num_rows() > 0 ? $query->row(): 0;
         }
 
         public function last_record($field, $table)

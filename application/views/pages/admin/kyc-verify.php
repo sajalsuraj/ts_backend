@@ -28,7 +28,7 @@
 ?>
 <div class="row">
     <div class="col-md-12">
-        <table class="table table-bordered">
+        <table id="dataTable" class="table table-bordered">
             <thead>
                 <tr>
                     <th>User Name</th>
@@ -72,6 +72,7 @@
 </div>
 
 <script>
+    $('#dataTable').DataTable();
     //Function to update the status
     $('.btn-verify').click(function(){
         var detail = $(this).attr('id'), status = 1, id = "";

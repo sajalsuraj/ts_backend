@@ -36,7 +36,7 @@
         }
 
         public function getProfileData($data){
-            $this->db->select('id, name, email, phone, face_photo, side_face_photo, full_body_photo, tool_photo, otp_verified, work_location, primary_profession, mode_of_transport, device_id');
+            $this->db->select('id, name, email, phone, face_photo, side_face_photo, full_body_photo, tool_photo, otp_verified, work_location, primary_profession, mode_of_transport, device_id, created_at');
             $query = $this->db->get_where('worker', array('id' => $data))->row();
             return $query;
         }

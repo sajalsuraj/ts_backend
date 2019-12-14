@@ -15,6 +15,9 @@
 .table{
     font-size: 12px;
 }
+.red-font{
+    color: red;
+}
 </style>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -27,7 +30,7 @@
 ?>
 <div class="row">
     <div class="col-md-12">
-        <table class="table">
+        <table id="dataTable" class="table table-bordered">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -35,6 +38,8 @@
                     <th>Email</th>
                     <th>Profession</th>
                     <th>City</th>
+                    <th>Verification Status</th>
+                    <th>Added on</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -46,6 +51,8 @@
                     <td><?php echo $worker->email; ?></td>
                     <td><?php echo $worker->primary_profession; ?></td>
                     <td><?php echo $worker->city; ?></td>
+                    <td><b><?php if($worker->otp_verified == "0"){echo "<span class='red-font'>Not Verified</span>";}else{echo "Verified";} ?></b></td>
+                    <td><b><?php echo $worker->created_at; ?></b></td>
                     <td><button id="t_<?php echo $worker->id; ?>" type="button" class="btn btn-danger btn-del">Delete</button></td>
                 </tr>
             <?php } ?>
@@ -54,6 +61,7 @@
     </div>
 </div>
 <script>
+    $('#dataTable').DataTable();
     $('.btn-del').click(function(){
         var id = $(this).attr('id');
         if (confirm("Do you really want to delete this user ?") == true) {

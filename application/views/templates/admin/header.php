@@ -168,6 +168,13 @@ if ($this->session->has_userdata('type') == true) {
       </li>
 
       <li class="nav-item active">
+        <a class="nav-link" href="training-centres">
+        <i class="fas fa-chalkboard-teacher"></i>
+          <span>Training Centres</span>
+        </a>
+      </li>
+
+      <li class="nav-item active">
         <a class="nav-link" href="contact-us">
         <i class="fas fa-phone-square-alt"></i>
           <span>Contact Us</span>

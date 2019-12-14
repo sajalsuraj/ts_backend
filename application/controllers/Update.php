@@ -757,4 +757,67 @@
             }
             echo json_encode($response);
         }
+
+        public function usertraining(){
+
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($_POST['user_id']) && isset($_POST['training_video_no'])){
+                if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                    $id = $_POST['user_id'];
+                    unset($_POST['user_id']);
+                    
+                    $last_seen_video = $this->user->getLastSeenVideo($id);
+                    $last_seen_video = $last_seen_video->training_video_no;
+
+                    if((int)$last_seen_video >= (int)$_POST['training_video_no']){
+                        $response = array(
+                            "status" => false,
+                            "message" => "This video is already seen by the vendor",
+                            "status_code"=>1
+                        );
+                    }
+                    else{
+                        if($this->user->userupdate('worker', $_POST, $id)){
+                            $response = array(
+                                "status" => true,
+                                "message" => "Vendor data updated",
+                                "status_code"=>2
+                            );
+                        }
+                        else{
+                            $response = array(
+                                "status" => false,
+                                "message" => "Error occurred while updating"
+                            );
+                        }
+                    }
+
+                    
+                }
+                else{
+                    if($this->admin->checkUserById($_POST['user_id'], 'worker')){
+                        $response = array(
+                            "status" => false,
+                            "message" => "Unauthorized Access"
+                        );
+                    }
+                    else{
+                        $response = array(
+                            "status" => false,
+                            "message" => "User doesn't exist"
+                        );
+                    }
+                }
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Data required, post data cannot be empty"
+                );
+            }
+            
+            echo json_encode($response);
+        }
     }

@@ -982,31 +982,37 @@
 
         public function userstatus(){
 
-            $user_verified = false;
-            $is_kyc_available = false;
-            $is_kyc_verified = false;
-            $is_bank_details_available = false;
-            $is_user_info_available = false;
+            if(isset($_POST['user_id']) && !empty($_POST['user_id'])){
+                $user_verified = false;
+                $is_kyc_available = false;
+                $is_kyc_verified = false;
+                $is_bank_details_available = false;
+                $is_user_info_available = false;
 
-            $basicDetail = $this->user->getProfileData($_POST['user_id']);
-            $is_kyc_available = $this->admin->checkKYCById($_POST['user_id'], 'kyc');
-            $is_bank_details_available = $this->admin->checkIfBankDetailsExistById($_POST['user_id'], 'bank_details');
-            $is_user_info_available =  $this->admin->isUserInfoAvailable($_POST['user_id']);
-            
-            if($basicDetail->otp_verified == "1"){
-                $user_verified = true;
-            }
-
-            if($is_kyc_available){
-                $kycStatus = $this->admin->checkIfKYCVerified($_POST['user_id'], 'kyc');
-                if($kycStatus->is_verified == "1"){
-                    $is_kyc_verified = true;
+                $basicDetail = $this->user->getProfileData($_POST['user_id']);
+                $is_kyc_available = $this->admin->checkKYCById($_POST['user_id'], 'kyc');
+                $is_bank_details_available = $this->admin->checkIfBankDetailsExistById($_POST['user_id'], 'bank_details');
+                $is_user_info_available =  $this->admin->isUserInfoAvailable($_POST['user_id']);
+                $is_user_award_available = $this->admin->isAwardAvailable($_POST['user_id']);
+                
+                if($basicDetail != NULL && $basicDetail->otp_verified == "1"){
+                    $user_verified = true;
                 }
+
+                if($is_kyc_available){
+                    $kycStatus = $this->admin->checkIfKYCVerified($_POST['user_id'], 'kyc');
+                    if($kycStatus->is_verified == "1"){
+                        $is_kyc_verified = true;
+                    }
+                }
+
+                $statusArr = array("is_user_verified"=>$user_verified, "is_rating_available"=>false, "is_user_award_available"=>$is_user_award_available, "is_user_about_available"=>$is_user_info_available, "is_kyc_available"=>$is_kyc_available, "is_kyc_verified"=>$is_kyc_verified, "is_bank_details_available"=>$is_bank_details_available);
+
+                $resp = array("message"=>"User status", "status"=> $statusArr);
             }
-
-            $statusArr = array("is_user_verified"=>$user_verified, "is_user_about_available"=>$is_user_info_available, "is_kyc_available"=>$is_kyc_available, "is_kyc_verified"=>$is_kyc_verified, "is_bank_details_available"=>$is_bank_details_available);
-
-            $resp = array("message"=>"User status", "status"=> $statusArr);
+            else{
+                $resp = array("message"=>"User ID is mandatory", "status"=> false);
+            }
 
             echo json_encode($resp);
         }
@@ -1021,6 +1027,62 @@
                 echo json_encode(['status' => false, 'message' => "Contact details not available"]);
             }  
         }
+
+        public function trainingvideos(){
+            $training = $this->admin->getAllTrainingVideos();
+            
+            if($training['result'] != NULL){
+                foreach ($training['result'] as $key => $value) {
+                    $value->video_file = base_url().'assets/admin/videos/'.$value->video_file;
+                }
+                echo json_encode(['status' => true, 'details'=> $training['result'], 'message' => "Training videos available"]);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Training videos not available"]);
+            } 
+        }
+
+        public function lastseentrainingvideo(){
+            
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $last_seen_video = $this->user->getLastSeenVideo($_POST['user_id']);
+
+                if((int)$last_seen_video->training_video_no == 0){
+                    $response = array(
+                        "status" => false,
+                        "message" => "0 tutorial videos seen by the user"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => true,
+                        "message" => "Tutorials seen by the user",
+                        "last_seen_tutorial" => $last_seen_video->training_video_no
+                    );
+                }
+                
+  
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'customer')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
+            
 
         public function awards(){
 

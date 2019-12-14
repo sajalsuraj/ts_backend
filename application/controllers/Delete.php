@@ -60,6 +60,17 @@
             }
         }
 
+        public function trainingvideos(){
+            if($this->admin->deleteEntity("training", $_POST['id'])){
+                $path = getcwd().'/assets/admin/videos/'.$_POST['video_file'];
+                unlink($path);
+                echo json_encode(['status' => true, 'message' => 'Training video deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
     }
 
 ?>

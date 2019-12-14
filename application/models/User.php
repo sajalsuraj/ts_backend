@@ -47,6 +47,12 @@
             return $query;
         }
 
+        public function getLastSeenVideo($id){
+            $this->db->select('training_video_no');
+            $query = $this->db->get_where('worker', array('id' => $id))->row();
+            return $query;
+        }
+
         public function kyc($table, $data, $id){
             $data = array(
                 'is_verified' => $data

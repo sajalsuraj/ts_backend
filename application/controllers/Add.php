@@ -544,5 +544,91 @@
 
             echo json_encode($response);
         }
+
+        public function trainingvideo(){
+            $videoCount = 0;
+            $videoMissing = false;
+            $training_total = $this->admin->getTrainingVideoCount()->total_videos;
+            if((int)$training_total > 6){
+                $response = array(
+                    "status" => false,
+                    "message" => "7 training videos are already there, You cannot upload more than that"
+                );
+            }
+            else{
+                if(isset($_FILES["video_file"])){
+                    if(!empty($_FILES["video_file"])){
+                        if($_FILES['video_file']['size'] > 12000000){
+                            $response = array(
+                                "status" => false,
+                                "message" => "File not uploaded, File size should not exceed 12MB, Please try again"
+                            );
+                        }
+                        else{
+                            $trainingData = $this->admin->getAllTrainingVideos();
+
+                            //If there is no data
+                            if($trainingData['result'] == NULL){
+                                $videoCount++;
+                            }
+
+                            //Insert video number in middle if something missing
+                            foreach ($trainingData['result'] as $key => $value) {
+                                $videoCount++;
+                                if($videoCount != $value->video_no){
+                                    if(!$this->admin->checkIfTrainingVideoAvailable($videoCount)){
+                                        $videoMissing = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            $max_training_num = $this->admin->getMaxTrainingNumber();
+                            
+                            $folder= './assets/admin/videos/';
+                            $temp = explode(".", $_FILES["video_file"]["name"]);
+                            $target_file_img = $folder. round(microtime(true)).'front.'.$temp[1]; 
+                            $_POST['video_file'] = round(microtime(true)).'front.'.$temp[1];
+                            move_uploaded_file($_FILES["video_file"]["tmp_name"], $target_file_img);
+
+                            if($videoMissing){
+                                $_POST['video_no'] = $videoCount;
+                            }
+                            else{
+                                if($max_training_num->max_video_num == NULL){
+                                    $_POST['video_no'] = $videoCount;
+                                }
+                                else{
+                                    $_POST['video_no'] = $max_training_num->max_video_num + 1;
+                                }
+                            }
+    
+                            $data = $this->admin->addData($_POST, "training");
+    
+                            if($data){
+                                $response = array(
+                                    "status" => true,
+                                    "message" => "Video uploaded succesfully"
+                                );
+                            } 
+                        }
+                        
+                    }
+                    else{
+                        $response = array(
+                            "status" => false,
+                            "message" => "Error occurred while uploading, video file should not be empty"
+                        );
+                    }
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Error occurred while uploading, video file is mandatory"
+                    );
+                }
+            }
+            
+            echo json_encode($response);
+        }
     
     }

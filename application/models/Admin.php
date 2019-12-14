@@ -43,6 +43,30 @@
             return $query->num_rows() > 0 ? $query->row(): 0;
         }
 
+        public function getTrainingVideoCount(){
+            $this->db->select('count(*) as total_videos');
+            $query = $this->db->get('training');
+            return $query->num_rows() > 0 ? $query->row(): 0;
+        }
+
+        public function getMaxTrainingNumber(){
+            $this->db->select('max(video_no) as max_video_num');
+            $query = $this->db->get('training');
+            return $query->num_rows() > 0 ? $query->row(): 0;
+        }
+
+        public function checkIfTrainingVideoAvailable($vid_no){
+            $this->db->select('*');
+            $query = $this->db->get_where('training', array('video_no' => $vid_no));
+            return $query->num_rows() > 0 ? true: false;
+        }
+
+        public function isAwardAvailable($id){
+            $this->db->select('*');
+            $query = $this->db->get_where('award', array('user_id' => $id));
+            return $query->num_rows() > 0 ? true: false;
+        }
+
         public function last_record($field, $table)
         { 
             return $this->db->select($field)->from($table)->limit(1)->order_by($field,'DESC')->get()->row();
@@ -56,6 +80,14 @@
 
         public function getAllServices(){
             $query = $this->db->get('services');
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
+        public function getAllTrainingVideos(){
+            $this->db->from('training');
+            $this->db->order_by("video_no", "asc");
+            $query = $this->db->get();
             $data['result'] = $query->result();
             return $data; 
         }

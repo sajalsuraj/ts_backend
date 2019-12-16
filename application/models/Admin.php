@@ -43,6 +43,12 @@
             return $query->num_rows() > 0 ? $query->row(): 0;
         }
 
+        public function getVendorRating($id){
+            $this->db->select('(sum(service_quality)/count(*)) as service_quality_rating, (sum(behaviour)/count(*)) as behaviour_rating, (sum(speed_of_work)/count(*)) as speed_of_work_rating');
+            $query = $this->db->get_where('rating', array('vendor_id' => $id));
+            return $query->num_rows() > 0 ? $query->row(): 0;
+        }
+
         public function getTrainingVideoCount(){
             $this->db->select('count(*) as total_videos');
             $query = $this->db->get('training');

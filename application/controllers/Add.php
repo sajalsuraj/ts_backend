@@ -500,6 +500,17 @@
              }
         }
 
+        public function rating(){
+            $data = $this->admin->addData($_POST, "rating");
+          
+            if($data){
+                echo json_encode(['status' => true, 'message' => 'Vendor rating added successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error while adding']);
+            }
+        }
+
         public function award(){
             if(isset($_FILES["file"])){
                 if(!empty($_FILES["file"])){

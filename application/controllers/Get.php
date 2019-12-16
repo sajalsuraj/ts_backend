@@ -1121,6 +1121,33 @@
             
         }
 
+        public function rating(){
+
+            $data = $this->admin->getVendorRating($_POST['user_id']);
+            if($data->service_quality_rating == null){
+                $data->service_quality_rating = "0";
+            }
+
+            if($data->behaviour_rating == null){
+                $data->behaviour_rating = "0";
+            }
+
+            if($data->speed_of_work_rating == null){
+                $data->speed_of_work_rating = "0";
+            }
+
+            $data->total_average_rating = ((float)$data->service_quality_rating + (float)$data->behaviour_rating + (float)$data->speed_of_work_rating)/3;
+            $data->total_average_rating = (string)$data->total_average_rating;
+
+            $response = array(
+                "status" => true,
+                "message" => "Vendor rating",
+                "rating_data" => $data
+            );
+            
+            echo json_encode($response);
+        }
+
     }
 
     

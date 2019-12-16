@@ -18,6 +18,9 @@
 .red-font{
     color: red;
 }
+.green-font{
+    color:green;
+}
 </style>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -51,7 +54,7 @@
                     <td><?php echo $worker->email; ?></td>
                     <td><?php echo $worker->primary_profession; ?></td>
                     <td><?php echo $worker->city; ?></td>
-                    <td><b><?php if($worker->otp_verified == "0"){echo "<span class='red-font'>Not Verified</span>";}else{echo "Verified";} ?></b></td>
+                    <td><b><?php if($worker->otp_verified == "0"){echo "<span class='red-font'>Not Verified</span>";}else{echo "Verified <i class='fas green-font fa-check-circle'></i>";} ?></b></td>
                     <td><b><?php echo $worker->created_at; ?></b></td>
                     <td><button id="t_<?php echo $worker->id; ?>" type="button" class="btn btn-danger btn-del">Delete</button></td>
                 </tr>

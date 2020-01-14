@@ -25,14 +25,32 @@
             return $query->row();
         }
 
+        public function getHomePage(){
+            $query = $this->db->get('homepage');
+            return $query->row();
+        }
+
         public function getContact(){
             $query = $this->db->get('contact');
+            return $query->row();
+        }
+
+        public function checkIfOTPVerified($id, $type){
+            $this->db->select('otp_verified');
+            $query = $this->db->get_where($type, array('id' => $id));
             return $query->row();
         }
 
         public function getAwards($id){
             $this->db->select('*');
             $query = $this->db->get_where('award', array('user_id' => $id));
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
+        public function getAllFAQTitle(){
+            $this->db->select('*');
+            $query = $this->db->get('faq_title');
             $data['result'] = $query->result();
             return $data; 
         }
@@ -84,6 +102,12 @@
             return $data; 
         }
 
+        public function getAllCustomers(){
+            $query = $this->db->get('customer');
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
         public function getAllServices(){
             $query = $this->db->get('services');
             $data['result'] = $query->result();
@@ -110,9 +134,22 @@
             return $data; 
         }
 
+        public function getAllVehicles(){
+            $query = $this->db->get('vehicle');
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
         public function getActivatedBanners(){
             $this->db->select('*');
             $query = $this->db->get_where("banner", array("status"=>'true'));
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
+        public function getVendorNotification($id){
+            $this->db->select('*');
+            $query = $this->db->order_by('created_at', 'desc')->get_where("admin_notification", array("vendor_id"=>$id));
             $data['result'] = $query->result();
             return $data; 
         }
@@ -202,7 +239,7 @@
         }
 
         public function checkIfKYCVerified($id, $type){
-            $this->db->select('is_verified');
+            $this->db->select('id_type, is_verified');
             $query = $this->db->get_where($type, array('user_id' => $id));
             return $query->row();
         }
@@ -229,6 +266,14 @@
             $this->db->select('year, month, business, phone, website, intro');
             $query = $this->db->get_where($type, array('user_id' => $id));
             return $query->num_rows() > 0 ?  $query->row(): false;
+        }
+
+        public function getAllFAQs(){
+            $this->db->select('faq.*, fTitle.title');
+            $this->db->from('faq, faq_title as fTitle');
+            $this->db->where('faq.faq_title = fTitle.id');
+            $query = $this->db->get();
+            return $query->result();
         }
 
         public function isUserInfoAvailable($id){

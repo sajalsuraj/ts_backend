@@ -65,7 +65,7 @@
 </div>
 <script>
     $('#dataTable').DataTable();
-    $('.btn-del').click(function(){
+    $("#dataTable").on("click", ".btn-del", function(){
         var id = $(this).attr('id');
         if (confirm("Do you really want to delete this user ?") == true) {
             var obj = {id:id.split("_")[1], type:"worker" };

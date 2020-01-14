@@ -21,6 +21,9 @@
 .btn-del{
     color: #fff !important;
 }
+.video_thumb{
+    width: 200px;
+}
 </style>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -41,6 +44,7 @@
             <thead>
                 <tr>
                     <th>Heading</th>
+                    <th>Thumbnail</th>
                     <th>Video File</th>
                     <th>Action</th>
                 </tr>
@@ -49,6 +53,7 @@
                 <?php foreach ($training['result'] as $city) { ?>
                     <tr id="b_<?php echo $city->id; ?>">
                         <td><b><?php echo $city->heading; ?></b></td>
+                        <td><img class="video_thumb" src="<?php echo base_url().'assets/admin/images/video_thumb/'.$city->video_thumb; ?>"></td>
                         <td>
                         <video width="400" controls>
                             <source src="<?php echo base_url().'assets/admin/videos/'.$city->video_file; ?>" type="video/mp4">
@@ -87,6 +92,11 @@
                     <input id="videoFile" accept="video/*" name="video_file" type="file" />
                     <span id="err-msg"></span>
                 </div>
+
+                <div class="form-group">
+                    <label for="exampleInputEmail3">Upload video thumbnail:</label>
+                    <input id="imageFile" accept="image/*" name="video_thumb" type="file" />
+                </div>
             </div>
             </div>
             <div class="modal-footer">
@@ -112,6 +122,9 @@ $(function(){
                     required:true
                 },
                 video_file:{
+                    required:true
+                },
+                video_thumb:{
                     required:true
                 }
             },

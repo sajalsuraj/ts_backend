@@ -140,7 +140,7 @@
                             "status" => true,
                             "is_otp_verified" => boolval($otp_status->otp_verified),
                             "phone" => $_POST['phone'],
-                            "message" => "Successfully added"
+                            "message" => "OTP Sent, Please verify your phone no."
                         );
 
                         $otp = rand(1000,9999);
@@ -164,6 +164,35 @@
             }
             echo json_encode($response);
             
+        }
+
+        public function resendotp(){
+
+            $this->user->deleteOTP('otp', $_POST['phone']);
+
+            $otp = rand(1000,9999);
+            $otpArr = array(
+                "otp" => $otp,
+                "phone" => $_POST['phone']
+            );
+
+            $this->otp($otp,$_POST['phone']);
+            $otpData = $this->admin->addData($otpArr, "otp");
+
+            if($otpData){
+                $response = array(
+                    "status" => true,
+                    "message" => "OTP sent successfully"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred"
+                );
+            }
+
+            echo json_encode($response);
         }
 
         public function kycdetail(){
@@ -361,6 +390,26 @@
             echo json_encode($response);
         }
 
+        public function vehicle(){
+            if(isset($_POST['vehicle_name'])){
+                $data = $this->admin->addData($_POST, "vehicle");
+                if($data){
+                    $response = array(
+                        "status" => true,
+                        "id" => $this->admin->last_record('id', 'vehicle')->id,
+                        "message" => "Vehicle added successfully"
+                    );
+                }
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Vehicle name is empty"
+                );
+            }
+            echo json_encode($response);
+        }
+
         public function banner(){
             if(isset($_FILES["banner_image"])){
                 if(!empty($_FILES["banner_image"])){
@@ -488,6 +537,18 @@
              }
         }
 
+        public function homepage(){
+
+            $data = $this->admin->addData($_POST, "homepage");
+          
+             if($data){
+                echo json_encode(['status' => true, 'message' => 'Data added successfully']);
+             }
+             else{
+                echo json_encode(['status' => false, 'message' => 'Error while adding']);
+             }
+        }
+
         public function contact(){
 
             $data = $this->admin->addData($_POST, "contact");
@@ -505,6 +566,28 @@
           
             if($data){
                 echo json_encode(['status' => true, 'message' => 'Vendor rating added successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error while adding']);
+            }
+        }
+
+        public function faqtitle(){
+            $data = $this->admin->addData($_POST, "faq_title");
+          
+            if($data){
+                echo json_encode(['status' => true, 'message' => 'Title added successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error while adding']);
+            }
+        }
+
+        public function faqcontent(){
+            $data = $this->admin->addData($_POST, "faq");
+          
+            if($data){
+                echo json_encode(['status' => true, 'message' => 'FAQ added successfully']);
             }
             else{
                 echo json_encode(['status' => false, 'message' => 'Error while adding']);
@@ -600,6 +683,12 @@
                             $target_file_img = $folder. round(microtime(true)).'front.'.$temp[1]; 
                             $_POST['video_file'] = round(microtime(true)).'front.'.$temp[1];
                             move_uploaded_file($_FILES["video_file"]["tmp_name"], $target_file_img);
+
+                            $folder= './assets/admin/images/video_thumb/';
+                            $temp = explode(".", $_FILES["video_thumb"]["name"]);
+                            $target_file_img = $folder. round(microtime(true)).'front.'.$temp[1]; 
+                            $_POST['video_thumb'] = round(microtime(true)).'front.'.$temp[1];
+                            move_uploaded_file($_FILES["video_thumb"]["tmp_name"], $target_file_img);
 
                             if($videoMissing){
                                 $_POST['video_no'] = $videoCount;

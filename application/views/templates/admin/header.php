@@ -126,6 +126,13 @@ if ($this->session->has_userdata('type') == true) {
         </a>
       </li>
 
+      <li class="nav-item active">
+        <a class="nav-link" href="home-content">
+        <i class="fas fa-home"></i>
+          <span>App Homepage</span>
+        </a>
+      </li>
+
       <li class="nav-item dropdown active">
         <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-images"></i>
@@ -148,10 +155,29 @@ if ($this->session->has_userdata('type') == true) {
         </div>
       </li>
 
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-question-circle"></i>
+          <span>FAQ</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+          <a class="dropdown-item" href="add-faq-title">Add faq title</a>
+          <a class="dropdown-item" href="add-faq-content">Add faq</a>
+          <a class="dropdown-item" href="all-faq">View All</a>
+        </div>
+      </li>
+
       <li class="nav-item active">
         <a class="nav-link" href="cities">
         <i class="fa fa-location-arrow" aria-hidden="true"></i>
           <span>Cities</span>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="vehicle">
+        <i class="fas fa-motorcycle"></i>
+          <span>Vehicles</span>
         </a>
       </li>
 
@@ -173,6 +199,13 @@ if ($this->session->has_userdata('type') == true) {
           <span>Training Centres</span>
         </a>
       </li>
+
+      <!-- <li class="nav-item active">
+        <a class="nav-link" href="notify-vendors">
+        <i class="fas fa-bell"></i>
+          <span>Notify Vendors</span>
+        </a>
+      </li> -->
 
       <li class="nav-item active">
         <a class="nav-link" href="contact-us">

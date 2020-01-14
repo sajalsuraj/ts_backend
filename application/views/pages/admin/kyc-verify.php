@@ -15,6 +15,14 @@
 .table{
     font-size: 12px;
 }
+.red-font{
+    color: red;
+    font-weight: bold;
+}
+.green-font{
+    color:green;
+    font-weight: bold;
+}
 </style>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -40,6 +48,7 @@
                     <th>Parent Name</th>
                     <th>Gender</th>
                     <th>DOB</th>
+                    <th>Documents Status</th>
                     <th>Permanent Address</th>
                     <th>Current Address</th>
                     <th>Status</th>
@@ -47,22 +56,46 @@
             </thead>
             <tbody>
             <?php foreach ($allWorker as $worker) { ?>
+                <?php 
+                    if($worker->id_type == "PanCard"){
+                        $img_front_side = $worker->img_front_side;
+                        if($img_front_side != ""){
+                            $worker->is_document_uploaded = true;
+                        }
+                        else{
+                            $worker->is_document_uploaded = false;
+                        }
+                    }
+                    else{
+                        $img_front_side = $worker->img_front_side;
+                        $img_back_side = $worker->img_back_side;
+
+                        if($img_front_side != "" && $img_back_side != ""){
+                            $worker->is_document_uploaded = true;
+                        }
+                        else{
+                            $worker->is_document_uploaded = false;
+                        }
+                    }
+
+                ?>
                 <tr>
                     <td><?php echo $worker->username; ?></td>
                     <td><?php echo $worker->name; ?></td>
                     <td><?php echo $worker->id_type; ?></td>
                     <td><?php echo $worker->id_number; ?></td>
                     <td><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_front_side; ?>" /></td>
-                    <td><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_back_side; ?>" /></td>
+                    <td><?php if($worker->id_type == "PanCard"){ ?><span class="green-font">Not required</span><?php }else{ ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_back_side; ?>" /><?php } ?></td>
                     <td><?php echo $worker->parent_name; ?></td>
                     <td><?php echo $worker->gender; ?></td>
                     <td><?php echo $worker->dob; ?></td>
+                    <td><?php if($worker->is_document_uploaded){ ?><span class="green-font">Uploaded</span> <i class='fas green-font fa-check-circle'></i><?php }else{ ?><span class="red-font">Not Uploaded</span><?php } ?></td>
                     <td><?php echo $worker->p_house_no.", ".$worker->p_street.", ".$worker->p_city.", ".$worker->p_pincode; ?></td>
                     <td><?php echo $worker->c_house_no.", ".$worker->c_street.", ".$worker->c_city.", ".$worker->c_pincode; ?></td>
                     <?php if($worker->is_verified != 1){ ?>
                         <td><button id="verify_<?php echo $worker->id; ?>_<?php echo $worker->id_number; ?>" type="button" class="btn btn-success btn-verify"><?php if($worker->is_verified != 1){echo "Verify";}else{echo "Verified";} ?></button></td>
                     <?php }else{ ?>
-                        <td>Verified</td>
+                        <td><span class="green-font">Verified</span> <i class='fas green-font fa-check-circle'></i></td>
                     <?php } ?>
                 </tr>
             <?php } ?>
@@ -72,7 +105,7 @@
 </div>
 
 <script>
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
     //Function to update the status
     $('.btn-verify').click(function(){
         var detail = $(this).attr('id'), status = 1, id = "";

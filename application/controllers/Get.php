@@ -104,8 +104,17 @@
                         'type' => $data->type 
                     );
                     $jwtToken = $this->objOfJwt->GenerateToken($newdata);
+                    $user_verified_by_phone = false;
+                    $otp_verified = $this->admin->checkIfOTPVerified($data->id, 'worker');
+                    if($otp_verified->otp_verified == 1){
+                        $user_verified_by_phone = true;
+                    }
+                    else{
+                        $user_verified_by_phone = false;
+                    }
                     if($this->admin->checkKYCById($data->id, "kyc")){
 
+                        
                         $is_verified = $this->admin->checkIfKYCVerified($data->id, 'kyc');
                         if($is_verified->is_verified == 1){
                             $success_resp = array(
@@ -113,7 +122,8 @@
                                 'access_token'=>$jwtToken,
                                 'message' => 'Successful Login',
                                 'is_kyc_verified' => true,
-                                'is_kyc_available' => true
+                                'is_kyc_available' => true,
+                                'is_otp_verified' => $user_verified_by_phone
                             );
                         }
                         else{
@@ -122,7 +132,8 @@
                                 'access_token'=>$jwtToken,
                                 'message' => 'Successful Login',
                                 'is_kyc_verified' => false,
-                                'is_kyc_available' => true
+                                'is_kyc_available' => true,
+                                'is_otp_verified' => $user_verified_by_phone
                             );
                         }
                     }
@@ -132,7 +143,8 @@
                             'access_token'=>$jwtToken,
                             'message' => 'Successful Login',
                             'is_kyc_verified' => false,
-                            'is_kyc_available' => false
+                            'is_kyc_available' => false,
+                            'is_otp_verified' => $user_verified_by_phone
                         );
                     }
                     echo json_encode($success_resp);
@@ -466,6 +478,51 @@
             echo json_encode($response);
         }
 
+        public function kycdoctype(){
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $data = $this->admin->checkKYCById($_POST['user_id'], "kyc");
+                
+                if($data){
+                    $is_verified = $this->admin->checkIfKYCVerified($_POST['user_id'], 'kyc');
+                    $is_kyc_verified = false;
+                    if($is_verified->is_verified == 1){
+                        $is_kyc_verified = true;
+                    }
+
+                    $response = array(
+                        "status" => true,
+                        "message" => "KYC Details",
+                        "is_kyc_verified" => $is_kyc_verified,
+                        "document" => $is_verified->id_type
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "KYC not available"
+                    );
+                }
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'worker')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
+
         //Customer APIs
 
         public function verifyotpcustomer(){
@@ -474,22 +531,30 @@
                 $POST['otp_verified'] = 1;
                 $phone = $_POST['phone'];
                 unset($_POST['phone']);
+                $type = $_POST['page'];
+                unset($_POST['page']);
                 if($this->user->updateUserIfVerified('customer', $POST, $phone)){
                     if($this->user->deleteOTP('otp', $phone)){
-                        $user = $this->admin->getUserByPhone($phone, "customer");
-                        $msg = "Congratulations, you are successfully registered with Troubleshooters Services";
-            
-                        $headers = "From: noreply@troubleshooters.services". "\r\n" .
-                                    'X-Mailer: PHP/' . phpversion();
-                        // send email
-                        
-                        $mail = mail($user->email,"Registration successful with Troubleshooters Services",$msg, $headers);
-                        
-                        if(!$mail) {   
-                            echo json_encode(['status'=> true, 'message' => "User verified, error occurred while sending email"]);   
-                        } else {
+
+                        if($type == "signup"){
+                            echo json_encode(['status'=> true, 'message' => "User verified and registered successfully"]);
+                        }
+                        else if($type == "changepassword"){
+                            $user = $this->admin->getUserByPhone($phone, "customer");
+                            $msg = "Congratulations, you are successfully registered with Troubleshooters Services";
+                
+                            $headers = "From: noreply@troubleshooters.services". "\r\n" .
+                                        'X-Mailer: PHP/' . phpversion();
+                            // send email
                             
-                            echo json_encode(['status'=> true, 'message' => "User verified, Email sent successfully to the user"]);
+                            $mail = mail($user->email,"Registration successful with Troubleshooters Services",$msg, $headers);
+                            
+                            if(!$mail) {   
+                                echo json_encode(['status'=> true, 'message' => "User verified, error occurred while sending email"]);   
+                            } else {
+                                
+                                echo json_encode(['status'=> true, 'message' => "User verified, Email sent successfully to the user"]);
+                            }
                         }
                     }
                 }
@@ -877,6 +942,17 @@
             }
         }
 
+        public function vehicles(){
+            $cities = $this->admin->getAllVehicles();
+            
+            if($cities['result']){
+                echo json_encode(['status' => true, 'vehicles'=> $cities['result'], 'message' => "Vehicles List"]);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Vehicles not available"]);
+            }
+        }
+
         public function verifyotpuser(){
             if(isset($_POST['phone']) && isset($_POST['otp'])){
                 if($this->user->checkUserOtp($_POST['phone'], $_POST['otp'], 'otp')){
@@ -988,12 +1064,19 @@
                 $is_kyc_verified = false;
                 $is_bank_details_available = false;
                 $is_user_info_available = false;
+                $is_user_info_available = false;
+                $is_training_completed = false;
 
                 $basicDetail = $this->user->getProfileData($_POST['user_id']);
                 $is_kyc_available = $this->admin->checkKYCById($_POST['user_id'], 'kyc');
                 $is_bank_details_available = $this->admin->checkIfBankDetailsExistById($_POST['user_id'], 'bank_details');
                 $is_user_info_available =  $this->admin->isUserInfoAvailable($_POST['user_id']);
                 $is_user_award_available = $this->admin->isAwardAvailable($_POST['user_id']);
+                $last_seen_video = $this->user->getLastSeenVideo($_POST['user_id']);
+
+                if((int)$last_seen_video->training_video_no == 7){
+                    $is_training_completed = true;
+                }
                 
                 if($basicDetail != NULL && $basicDetail->otp_verified == "1"){
                     $user_verified = true;
@@ -1006,7 +1089,7 @@
                     }
                 }
 
-                $statusArr = array("is_user_verified"=>$user_verified, "is_rating_available"=>false, "is_user_award_available"=>$is_user_award_available, "is_user_about_available"=>$is_user_info_available, "is_kyc_available"=>$is_kyc_available, "is_kyc_verified"=>$is_kyc_verified, "is_bank_details_available"=>$is_bank_details_available);
+                $statusArr = array("is_user_verified"=>$user_verified, "is_rating_available"=>false, "is_user_award_available"=>$is_user_award_available, "is_user_about_available"=>$is_user_info_available, "is_kyc_available"=>$is_kyc_available, "is_kyc_verified"=>$is_kyc_verified, "is_bank_details_available"=>$is_bank_details_available, "is_training_completed" => $is_training_completed);
 
                 $resp = array("message"=>"User status", "status"=> $statusArr);
             }
@@ -1034,6 +1117,9 @@
             if($training['result'] != NULL){
                 foreach ($training['result'] as $key => $value) {
                     $value->video_file = base_url().'assets/admin/videos/'.$value->video_file;
+                    if($value->video_thumb != ""){
+                        $value->video_thumb = base_url().'assets/admin/images/video_thumb/'.$value->video_thumb;
+                    } 
                 }
                 echo json_encode(['status' => true, 'details'=> $training['result'], 'message' => "Training videos available"]);
             }
@@ -1049,7 +1135,7 @@
             
             if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
                 $last_seen_video = $this->user->getLastSeenVideo($_POST['user_id']);
-
+                var_dump($last_seen_video);
                 if((int)$last_seen_video->training_video_no == 0){
                     $response = array(
                         "status" => false,
@@ -1098,7 +1184,7 @@
                 
                 if($awards['result']){
                     foreach ($awards['result'] as $key => $value) {
-                        $value->file = base_url().'assets/images/documents/'.$value->file;
+                        $value->file = base_url().'assets/admin/images/documents/'.$value->file;
                     }
 
                     $response = array(
@@ -1145,6 +1231,25 @@
                 "rating_data" => $data
             );
             
+            echo json_encode($response);
+        }
+
+        public function notification(){
+            $data = $this->admin->getVendorNotification($_POST['user_id']);
+
+            if($data['result']){
+                $response = array(
+                    "status" => true,
+                    "message" => "Vendor notifications available",
+                    "notification" => $data['result']
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Vendor notifications not available"
+                );
+            }
             echo json_encode($response);
         }
 

@@ -34,10 +34,11 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="exampleInputEmail8">MODE OF TRANSPORTATION</label>
+                        <?php $allVehicles = $this->admin->getAllVehicles(); ?>
                         <select class="form-control" name="mode_of_transport">
-                            <option value="Public Transport">Public Transport</option>
-                            <option value="Car">Car</option>
-                            <option value="Bike">Bike</option>
+                        <?php foreach ($allVehicles['result'] as $vehicle) { ?>
+                            <option value="<?php echo $vehicle->vehicle_name; ?>"><?php echo $vehicle->vehicle_name; ?></option> 
+                        <?php } ?>
                         </select>
                     </div>
                 </div>

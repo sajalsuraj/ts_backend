@@ -758,6 +758,22 @@
             echo json_encode($response);
         }
 
+        public function homepage(){
+            if($this->user->userupdate('homepage', $_POST, $_POST['id'])){
+                $response = array(
+                    "status" => true,
+                    "message" => "Data updated"
+                );
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while updating"
+                );
+            }
+            echo json_encode($response);
+        }
+
         public function usertraining(){
 
             $received_Token = $this->input->request_headers('Authorization');

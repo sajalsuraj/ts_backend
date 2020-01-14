@@ -30,6 +30,8 @@ $allServices = $this->admin->getAllServices();
 $totalServices = count($allServices['result']);
 $allWorkers = $this->admin->getAllWorkers();
 $totalWorkers = count($allWorkers['result']);
+$allCustomers = $this->admin->getAllCustomers();
+$totalCustomers = count($allCustomers['result']);
 ?>
 
 <!-- Icon Cards-->
@@ -42,7 +44,7 @@ $totalWorkers = count($allWorkers['result']);
             <div class="card text-white bg-danger o-hidden h-100">
                 <div class="card-body">
                 <div class="card-body-icon">
-                    <i class="fas fa-fw fa-life-ring"></i>
+                    <i class="fas fa-user-tie"></i>
                 </div>
                 <div class="mr-5"><?php echo $totalWorkers; ?> Workers!</div>
                 </div>
@@ -64,6 +66,23 @@ $totalWorkers = count($allWorkers['result']);
                 <div class="mr-5"><?php echo $totalServices; ?> Services</div>
                 </div>
                 <a class="card-footer text-white clearfix small z-1" href="all-services">
+                <span class="float-left">View All</span>
+                <span class="float-right">
+                    <i class="fas fa-angle-right"></i>
+                </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-primary o-hidden h-100">
+                <div class="card-body">
+                <div class="card-body-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="mr-5"><?php echo $totalCustomers; ?> Customers!</div>
+                </div>
+                <a class="card-footer text-white clearfix small z-1" href="all-customers">
                 <span class="float-left">View All</span>
                 <span class="float-right">
                     <i class="fas fa-angle-right"></i>

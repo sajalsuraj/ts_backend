@@ -60,11 +60,31 @@
             }
         }
 
+        public function vehicle(){
+            if($this->admin->deleteEntity("vehicle", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'Vehicle deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
         public function trainingvideos(){
             if($this->admin->deleteEntity("training", $_POST['id'])){
                 $path = getcwd().'/assets/admin/videos/'.$_POST['video_file'];
                 unlink($path);
                 echo json_encode(['status' => true, 'message' => 'Training video deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
+        public function award(){
+            if($this->admin->deleteEntity("award", $_POST['id'])){
+                $path = getcwd().'/assets/admin/images/documents/'.$_POST['file'];
+                unlink($path);
+                echo json_encode(['status' => true, 'message' => 'Award deleted successfully']);
             }
             else{
                 echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);

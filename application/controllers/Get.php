@@ -1135,7 +1135,6 @@
             
             if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
                 $last_seen_video = $this->user->getLastSeenVideo($_POST['user_id']);
-                var_dump($last_seen_video);
                 if((int)$last_seen_video->training_video_no == 0){
                     $response = array(
                         "status" => false,
@@ -1249,6 +1248,47 @@
                     "status" => false,
                     "message" => "Vendor notifications not available"
                 );
+            }
+            echo json_encode($response);
+        }
+
+        public function faq(){
+            $faqTitles = $this->admin->getAllFAQTitle();
+            $allFaqs = $this->admin->getAllFAQs();
+
+            $faqData = array("titles"=> $faqTitles['result'], "faqList"=> $allFaqs);
+
+            echo json_encode($faqData);
+        }
+
+        public function homepage(){
+            $homeData = $this->admin->getHomePage();
+
+            $homeData = array("data"=> $homeData, "status"=>true);
+
+            echo json_encode($homeData);
+        }
+
+        public function vendortokenupdate(){
+            if(!isset($_POST['user_id']) || empty($_POST['user_id'])){
+                $response = array(
+                    "status" => false,
+                    "message" => "User ID is mandatory"
+                );
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'worker')){
+                    $response = array(
+                        "status" => true,
+                        "message" => "User Exists"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
             }
             echo json_encode($response);
         }

@@ -73,7 +73,8 @@ $(document).ready(function(){
             isFirstTime++;
             if(isFirstTime > 1){
                 url = "<?php echo base_url(); ?>update/homepage";
-                fd.append('id', '<?php echo $terms->id; ?>');
+        
+                fd.append('id', '<?php if($terms != NULL){ echo $terms->id;} ?>');
             }
             
             $.ajax({

@@ -140,6 +140,12 @@
             return $data; 
         }
 
+        public function getAllFAQTitles(){
+            $query = $this->db->get('faq_title');
+            $data['result'] = $query->result();
+            return $data; 
+        }
+
         public function getActivatedBanners(){
             $this->db->select('*');
             $query = $this->db->get_where("banner", array("status"=>'true'));
@@ -257,7 +263,7 @@
         }
 
         public function getBankDetailsById($id, $type){
-            $this->db->select('name, ac_no, ifsc_code, bank_cheque');
+            $this->db->select('name, ac_no, ifsc_code, bank_cheque, bank_name');
             $query = $this->db->get_where($type, array('user_id' => $id));
             return $query->num_rows() > 0 ?  $query->row(): false;
         }

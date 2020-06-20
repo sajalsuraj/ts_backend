@@ -40,8 +40,15 @@
             </div>
             <?php if($hasCharge){ ?>
                 <div class="form-group rate">
-                    <label>Rate per minute:</label>
+                    <label>Rate:</label>
                     <input type="text" value="<?php echo $service->rate_per_min; ?>" class="form-control" placeholder="30, 40, 50, etc" name="rate_per_min" />
+                </div>
+                <div class="form-group rate">
+                    <label>Rate mode:</label>
+                    <select class="form-control" name="mode">
+                        <option value="rate_per_min" <?php if($service->mode == "rate_per_min"){echo "selected";}?>>Rate per minute</option>
+                        <option value="fixed" <?php if($service->mode == "fixed"){echo "selected";}?>>Fixed Rate</option>
+                    </select>
                 </div>
                 <div class="form-group rate">
                     <label>Details (Optional):</label>

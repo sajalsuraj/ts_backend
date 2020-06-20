@@ -21,7 +21,10 @@
 .green-font{
     color:green;
 }
-</style>
+td a{
+    color: #fff !important;
+}
+</style> 
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
@@ -56,11 +59,37 @@
                     <td><?php echo $worker->city; ?></td>
                     <td><b><?php if($worker->otp_verified == "0"){echo "<span class='red-font'>Not Verified</span>";}else{echo "Verified <i class='fas green-font fa-check-circle'></i>";} ?></b></td>
                     <td><b><?php echo $worker->created_at; ?></b></td>
-                    <td><button id="t_<?php echo $worker->id; ?>" type="button" class="btn btn-danger btn-del">Delete</button></td>
+                    <td><a id="<?php echo $worker->id; ?>" class="btn btn-primary edit-worker">Edit</a> <button id="t_<?php echo $worker->id; ?>" type="button" class="btn btn-danger btn-del">Delete</button></td>
                 </tr>
             <?php } ?>
             </tbody>
         </table>
+    </div>
+
+    <div id="verifyPasswordModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verify password before proceeding</h5>
+                    <button type="button" class="close" onclick="$('#err-msg').html('');$('#newPassword').val('');" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="form-group">
+                            <label for="exampleInputEmail">Enter Password:</label>
+                            <input id="newPassword" class="form-control" placeholder="Enter password" type="password" />
+                            <span id="err-msg"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="verifyPassword" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" onclick="$('#err-msg').html('');$('#newPassword').val('');" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -86,6 +115,37 @@
             });
         } else {
             
+        }
+    });
+    var workerId = "";
+    $('.edit-worker').click(function(){
+        workerId = $(this).attr('id');
+        $('#verifyPasswordModal').modal('show');
+    });
+
+    $('#verifyPassword').click(function(){
+        if($('#newPassword').val() == ""){
+            alert('Password cannot be empty');
+        }
+        else{
+            let formData = new FormData();
+            formData.append('id', "<?php echo $this->session->userdata('user_id'); ?>");
+            formData.append('password', $('#newPassword').val());
+            $.ajax({
+                url: '<?php echo base_url(); ?>get/verifyadminpassword',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                success: function(as) {
+                    if (as.status == true) {
+                        location.href="edit-worker/"+workerId;
+                    } else if (as.status == false) {
+                        alert(as.message);
+                    }
+                }
+            });
         }
     });
 </script>

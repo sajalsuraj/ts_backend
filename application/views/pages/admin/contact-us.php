@@ -37,6 +37,11 @@ form{
             </div>
 
             <div class="form-group">
+                <label>Address</label>
+                <textarea class="form-control" name="address"><?php if($contact != NULL){echo $contact->address;} ?></textarea>
+            </div>
+
+            <div class="form-group">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </form>

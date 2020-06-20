@@ -15,10 +15,11 @@ class Pdfgenerator {
     $dompdf->render();
     // $canvas = $dompdf->get_canvas();
     // $font = Font_Metrics::get_font("helvetica", "normal");
-    if ($stream) {
-        $dompdf->stream($filename.".pdf", array("Attachment" => 0));
-    } else {
+    // if ($stream) {
+    //     $dompdf->stream($filename.".pdf", array("Attachment" => 0));
+    // } else {
+      //$dompdf->stream($filename.".pdf", array("Attachment" => 0));
         return $dompdf->output();
-    }
+   // }
   }
 }

@@ -22,16 +22,18 @@ if ($this->session->has_userdata('type') == true) {
     <li class="breadcrumb-item active">Overview</li>
 </ol>
 <?php
-// $allTestimonials = $this->admin->getAllTestimonials();
-// $totalTestimonial = count($allTestimonials['result']);
-// $getAllImages = $this->admin->getAllImages();
-// $totalImages = count($getAllImages['result']);
 $allServices = $this->admin->getAllServices();
 $totalServices = count($allServices['result']);
 $allWorkers = $this->admin->getAllWorkers();
 $totalWorkers = count($allWorkers['result']);
 $allCustomers = $this->admin->getAllCustomers();
 $totalCustomers = count($allCustomers['result']);
+$allRequests = $this->admin->getAllRequests();
+$totalRequests = count($allRequests);
+$allBookings = $this->admin->getAllBookingsDashboard();
+$totalBookings = count($allBookings);
+$allReferrals = $this->user->getCustomersWhoAreReferred();
+$allMemberships = $this->admin->getAllMemberships();
 ?>
 
 <!-- Icon Cards-->
@@ -90,6 +92,75 @@ $totalCustomers = count($allCustomers['result']);
                 </a>
             </div>
         </div>
+
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-danger o-hidden h-100">
+                <div class="card-body">
+                <div class="card-body-icon">
+                <i class="fas fa-hands-helping"></i>
+                </div>
+                <div class="mr-5"><?php echo $totalRequests; ?> Service Requests</div>
+                </div>
+                <a class="card-footer text-white clearfix small z-1" href="all-requests">
+                <span class="float-left">View All</span>
+                <span class="float-right">
+                    <i class="fas fa-angle-right"></i>
+                </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-primary o-hidden h-100">
+                <div class="card-body">
+                <div class="card-body-icon">
+                <i class="fas fa-list"></i>
+                </div>
+                <div class="mr-5"><?php echo $totalBookings; ?> Bookings</div>
+                </div>
+                <a class="card-footer text-white clearfix small z-1" href="all-bookings">
+                <span class="float-left">View All</span>
+                <span class="float-right">
+                    <i class="fas fa-angle-right"></i>
+                </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-danger o-hidden h-100">
+                <div class="card-body">
+                <div class="card-body-icon">
+                <i class="fa fa-user-plus"></i>
+                </div>
+                <div class="mr-5"><?php echo count($allReferrals); ?> Referrals</div>
+                </div>
+                <a class="card-footer text-white clearfix small z-1" href="all-referrals">
+                <span class="float-left">View All</span>
+                <span class="float-right">
+                    <i class="fas fa-angle-right"></i>
+                </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6 mb-3">
+            <div class="card text-white bg-danger o-hidden h-100">
+                <div class="card-body">
+                <div class="card-body-icon">
+                <i class="fas fa-user-check"></i>
+                </div>
+                <div class="mr-5"><?php echo count($allMemberships); ?> Memberships</div>
+                </div>
+                <a class="card-footer text-white clearfix small z-1" href="all-memberships">
+                <span class="float-left">View All</span>
+                <span class="float-right">
+                    <i class="fas fa-angle-right"></i>
+                </span>
+                </a>
+            </div>
+        </div>
+
     <?php }else{ ?>
         <?php 
         if(!$this->admin->checkKYCById($this->session->userdata('user_id'), 'kyc')){

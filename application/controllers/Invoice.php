@@ -10,8 +10,10 @@ class Invoice extends CI_Controller{
   {
     $this->load->library('pdfgenerator');
     $view = $this->load->view('invoice/invoice',array(),TRUE);
-    $filename = 'report_'.time();
-    $this->pdfgenerator->generate($view, $filename, true, 'A4', 'portrait');
+    $filename = 'invoice_'.time();
+    $pdfFile = $this->pdfgenerator->generate($view, $filename, true, 'A4', 'portrait');
+    $filePath = 'assets/admin/invoice/'.$filename.'.pdf';
+    file_put_contents($filePath, $pdfFile);
     exit();
   }
 }

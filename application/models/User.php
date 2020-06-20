@@ -36,15 +36,24 @@
         }
 
         public function getProfileData($data){
-            $this->db->select('id, name, email, phone, face_photo, side_face_photo, full_body_photo, tool_photo, otp_verified, work_location, primary_profession, mode_of_transport, device_id, created_at');
+            $this->db->select('id, name, email, city, phone, face_photo, side_face_photo, full_body_photo, tool_photo, otp_verified, work_location, primary_profession, sub_profession, mode_of_transport, device_id, created_at');
             $query = $this->db->get_where('worker', array('id' => $data))->row();
             return $query;
         }
 
         public function getCustomerData($data){
-            $this->db->select('id, name, email, phone, photo, device_id');
+            $this->db->select('id, name, email, phone, photo, referral, device_id');
             $query = $this->db->get_where('customer', array('id' => $data))->row();
             return $query;
+        }
+
+        public function getCustomersWhoAreReferred(){
+            $this->db->select('c.name as referred_name, c1.name as referred_by_name, c.id as referred_id, c1.id as referred_by_id, c.referred_by as referral_code');
+            $this->db->from('customer as c');
+            $this->db->join('customer as c1', 'c.referred_by = c1.referral','left');
+            $this->db->where('c.referred_by <> ""');
+            $query = $this->db->get();
+            return $query->result();
         }
 
         public function getLastSeenVideo($id){
@@ -71,7 +80,7 @@
         public function userupdate($table, $data, $id){
             $this->db->where('id', $id);
             $this->db->update($table, $data); 
-            return true;
+            return ($this->db->affected_rows() > 0) ? true : false; 
         }
 
         public function staticupdate($table, $data, $type){

@@ -34,3 +34,32 @@
 .panel-img{
     width:100px;
 }
+@media (min-width: 768px) {
+    .sidebar .nav-item .nav-link span {
+        font-size: 0.9rem;
+        display: inline;
+    }
+}
+.sidebar{
+    background-color: #6954e1;
+}
+.sidebar > li.nav-item:hover{
+    background: #322560;
+}
+li.breadcrumb-item a{
+    color: #6954e1;
+}
+.bg-dark, .bg-primary, .bg-success, .bg-danger, footer.sticky-footer{
+    background: linear-gradient(to right,#322560, #6954e1);
+}
+footer.sticky-footer span{
+    color: #fff;
+}
+.btn-primary{
+    background: linear-gradient(to right,#6954e1,#322560);
+    border:none;
+}
+footer.sticky-footer{
+    width: 100%;
+    position:relative;
+}

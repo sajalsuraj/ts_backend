@@ -39,13 +39,19 @@
         <table id="dataTable" class="table table-bordered">
             <thead>
                 <tr>
+                    <th>Vendor ID</th>
                     <th>User Name</th>
                     <th>Name Provided</th>
                     <th>ID</th>
                     <th>ID Number</th>
                     <th>ID Front Image</th>
                     <th>ID Back Image</th>
+                    <th>Face Photo</th>
+                    <th>Side face photo</th>
+                    <th>Full body photo</th>
+                    <th>Tool photo</th>
                     <th>Parent Name</th>
+                    <th>Vehicle</th>
                     <th>Gender</th>
                     <th>DOB</th>
                     <th>Documents Status</th>
@@ -80,13 +86,19 @@
 
                 ?>
                 <tr>
+                    <td><?php echo $worker->vendor_id; ?></td>
                     <td><?php echo $worker->username; ?></td>
                     <td><?php echo $worker->name; ?></td>
                     <td><?php echo $worker->id_type; ?></td>
                     <td><?php echo $worker->id_number; ?></td>
-                    <td><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_front_side; ?>" /></td>
+                    <td><?php if($worker->img_front_side !=  ""){ ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_front_side; ?>" /><?php }else echo "NA"; ?></td>
                     <td><?php if($worker->id_type == "PanCard"){ ?><span class="green-font">Not required</span><?php }else{ ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_back_side; ?>" /><?php } ?></td>
+                    <td><?php if($worker->face_photo !=  ""){ ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->face_photo; ?>" /><?php }else echo "NA"; ?></td>
+                    <td><?php if($worker->side_face_photo !=  ""){ ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->side_face_photo; ?>" /><?php }else echo "NA"; ?></td>
+                    <td><?php if($worker->full_body_photo !=  ""){ ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->full_body_photo; ?>" /><?php }else echo "NA"; ?></td>
+                    <td><?php if($worker->tool_photo !=  ""){ ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->tool_photo; ?>" /><?php }else echo "NA"; ?></td>
                     <td><?php echo $worker->parent_name; ?></td>
+                    <td><?php echo $worker->vehicle; ?></td>
                     <td><?php echo $worker->gender; ?></td>
                     <td><?php echo $worker->dob; ?></td>
                     <td><?php if($worker->is_document_uploaded){ ?><span class="green-font">Uploaded</span> <i class='fas green-font fa-check-circle'></i><?php }else{ ?><span class="red-font">Not Uploaded</span><?php } ?></td>
@@ -105,7 +117,7 @@
 </div>
 
 <script>
-    $('#dataTable').DataTable({"scrollX": true});
+    $('#dataTable').DataTable({"scrollX": true, bAutoWidth: false});
     //Function to update the status
     $('.btn-verify').click(function(){
         var detail = $(this).attr('id'), status = 1, id = "";

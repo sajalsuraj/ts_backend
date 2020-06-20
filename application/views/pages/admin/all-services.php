@@ -35,7 +35,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Parent Category</th>
-                    <th>Rate/Minute (In INR)</th>
+                    <th>Rate (In INR)</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -44,7 +44,7 @@
                 <tr id="service_<?php echo $service->id; ?>">
                     <td><?php echo $service->service_name; ?></td>
                     <td><?php if($service->parent_category == ""){echo "None";}else{echo $this->admin->getServiceById($service->parent_category)->service_name;}  ?></td>
-                    <td><?php if($service->rate_per_min == ""){echo "NIL";}else{echo "&#8377;".$service->rate_per_min;} ?></td>
+                    <td><?php if($service->rate_per_min == ""){echo "NIL";}else{echo "&#8377;".$service->rate_per_min; if($service->mode=="fixed"){echo " (Fixed)";}else{echo " (Per min)";}} ?></td>
                     <td><a href="edit-service/<?php echo $service->id; ?>" class="btn btn-primary">Edit</a> <a id="del_<?php echo $service->id; ?>" class="btn btn-danger btn-del">Delete</a></td>
                 </tr>
             <?php } ?>
@@ -56,7 +56,7 @@
 $(document).ready(function(){
     $('#dataTable').DataTable();
 
-    $('.btn-del').click(function(){
+    $('#dataTable').on("click", ".btn-del", function(){
         var id = $(this).attr('id');
         if (confirm("Do you really want to delete this service? Subcategories related to this service will also be deleted!") == true) {
             var obj = {id:id.split("_")[1]};

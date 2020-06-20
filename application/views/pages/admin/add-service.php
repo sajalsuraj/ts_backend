@@ -51,8 +51,15 @@
                 <input type="text" class="form-control" required placeholder="Plumber, Carpenter, etc" name="service_name" />
             </div>
             <div class="form-group rate">
-                <label>Rate per minute:</label>
+                <label>Rate:</label>
                 <input type="text" class="form-control" placeholder="30, 40, 50, etc" name="rate_per_min" />
+            </div>
+            <div class="form-group rate">
+                <label>Rate mode:</label>
+                <select class="form-control" name="mode">
+                    <option value="rate_per_min">Rate per minute</option>
+                    <option value="fixed">Fixed Rate</option>
+                </select>
             </div>
             <div class="form-group rate">
                 <label>Details (Optional):</label>
@@ -104,6 +111,7 @@
                         return false;
                         }
                         formData.append('level', "3");
+                        formData.append('mode', $('select[name="mode"]').val());
                     }
                     formData.append('parent_category', $('#parent').val());
                     formData.append('rate_per_min', $('input[name="rate_per_min"]').val());

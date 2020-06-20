@@ -5,7 +5,12 @@
     $page = end($link_array);
 ?>
       <!-- /.container-fluid -->
-      <?php if($page !== "login"){ ?>
+
+    </div>
+    <!-- /.content-wrapper -->
+   
+  </div>
+  <?php if($page !== "login"){ ?>
       <!-- Sticky Footer -->
       <footer class="sticky-footer">
         <div class="container my-auto">
@@ -15,10 +20,6 @@
         </div>
       </footer>
       <?php } ?>
-    </div>
-    <!-- /.content-wrapper -->
-
-  </div>
   <!-- /#wrapper -->
 
   <!-- Scroll to Top Button-->

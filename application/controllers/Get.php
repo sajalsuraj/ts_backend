@@ -87,6 +87,18 @@
         
         }//end-function
 
+        public function verifyadminpassword(){
+            $adminData = $this->admin->getAdminProfile($_POST['id']);
+            if ($adminData->password === md5($_POST['password'])) {
+                
+                $response = array("message" => "Password is incorrect", "status" => true);
+                
+            } else {
+                $response = array("message" => "Password is incorrect", "status" => false);
+            }
+            echo json_encode($response);
+        }
+
         //APIs
         public function userlogin(){
 
@@ -177,6 +189,19 @@
                             $data->is_verified = false;
                         }  
                     }
+                    if($data->sub_profession != ""){
+                        $serviceInRequest = $data->sub_profession;
+                        if($serviceInRequest != ""){
+                            $tempServices = explode(",", $serviceInRequest);
+                            $serviceArr = [];
+                            foreach($tempServices as $ser){
+                                $serviceArr[] = $this->admin->getServiceById($ser);
+                            }
+                            $data->sub_profession = $serviceArr;
+                        }
+                    }
+                    
+                    
                     if($data->face_photo != ""){
                         $data->face_photo = base_url()."assets/admin/images/profile/".$data->face_photo;
                     }
@@ -372,6 +397,19 @@
             if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
 
                 $data = $this->admin->getAllActiveRequests($_POST['user_id']);
+         
+                foreach($data as $request){
+                    $serviceInRequest = $request->services;
+                    if($serviceInRequest != ""){
+                        $tempServices = explode(",", $serviceInRequest);
+                        $serviceArr = [];
+                        foreach($tempServices as $ser){
+                            $serviceArr[] = $this->admin->getServiceById($ser);
+                        }
+                        $request->services = $serviceArr;
+                    }
+                }
+    
                 if($data){
                     $response = array(
                         "status" => true,
@@ -411,6 +449,17 @@
 
                 $data = $this->admin->getAllVendorBookings($_POST['user_id']);
                 if($data){
+                    foreach($data as $request){
+                        $serviceInRequest = $request->services;
+                        if($serviceInRequest != ""){
+                            $tempServices = explode(",", $serviceInRequest);
+                            $serviceArr = [];
+                            foreach($tempServices as $ser){
+                                $serviceArr[] = $this->admin->getServiceById($ser);
+                            }
+                            $request->services = $serviceArr;
+                        }
+                    }
                     $response = array(
                         "status" => true,
                         "message" => "Order List",
@@ -441,6 +490,8 @@
             echo json_encode($response);
         }
 
+        
+
         public function bookinginfo(){
             $received_Token = $this->input->request_headers('Authorization');
             $tokenData = $this->user->getTokenData($received_Token);
@@ -448,6 +499,17 @@
             if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
                 $data = $this->admin->getBookingInfo($_POST['user_id'], $_POST['booking_id']);
                 if($data){
+                    foreach($data as $request){
+                        $serviceInRequest = $request->services;
+                        if($serviceInRequest != ""){
+                            $tempServices = explode(",", $serviceInRequest);
+                            $serviceArr = [];
+                            foreach($tempServices as $ser){
+                                $serviceArr[] = $this->admin->getServiceById($ser);
+                            }
+                            $request->services = $serviceArr;
+                        }
+                    }
                     $response = array(
                         "status" => true,
                         "message" => "Booking data",
@@ -477,6 +539,26 @@
             }
             echo json_encode($response);
         }
+
+        public function bookingcomments(){
+            $data = $this->admin->getCommentsByBookingId($_POST['booking_id']);
+
+            if($data){
+                $response = array(
+                    "status"=>true,
+                    "data"=>$data,
+                    "message"=>"Comment available"
+                );
+            }
+            else{
+                $response = array(
+                    "status"=>false,
+                    "message"=>"Comments not available"
+                );
+            }
+            echo json_encode($response);
+        }
+
 
         public function kycdoctype(){
             $received_Token = $this->input->request_headers('Authorization');
@@ -521,6 +603,66 @@
                 }
             }
             echo json_encode($response);
+        }
+
+        public function waitingduration(){
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $data = $this->admin->getBookingInfo($_POST['user_id'], $_POST['booking_id']);
+                if($data){
+                    $hasReached = false;
+                    $hasCrossed48Mins = false;
+                    if($data[0]->reached_location_at == ""){
+                        $hasReached = false;
+                    }
+                    else{
+                        $timeEnd = new DateTime('now');
+                        $timeStart = new DateTime('@'.$data[0]->reached_location_at);
+                        $interval = $timeStart->diff($timeEnd);
+                        $interval = $interval->format('%H,%i');
+                        $intervalArr = explode(",",$interval);
+                        $totalTimeInMinutes = ((int) $intervalArr[0] * 60) + ((int) $intervalArr[1]);
+
+                        if($totalTimeInMinutes >= 15){
+                            $hasReached = true;
+                        }
+
+                        if($totalTimeInMinutes >= 48){
+                            $hasCrossed48Mins = true;
+                        }
+                    }
+                    $response = array(
+                        "status"=>true,
+                        "message"=> "Vendor waiting duration",
+                        "hasCrossedTimeLimit" => $hasReached,
+                        "hasCrossed48Mins" => $hasCrossed48Mins
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Booking not available"
+                    );
+                }
+                echo json_encode($response);
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'worker')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            //echo json_encode($response);
         }
 
         //Customer APIs
@@ -593,9 +735,165 @@
             }
         }
 
+        //Get all services including subcategories
+        public function allservices(){
+            $data = $this->admin->getAllServices();
+
+            if($data){
+                echo json_encode(['status' => true, 'data' => $data['result'], 'message' => 'Service list']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Services not available']);
+            }
+        }
+
+        public function customerbookingstatus(){
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $data = $this->admin->getBookingInfoByCustomerID($_POST['user_id'], $_POST['booking_id']);
+                if($data){
+                    foreach($data as $request){
+                        $serviceInRequest = $request->services;
+                        if($serviceInRequest != ""){
+                            $tempServices = explode(",", $serviceInRequest);
+                            $serviceArr = [];
+                            foreach($tempServices as $ser){
+                                $serviceArr[] = $this->admin->getServiceById($ser);
+                            }
+                            $request->services = $serviceArr;
+                        }
+                    }
+                    $response = array(
+                        "status" => true,
+                        "message" => "Booking data",
+                        "info" => $data
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Booking not available"
+                    );
+                }
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'customer')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
+    
+        public function customerbookinginfo(){
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $data = $this->admin->getBookingInfoByCustomerID($_POST['user_id'], $_POST['booking_id']);
+                if($data){
+                    foreach($data as $request){
+                        $serviceInRequest = $request->services;
+                        if($serviceInRequest != ""){
+                            $tempServices = explode(",", $serviceInRequest);
+                            $serviceArr = [];
+                            foreach($tempServices as $ser){
+                                $serviceArr[] = $this->admin->getServiceById($ser);
+                            }
+                            $request->services = $serviceArr;
+                        }
+                    }
+                    $services = $this->admin->getServicesFromBooking($_POST['booking_id']);
+                    $started_at = $services[0]->started_at;
+                    $completed_at = $services[0]->completed_at;
+                    $services = $services[0]->services;
+        
+                    $allServices = explode(",",$services);
+                    $timeEnd = new DateTime('@'.$completed_at);
+                    $timeStart = new DateTime('@'.$started_at);
+                    $interval = $timeStart->diff($timeEnd);
+                    $interval = $interval->format('%H,%i');
+                    $intervalArr = explode(",",$interval);
+                    $totalTimeInMinutes = ((int) $intervalArr[0] * 60) + ((int) $intervalArr[1]);
+                    $totalBill = 0;
+                    $billWithMaterialCharge = 0; //including material charges
+                    
+                   
+                    $totalBill = (float) $data[0]->amount;
+                        
+
+                    $data[0]->service_charges = $totalBill;
+                    $material_procurement_charges = 0;
+                    if($data[0]->service_charge_added == "1"){
+                        $added_amount_json = json_decode($data[0]->bill_amount, true);
+
+                        foreach($added_amount_json as $key=>$value){
+                            $added_amount += $value;
+                        }
+                        
+                        if($added_amount > 0){
+                            $material_procurement_charges =  (float) $added_amount * 0.18;
+                        }
+                    }
+                    $billWithMaterialCharge = $material_procurement_charges + $totalBill;
+                    $data[0]->material_procurement_charges = $material_procurement_charges;
+                    $gst = $billWithMaterialCharge * 0.18;
+                    $data[0]->gst = $gst;
+                    $data[0]->billWithMaterialCharge = $billWithMaterialCharge;
+                    $data[0]->finalBill = $billWithMaterialCharge + $gst;
+                    $response = array(
+                        "status" => true,
+                        "message" => "Booking data",
+                        "info" => $data
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Booking not available"
+                    );
+                }
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'customer')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
+
         public function services(){
             $data = $this->admin->getAllParentServices();
 
+            if($data){
+                echo json_encode(['status' => true, 'data' => $data['result'], 'message' => 'Service list']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Services not available']);
+            }
+        }
+
+        public function services2(){
+            $data = $this->admin->getAllParentServicesWithLimit(6);
             if($data){
                 echo json_encode(['status' => true, 'data' => $data['result'], 'message' => 'Service list']);
             }
@@ -635,30 +933,95 @@
                 }
             }
         }
+
+        function getParentService($service){
+            $serviceData = $this->admin->getServiceById($service);
+            if($serviceData->level == "1"){
+                return $serviceData;
+            }
+            return $this->getParentService($serviceData->parent_category);
+        }
+
         public function nearbyvendor(){
 
             $received_Token = $this->input->request_headers('Authorization');
             $tokenData = $this->user->getTokenData($received_Token);
             
             if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
-                $allVendors = $this->admin->getAllVerifiedWorkers($_POST['profession']);
+                $servicesRequested = $_POST['profession'];
+                $saggregatedArr = [];
+                if($servicesRequested != ""){
+                    $services = explode(",", $servicesRequested);
+                    $prevService;
+                    $serviceToCompare;
+                    $parsedElements = [];
+    
+                    for($i = 0; $i < count($services); $i++){
+                        if(in_array($services[$i], $parsedElements)){
+                            continue;
+                        }
+                        $prevService = $this->getParentService($services[$i]);
+                        $tempArr = [];
+                        array_push($tempArr, $services[$i]);
+                        for($j = $i+1; $j < count($services); $j++){
+                            $serviceToCompare = $this->getParentService($services[$j]);
+                            if($prevService->id === $serviceToCompare->id){
+                                array_push($tempArr, $services[$j]);
+                                array_push($parsedElements, $services[$j]);
+                            }
+                        }
+                        array_push($saggregatedArr, $tempArr);
+                    }
+                }
                 $flag = false;
-                $reqNo = rand(10000,99999);
-                foreach($allVendors as $key => $value){
-                    $dist = $this->distance((float) $_POST['lat'], (float) $_POST['lng'], (float) $value->lat, (float) $value->lng, "K");
-                    if($dist < 10){
-                        //$nearest_vendors[] = $value;
+                $commaSeparatedServices = "";
+                $responseMessage = "";
+                foreach($saggregatedArr as $serviceGroup){
+                    $commaSeparatedServices = "";
+                    foreach($serviceGroup as $commaservice){
+                        $commaSeparatedServices .= $commaservice.",";
+                    }
+                    $commaSeparatedServices = rtrim($commaSeparatedServices, ",");
+
+                    $allVendors = $this->admin->getAllVerifiedWorkers($commaSeparatedServices);
+                
+                    
+                    $reqNo = rand(10000,99999);
+                    $distanceArr = array();
+                    $vendorArr = array();
+                    foreach($allVendors as $key => $value){
+                        $dist = $this->distance((float) $_POST['lat'], (float) $_POST['lng'], (float) $value->lat, (float) $value->lng, "K");
+                        if($dist < 10){
+                            array_push($distanceArr, $dist);
+                            array_push($vendorArr, $value->id);
+                        }
+                    }
+                    
+                    if(!empty($distanceArr)){
+                        $minDistance = min($distanceArr);
+                        $indexOfMinDistance = array_search($minDistance, $distanceArr);
+                        $vendor_id = $vendorArr[$indexOfMinDistance];
+                        $singleService = explode(",", $commaSeparatedServices);
+                        $singleService = $singleService[0];
+                        
+                        $parentService = $this->getParentService($singleService);
+                        $parentService = $parentService->service_name;
+                    
                         $post = array();
-                        $post['vendor_id'] = $value->id;
+                        $post['vendor_id'] = $vendor_id;
                         $post['req_no'] = $reqNo."".$_POST['user_id'];
                         $post['request_status'] = 0;
                         $post['customer_id'] = $_POST['user_id'];
                         $post['lat'] = $_POST['lat'];
                         $post['lng'] = $_POST['lng'];
+                        $post['quantity'] = $_POST['quantity'];
+                        $post['services'] = $commaSeparatedServices;
+                        $post['last_assigned_to'] = $vendor_id;
                         date_default_timezone_set('Asia/Kolkata');
+                        $post['vendor_changed_at'] = time();
                         $post['created_at'] = time();
                         $this->admin->addData($post, 'request');
-                        $vendor = $this->user->getProfileData($value->id);
+                        $vendor = $this->user->getProfileData($vendor_id);
                         $notificationMessage = array();
                         $notificationMessage = array(
                             "title" => "Troubleshooter",
@@ -671,13 +1034,18 @@
                         $to = $vendor->device_id;
                         $this->send_notification($api_key, $to, $notificationMessage, $bodyData);
                         $flag = true;
+                        $responseMessage .= "Your request has been sent to nearby ".$parentService." Service. "; 
                     }
+                    else{
+                        $responseMessage .= "Nearby vendors are not available for the other services you chose. ";
+                    }
+                    
                 }
 
                 if($flag){
                     $response = array(
                         "status" => true,
-                        "message" => "Your request has been sent to nearby vendors. Your booking will be confirmed once your request gets accepted."
+                        "message" => $responseMessage
                     );
                 }
                 else{
@@ -751,6 +1119,66 @@
             if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
                 $data = $this->admin->getAllPendingBookings($_POST['user_id']);
                 if($data){
+                    foreach($data as $request){
+                        $serviceInRequest = $request->services;
+                        if($serviceInRequest != ""){
+                            $tempServices = explode(",", $serviceInRequest);
+                            $serviceArr = [];
+                            foreach($tempServices as $ser){
+                                $serviceArr[] = $this->admin->getServiceById($ser);
+                            }
+                            $request->services = $serviceArr;
+                        }
+                    }
+                    $response = array(
+                        "status" => true,
+                        "message" => "Bookings available",
+                        "bookings" => $data
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Bookings not available"
+                    );
+                }
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'customer')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
+
+        public function completeduserbookings(){
+
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $data = $this->admin->getAllCompletedBookings($_POST['user_id']);
+                if($data){
+                    foreach($data as $request){
+                        $serviceInRequest = $request->services;
+                        if($serviceInRequest != ""){
+                            $tempServices = explode(",", $serviceInRequest);
+                            $serviceArr = [];
+                            foreach($tempServices as $ser){
+                                $serviceArr[] = $this->admin->getServiceById($ser);
+                            }
+                            $request->services = $serviceArr;
+                        }
+                    }
                     $response = array(
                         "status" => true,
                         "message" => "Bookings available",
@@ -796,6 +1224,11 @@
                         "message" => "Location status",
                         "location" => $locData
                     );
+                    if($locData->distance < 10){
+                        date_default_timezone_set('Asia/Kolkata');
+                        $reachArr['reached_location_at'] = time();
+                        $this->admin->updateVendorReachTime($reachArr, $_POST['booking_id']);
+                    }
                 }
                 else{
                     $response = array(
@@ -1018,6 +1451,153 @@
             }  
         }
 
+        public function declaration(){
+            $terms = $this->admin->getTerms("declaration");
+            
+            if($terms != NULL){
+                echo json_encode(['status' => true, 'paragraph'=> $terms->paragraph, 'message' => "Declaration paragraph"]);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Declaration not available"]);
+            }  
+        }
+
+        public function packages(){
+            $packages = $this->admin->getAllPackages();
+            $memberships = $this->admin->getAllMemberships();
+
+            $data = array();
+
+            $data2 = array();
+        
+            $timeNow = date_create(date("Y-m-d"));
+
+            foreach($packages as $package){
+                $timeEnd = date_create($package->to_date);
+                $diff = date_diff($timeNow, $timeEnd);
+                $interval = $diff->format("%R%a");
+                if($interval < 0){
+                    $package->image = base_url().'assets/admin/images/'.$package->image;
+                    $data[] = $package;
+                }
+            }
+
+            foreach($memberships as $membership){
+                $timeEnd = date_create($membership->to_date);
+                $diff = date_diff($timeEnd, $timeNow);
+                $interval = $diff->format("%R%a");
+                if($interval < 0){
+                    $membership->image = base_url().'assets/admin/images/'.$membership->image;
+                    $data2[] = $membership;
+                }
+            }
+            $serviceArr = [];
+            $serviceArr2 = [];
+            foreach($data as $pack){
+                $serviceArr = [];
+                $services = json_decode($pack->services, false);
+                foreach($services as $service){
+                    $serviceArr[] = $this->admin->getServiceById($service->service);
+                }
+                $pack->service_detail = $serviceArr;
+                $pack->type = "package";
+            }
+
+            foreach($data2 as $mem){
+                $serviceArr2 = [];
+                $services = json_decode($mem->services, false);
+                foreach($services as $service){
+                    $serviceArr2[] = $this->admin->getServiceById($service->service);
+                }
+                $mem->service_detail = $serviceArr2;
+                $mem->type = "membership";
+            }
+            $finalArr = array_merge($data, $data2);
+          
+            if(count($finalArr) > 0){
+                $response = array("status"=>true, "message"=>"Packages & memberships available", "data"=>$finalArr);
+            }
+            else{
+                $response = array("status"=>false, "message"=>"Packages & memberships not available");
+            }
+
+            echo json_encode($response); 
+        }
+
+        public function checkIfServicesBought(){
+            if($_POST['type']=="package"){
+                if($this->admin->checkIfUserBoughtPackage($_POST['package_id'], $_POST['user_id']) > 0){
+                    $response = array(
+                        "status" => true,
+                        "is_bought"=> true,
+                        "message" => "You have already bought this package"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "is_bought"=> false,
+                        "message" => "Not Bought"
+                    );
+                }
+            }
+            else if($_POST['type']=="membership"){
+                if($this->admin->checkIfUserBoughtMembership($_POST['membership_id'], $_POST['user_id']) > 0){
+                    $response = array(
+                        "status" => true,
+                        "is_bought"=> true,
+                        "message" => "You have already bought this membership"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "is_bought"=> false,
+                        "message" => "Not Bought"
+                    );
+                }
+            }
+
+            echo json_encode($response);
+        }
+
+        public function memberships(){
+            $packages = $this->admin->getAllMemberships();
+
+            $data = array();
+        
+            $timeNow = date_create(date("Y-m-d"));
+
+            foreach($packages as $package){
+                $timeEnd = date_create($package->to_date);
+                $diff = date_diff($timeEnd, $timeNow);
+                $interval = $diff->format("%R%a");
+                if($interval < 0){
+                    $package->image = base_url().'assets/admin/images/'.$package->image;
+                    $data[] = $package;
+                }
+            }
+            $serviceArr = [];
+            foreach($data as $pack){
+                $serviceArr = [];
+                $services = json_decode($pack->services, false);
+                foreach($services as $service){
+                    $serviceArr[] = $this->admin->getServiceById($service->service);
+                }
+                $pack->service_detail = $serviceArr;
+                $pack->type = "membership";
+            }
+          
+            if(count($data) > 0){
+                $response = array("status"=>true, "message"=>"Memberships available", "data"=>$data);
+            }
+            else{
+                $response = array("status"=>false, "message"=>"Membership not available");
+            }
+
+            echo json_encode($response); 
+        }
+
         public function categories(){
             $level1 = $this->admin->getServicesLevelWise("1");
             $level2 = $this->admin->getServicesLevelWise("2");
@@ -1064,8 +1644,18 @@
                 $is_kyc_verified = false;
                 $is_bank_details_available = false;
                 $is_user_info_available = false;
-                $is_user_info_available = false;
+                $is_personal_detail_completed = false;
                 $is_training_completed = false;
+                $is_document_uploaded = false;
+                $is_declaration_completed = false;
+                $is_current_address_completed = false;
+                $document_image = "";
+                $parent_name = "";
+                $declaration = "";
+                $gender = ""; $dob = ""; $p_street=""; $p_pincode = ""; $p_city=""; $p_state="";
+                $face_photo = ""; $side_face_photo=""; $full_body_photo = ""; $tool_photo=""; $mode_of_transport="";
+
+                $c_street = ""; $c_pincode = ""; $c_city=""; $c_state="";
 
                 $basicDetail = $this->user->getProfileData($_POST['user_id']);
                 $is_kyc_available = $this->admin->checkKYCById($_POST['user_id'], 'kyc');
@@ -1073,6 +1663,27 @@
                 $is_user_info_available =  $this->admin->isUserInfoAvailable($_POST['user_id']);
                 $is_user_award_available = $this->admin->isAwardAvailable($_POST['user_id']);
                 $last_seen_video = $this->user->getLastSeenVideo($_POST['user_id']);
+
+                if($is_kyc_available){
+                    $document_image = $this->admin->getKycByID($_POST['user_id'])[0]->img_front_side;
+                    $parent_name = $this->admin->getKycByID($_POST['user_id'])[0]->parent_name;
+                    $gender = $this->admin->getKycByID($_POST['user_id'])[0]->gender;
+                    $dob = $this->admin->getKycByID($_POST['user_id'])[0]->dob;
+                    $p_street = $this->admin->getKycByID($_POST['user_id'])[0]->p_street;
+                    $p_pincode = $this->admin->getKycByID($_POST['user_id'])[0]->p_pincode;
+                    $p_city = $this->admin->getKycByID($_POST['user_id'])[0]->p_city;
+                    $p_state = $this->admin->getKycByID($_POST['user_id'])[0]->p_state;
+                    $declaration = $this->admin->getKycByID($_POST['user_id'])[0]->declaration;
+
+                    $c_street = $this->admin->getKycByID($_POST['user_id'])[0]->c_street;
+                    $c_pincode = $this->admin->getKycByID($_POST['user_id'])[0]->c_pincode;
+                    $c_city = $this->admin->getKycByID($_POST['user_id'])[0]->c_city;
+                    $c_state = $this->admin->getKycByID($_POST['user_id'])[0]->c_state;
+                }
+
+                if($document_image != ""){
+                    $is_document_uploaded = true;
+                }
 
                 if((int)$last_seen_video->training_video_no == 7){
                     $is_training_completed = true;
@@ -1082,6 +1693,29 @@
                     $user_verified = true;
                 }
 
+                if($basicDetail != NULL){
+                    $face_photo = $basicDetail->face_photo;
+                    $side_face_photo = $basicDetail->side_face_photo;
+                    $full_body_photo = $basicDetail->full_body_photo;
+                    $tool_photo = $basicDetail->tool_photo;
+                    $mode_of_transport = $basicDetail->mode_of_transport;
+                }
+
+                //Personal Detail check
+                if($parent_name != "" && $gender != "" && $dob != "" && $p_street != "" && $p_pincode != "" && $p_city != "" && $p_state != "" && $face_photo != "" && $side_face_photo != "" && $full_body_photo != "" && $tool_photo != "" && $mode_of_transport != ""){
+                    $is_personal_detail_completed = true;
+                }
+
+                //Declaration
+                if($declaration != ""){
+                    $is_declaration_completed = true;
+                }
+
+                //Current City
+                if($c_city != "" && $c_street != "" && $c_pincode != "" && $p_state != ""){
+                    $is_current_address_completed = true;
+                }
+
                 if($is_kyc_available){
                     $kycStatus = $this->admin->checkIfKYCVerified($_POST['user_id'], 'kyc');
                     if($kycStatus->is_verified == "1"){
@@ -1089,7 +1723,7 @@
                     }
                 }
 
-                $statusArr = array("is_user_verified"=>$user_verified, "is_rating_available"=>false, "is_user_award_available"=>$is_user_award_available, "is_user_about_available"=>$is_user_info_available, "is_kyc_available"=>$is_kyc_available, "is_kyc_verified"=>$is_kyc_verified, "is_bank_details_available"=>$is_bank_details_available, "is_training_completed" => $is_training_completed);
+                $statusArr = array("is_user_verified"=>$user_verified, "is_rating_available"=>false, "is_user_award_available"=>$is_user_award_available, "is_user_about_available"=>$is_user_info_available, "is_kyc_available"=>$is_kyc_available, "is_kyc_verified"=>$is_kyc_verified, "is_bank_details_available"=>$is_bank_details_available, "is_training_completed" => $is_training_completed, "is_document_uploaded"=>$is_document_uploaded, "is_personal_detail_completed"=>$is_personal_detail_completed, "is_declaration_completed"=>$is_declaration_completed, "is_current_address_completed"=> $is_current_address_completed);
 
                 $resp = array("message"=>"User status", "status"=> $statusArr);
             }
@@ -1291,6 +1925,183 @@
                 }
             }
             echo json_encode($response);
+        }
+
+        public function bookingtimeline(){
+            $received_Token = $this->input->request_headers('Authorization');
+            $tokenData = $this->user->getTokenData($received_Token);
+            
+            if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $data = $this->admin->bookingtimeline($_POST['booking_id']);
+                if($data){
+                    
+                    $serviceInRequest = $data[0]->services;
+                    if($serviceInRequest != ""){
+                        $tempServices = explode(",", $serviceInRequest);
+                        $serviceArr = [];
+                        foreach($tempServices as $ser){
+                            $serviceArr[] = $this->admin->getServiceById($ser);
+                        }
+                        $data[0]->services = $serviceArr;
+                    }
+                    
+                    $response = array(
+                        "status" => true,
+                        "message" => "Booking timeline",
+                        "location" => $data
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Activities not available"
+                    );
+                }
+            }
+            else{
+                if($this->admin->checkUserById($_POST['user_id'], 'customer')){
+                    $response = array(
+                        "status" => false,
+                        "message" => "Unauthorized Access"
+                    );
+                }
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "User doesn't exist"
+                    );
+                }
+            }
+            echo json_encode($response);
+        }
+
+        //Crons
+        public function check45mins(){
+            $bookingsWithStatus1 = $this->admin->getAllBookingWithStatus1();
+            foreach($bookingsWithStatus1 as $book){
+                
+                $timeEnd = new DateTime('now');
+                $timeStart = new DateTime('@'.$book->created_at);
+                $interval = $timeStart->diff($timeEnd);
+                $interval = $interval->format('%H,%i');
+                $intervalArr = explode(",",$interval);
+                $totalTimeInMinutes = ((int) $intervalArr[0] * 60) + ((int) $intervalArr[1]);
+
+                $vendor = $this->user->getProfileData($book->vendor_id);
+                $to = $vendor->device_id;
+
+                if($totalTimeInMinutes > 45){
+                    $data['booking_status'] = 4;
+                    if($this->admin->updateBookingStatus($data, $book->booking_id)){
+                        $vendor = $this->user->getProfileData($book->vendor_id);
+                        $notificationMessage = array();
+                        $notificationMessage = array(
+                            "title" => "Troubleshooter",
+                            "body" => "Booking (Booking ID: ".$book->booking_id.")! has been cancelled!"
+                        );
+                        $bodyData = array(
+                            'action'=> "booking_cancelled"
+                        );
+                        $api_key = "AAAA0W6cR-g:APA91bGr4S_9LPdoWVc9k3aY5_6Nh3e_orRbsj6dLOq59nAC5GmLS9-21Au2figrAoCu9VjrsgWsd3taKiPvj2s2-niwWGDGA0B5KGGjFdCCZMQMcKdelOcexyXyuNcmcm_iRW9qGEJr";
+                        $to = $vendor->device_id;
+                        $this->send_notification($api_key, $to, $notificationMessage, $bodyData);
+                    }
+                }
+            }
+        }
+
+        public function check20mins(){
+            $bookingsWithStatus1 = $this->admin->getAllBookingAfterReachingLocation();
+            foreach($bookingsWithStatus1 as $book){
+                
+                $timeEnd = new DateTime('now');
+                $timeStart = new DateTime('@'.$book->reached_location_at);
+                $interval = $timeStart->diff($timeEnd);
+                $interval = $interval->format('%H,%i');
+                $intervalArr = explode(",",$interval);
+                $totalTimeInMinutes = ((int) $intervalArr[0] * 60) + ((int) $intervalArr[1]);
+
+                $vendor = $this->user->getProfileData($book->vendor_id);
+                $to = $vendor->device_id;
+
+                if($totalTimeInMinutes > 20){
+                    $data['booking_status'] = 4;
+                    if($this->admin->updateBookingStatus($data, $book->booking_id)){
+                        $vendor = $this->user->getProfileData($book->vendor_id);
+                        $notificationMessage = array();
+                        $notificationMessage = array(
+                            "title" => "Troubleshooter",
+                            "body" => "Booking (Booking ID: ".$book->booking_id.")! has been cancelled due to customer inavailablity!"
+                        );
+                        $bodyData = array(
+                            'action'=> "booking_cancelled"
+                        );
+                        $api_key = "AAAA0W6cR-g:APA91bGr4S_9LPdoWVc9k3aY5_6Nh3e_orRbsj6dLOq59nAC5GmLS9-21Au2figrAoCu9VjrsgWsd3taKiPvj2s2-niwWGDGA0B5KGGjFdCCZMQMcKdelOcexyXyuNcmcm_iRW9qGEJr";
+                        $to = $vendor->device_id;
+                        $this->send_notification($api_key, $to, $notificationMessage, $bodyData);
+                    }
+                }
+            }
+        }
+
+        public function fiveMinsLeadChange(){
+            $requests = $this->admin->getAllRequestWithStatus0();
+            foreach($requests as $request){
+                $timeEnd = new DateTime('now');
+                $timeStart = new DateTime('@'.$request->vendor_changed_at);
+                $interval = $timeStart->diff($timeEnd);
+                $interval = $interval->format('%H,%i');
+                $intervalArr = explode(",",$interval);
+                $totalTimeInMinutes = ((int) $intervalArr[0] * 60) + ((int) $intervalArr[1]);
+                
+                if($totalTimeInMinutes > 5){
+                    
+                    $vendorProfile = $this->user->getProfileData($request->vendor_id);
+                    $allVendors = $this->admin->getAllVerifiedVendorsExceptAssigned($vendorProfile->primary_profession, $request->last_assigned_to);
+                    $distanceArr = array();
+                    $vendorArr = array();
+                    foreach($allVendors as $key => $value){
+                        $dist = $this->distance((float) $request->lat, (float) $request->lng, (float) $value->lat, (float) $value->lng, "K");
+                        
+                        if($dist < 10){
+                            array_push($distanceArr, $dist);
+                            array_push($vendorArr, $value->id);
+                            //$nearest_vendors[] = $value;
+                        }
+                    }
+
+                    if(!empty($distanceArr)){
+                        $minDistance = min($distanceArr);
+                        $indexOfMinDistance = array_search($minDistance, $distanceArr);
+                        $vendor_id = $vendorArr[$indexOfMinDistance];
+                        $post = array();
+                        $post['vendor_id'] = $vendor_id;
+                        $post['last_assigned_to'] = $request->last_assigned_to.','.$vendor_id;
+                        date_default_timezone_set('Asia/Kolkata');
+                        $post['vendor_changed_at'] = time();
+                        if($this->admin->updatebookingrequest('request', $post, $request->id, $request->req_no)){
+                            $vendor = $this->user->getProfileData($vendor_id);
+                            $notificationMessage = array();
+                            $notificationMessage = array(
+                                "title" => "Troubleshooter",
+                                "body" => "There is a booking request!!"
+                            );
+                            $bodyData = array(
+                                'action'=> "booking_request"
+                            );
+                            $api_key = "AAAA0W6cR-g:APA91bGr4S_9LPdoWVc9k3aY5_6Nh3e_orRbsj6dLOq59nAC5GmLS9-21Au2figrAoCu9VjrsgWsd3taKiPvj2s2-niwWGDGA0B5KGGjFdCCZMQMcKdelOcexyXyuNcmcm_iRW9qGEJr";
+                            $to = $vendor->device_id;
+                            $this->send_notification($api_key, $to, $notificationMessage, $bodyData);
+                        }
+                    }
+                    else{
+                        $post = array();
+                        $post['request_status'] = 2;
+                        $this->admin->updatebookingrequest('request', $post, $request->id, $request->req_no);
+                    }
+                }
+            }
+            
         }
 
     }

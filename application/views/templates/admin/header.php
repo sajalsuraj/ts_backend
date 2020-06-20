@@ -19,14 +19,22 @@
 
   <!-- Custom styles for this template-->
   <link href="<?php echo base_url(); ?>assets/admin/css/sb-admin.css" rel="stylesheet">
-  <link href="<?php echo base_url(); ?>assets/admin/css/style.css" rel="stylesheet">
+  <link href="<?php echo base_url(); ?>assets/admin/css/style.css?v=3.1" rel="stylesheet">
 
+  <!-- jQuery UI -->
+  <link href="<?php echo base_url(); ?>assets/admin/css/jquery-ui.min.css" rel="stylesheet">
   <!-- Editor style -->
   <link href="<?php echo base_url(); ?>assets/admin/css/richtext.min.css" rel="stylesheet">
+
+  <!-- Select2 -->
+  <link href="<?php echo base_url(); ?>assets/admin/css/select2.min.css" rel="stylesheet">
 
   <!-- Bootstrap core JavaScript-->
   <script src="<?php echo base_url(); ?>assets/admin/vendor/jquery/jquery.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Select2 -->
+  <script src="<?php echo base_url(); ?>assets/admin/js/select2.min.js"></script>
 
   <!-- Core plugin JavaScript-->
   <script src="<?php echo base_url(); ?>assets/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -39,6 +47,11 @@
   <!-- Validation library-->
   <script src="<?php echo base_url(); ?>assets/admin/js/jquery.validate.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/admin/js/additional-methods.min.js"></script>
+
+  <!-- Underscore -->
+  <script src="<?php echo base_url(); ?>assets/admin/js/underscore-min.js"></script>
+
+  <script src="<?php echo base_url(); ?>assets/admin/js/jquery-ui.js"></script>
 
   <!-- Editor style -->
   <script src="<?php echo base_url(); ?>assets/admin/js/jquery.richtext.min.js"></script>
@@ -72,7 +85,7 @@ if ($this->session->has_userdata('type') == true) {
   <?php if($page !== "login"){ ?>
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-    <a class="navbar-brand mr-1" href="index.html">TroubleShooter</a>
+    <a class="navbar-brand mr-1" href="<?php echo base_url(); ?>users/dashboard">TroubleShooters</a>
 
     <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
       <i class="fas fa-bars"></i>
@@ -90,9 +103,9 @@ if ($this->session->has_userdata('type') == true) {
           <i class="fas fa-user-circle fa-fw"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-          <!-- <a class="dropdown-item" href="#">Settings</a>
-          <a class="dropdown-item" href="#">Activity Log</a>
-          <div class="dropdown-divider"></div> -->
+          <!-- <a class="dropdown-item" href="#">Settings</a>-->
+          <a class="dropdown-item" href="profile">Profile</a>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a>
         </div>
       </li>
@@ -105,14 +118,14 @@ if ($this->session->has_userdata('type') == true) {
     <!-- Sidebar -->
     <ul class="sidebar navbar-nav">
       <li class="nav-item active">
-        <a class="nav-link" href="dashboard">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/dashboard">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Dashboard</span>
         </a>
       </li>
 
       <li class="nav-item active">
-        <a class="nav-link" href="profile">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/profile">
         <i class="far fa-id-badge"></i>
           <span>Profile</span>
         </a>
@@ -120,16 +133,51 @@ if ($this->session->has_userdata('type') == true) {
 
       <?php if($usertype){ ?>
       <li class="nav-item active">
-        <a class="nav-link" href="kyc-verify">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/kyc-verify">
         <i class="far fa-address-card"></i>
-          <span>Verify KYCs</span>
+          <span>Workers KYC Verify</span>
         </a>
       </li>
 
       <li class="nav-item active">
-        <a class="nav-link" href="home-content">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/home-content">
         <i class="fas fa-home"></i>
           <span>App Homepage</span>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/all-worker">
+        <i class="fas fa-user-tie"></i>
+          <span>Workers</span>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/all-customers">
+        <i class="fas fa-users"></i>
+          <span>Customers</span>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/all-requests">
+        <i class="fas fa-hand-paper"></i>
+          <span>Service Requests</span>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/all-bookings">
+        <i class="fas fa-list"></i>
+          <span>Bookings</span>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/all-referrals">
+        <i class="fa fa-user-plus" aria-hidden="true"></i>
+          <span>Referrals</span>
         </a>
       </li>
 
@@ -139,8 +187,30 @@ if ($this->session->has_userdata('type') == true) {
           <span>Banner</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-          <a class="dropdown-item" href="add-banner">Add a banner</a>
-          <a class="dropdown-item" href="all-banners">View All</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-banner">Add a banner</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-banners">View All</a>
+        </div>
+      </li>
+
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-box-open"></i>
+          <span>Packages</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-package">Create Package</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-packages">View All</a>
+        </div>
+      </li>
+
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-user-check"></i>
+          <span>Memberships</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-membership">Create Membership</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-memberships">View All</a>
         </div>
       </li>
 
@@ -150,8 +220,8 @@ if ($this->session->has_userdata('type') == true) {
           <span>Services</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-          <a class="dropdown-item" href="add-service">Add a service</a>
-          <a class="dropdown-item" href="all-services">View All</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-service">Add a service</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-services">View All</a>
         </div>
       </li>
 
@@ -161,21 +231,28 @@ if ($this->session->has_userdata('type') == true) {
           <span>FAQ</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-          <a class="dropdown-item" href="add-faq-title">Add faq title</a>
-          <a class="dropdown-item" href="add-faq-content">Add faq</a>
-          <a class="dropdown-item" href="all-faq">View All</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-faq-title">Add faq title</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-faq-content">Add faq</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-faq">View All</a>
         </div>
       </li>
 
       <li class="nav-item active">
-        <a class="nav-link" href="cities">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/cities">
         <i class="fa fa-location-arrow" aria-hidden="true"></i>
           <span>Cities</span>
         </a>
       </li>
 
       <li class="nav-item active">
-        <a class="nav-link" href="vehicle">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/notification">
+        <i class="fas fa-bell" aria-hidden="true"></i>
+          <span>Notifications</span>
+        </a>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/vehicle">
         <i class="fas fa-motorcycle"></i>
           <span>Vehicles</span>
         </a>
@@ -187,14 +264,15 @@ if ($this->session->has_userdata('type') == true) {
           <span>Static Pages</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-          <a class="dropdown-item" href="terms">Terms & Conditions</a>
-          <a class="dropdown-item" href="privacy-policy">Privacy Policy</a>
-          <a class="dropdown-item" href="how-it-works">How it works</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/terms">Terms & Conditions</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/privacy-policy">Privacy Policy</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/how-it-works">How it works</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/declaration">Declaration</a>
         </div>
       </li>
 
       <li class="nav-item active">
-        <a class="nav-link" href="training-centres">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/training-centres">
         <i class="fas fa-chalkboard-teacher"></i>
           <span>Training Centres</span>
         </a>
@@ -208,7 +286,7 @@ if ($this->session->has_userdata('type') == true) {
       </li> -->
 
       <li class="nav-item active">
-        <a class="nav-link" href="contact-us">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/contact-us">
         <i class="fas fa-phone-square-alt"></i>
           <span>Contact Us</span>
         </a>
@@ -216,28 +294,28 @@ if ($this->session->has_userdata('type') == true) {
 
       <?php }else{ ?>
       <li class="nav-item active">
-        <a class="nav-link" href="about-me">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/about-me">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>About Me</span>
         </a>
       </li>
 
       <li class="nav-item active">
-        <a class="nav-link" href="bank-details">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/bank-details">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Bank Details</span>
         </a>
       </li>
 
       <li class="nav-item active">
-        <a class="nav-link" href="requests">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/requests">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Requests</span>
         </a>
       </li>
 
       <li class="nav-item active">
-        <a class="nav-link" href="orders">
+        <a class="nav-link" href="<?php echo base_url(); ?>users/orders">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Orders</span>
         </a>

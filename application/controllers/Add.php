@@ -14,6 +14,34 @@
             header('Access-Control-Allow-Methods: GET, HEAD, POST, PUT, DELETE');
         }
 
+        public function send_notification($apiKey, $to, $notification, $data)
+        {
+            $fields = array
+            (
+                'to' => $to,
+                'notification'	=> $notification,
+                "priority" => "high",
+                "data" => $data
+            );
+            
+            
+            $headers = array
+            (
+                'Authorization: key='.$apiKey,
+                'Content-Type: application/json'
+            );
+        #Send Reponse To FireBase Server	
+                $ch = curl_init();
+                curl_setopt( $ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send' );
+                curl_setopt( $ch,CURLOPT_POST, true );
+                curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
+                curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
+                curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
+                curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode( $fields ) );
+                curl_exec($ch );
+                curl_close( $ch );
+        }
+
         public function otp($otp, $phone){
            
             $msg = rawurlencode("Verify your account. OTP-".$otp);    //Message Here
@@ -34,6 +62,15 @@
             $output = curl_exec($ch);
             return $output;
 
+        }
+
+        public function get_string_between($string, $start, $end){
+            $string = ' ' . $string;
+            $ini = strpos($string, $start);
+            if ($ini == 0) return '';
+            $ini += strlen($start);
+            $len = strpos($string, $end, $ini) - $ini;
+            return substr($string, $ini, $len);
         }
 
         public function signup(){
@@ -73,6 +110,14 @@
                             );
                         }
                         else{
+                            $profsarr = "";
+                            $prof = $this->get_string_between($post->sub_profession, '[', ']');
+                            $profArr = explode(",",$prof);
+                            foreach($profArr as $pro){
+                                $profsarr .= (int) $this->get_string_between($pro, '"', '"').",";
+                            }
+                            $profsarr = rtrim($profsarr, ",");
+                            $post->sub_profession = $profsarr;
                             $post->password = md5($post->password);
                             $post->type = "worker";
                             $data = $this->admin->addData($post, "worker");
@@ -131,6 +176,8 @@
                 }
                 else{
                     $_POST['password'] = md5($_POST['password']);
+                    $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    $_POST['referral'] = substr(str_shuffle($permitted_chars), 0, 8);
                     $data = $this->admin->addData($_POST, "customer");
                 
                     if($data){
@@ -284,7 +331,19 @@
             $count = 0;
 
             if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
-
+                $kyc_existed = $this->admin->checkKYCById($_POST['user_id'], 'kyc');
+                if($kyc_existed){
+                    $is_verified = $this->admin->checkIfKYCVerified($_POST['user_id'], 'kyc');
+                    if($is_verified->is_verified == 1){
+                        $response = array(
+                            "status" => false,
+                            "message" => "KYC already verified"
+                        );
+                        echo json_encode($response);
+                        return;
+                    }
+                }
+                
                 if(isset($_POST['id_type'])){
                     if($_POST['id_type'] == "PAN"){
                         if(isset($_FILES["img_front_side"])){
@@ -314,7 +373,7 @@
                     }
                 }
 
-                if(!$this->admin->checkKYCById($_POST['user_id'], 'kyc')){
+                if(!$kyc_existed){
                     $count++;
                     $_POST['steps_filled'] = $count;
                     if($this->admin->addData($_POST, 'kyc')){
@@ -385,6 +444,27 @@
                 $response = array(
                     "status" => false,
                     "message" => "City name is empty"
+                );
+            }
+            echo json_encode($response);
+        }
+
+
+        public function referral(){
+            if(isset($_POST['amount'])){
+                $data = $this->admin->addData($_POST, "referral");
+                if($data){
+                    $response = array(
+                        "status" => true,
+                        "id" => $this->admin->last_record('id', 'referral')->id,
+                        "message" => "Amount added successfully"
+                    );
+                }
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Amount is empty"
                 );
             }
             echo json_encode($response);
@@ -537,6 +617,43 @@
              }
         }
 
+        public function bookingcomment(){
+            $_POST['created_at'] = time();
+            $data = $this->admin->addData($_POST, "comments");
+          
+             if($data){
+                echo json_encode(['status' => true, 'message' => 'Comment added successfully']);
+             }
+             else{
+                echo json_encode(['status' => false, 'message' => 'Error while adding']);
+             }
+        }
+
+        public function notification(){
+            $_POST['created_at'] = time();
+            $data = $this->admin->addData($_POST, "admin_notification");
+          
+             if($data){
+                $vendor = $this->user->getProfileData($_POST['vendor_id']);
+                $notificationMessage = array();
+                $notificationMessage = array(
+                    "title" => $_POST['title'],
+                    "body" => $_POST['message']
+                );
+                $bodyData = array(
+                    'action'=> "vendor_notification"
+                );
+                $api_key = "AAAA0W6cR-g:APA91bGr4S_9LPdoWVc9k3aY5_6Nh3e_orRbsj6dLOq59nAC5GmLS9-21Au2figrAoCu9VjrsgWsd3taKiPvj2s2-niwWGDGA0B5KGGjFdCCZMQMcKdelOcexyXyuNcmcm_iRW9qGEJr";
+                $to = $vendor->device_id;
+                $this->send_notification($api_key, $to, $notificationMessage, $bodyData);
+                $respData = array("message"=>$_POST['message'], "vendor_name"=>$vendor->name, "created_at"=>$_POST['created_at']);
+                echo json_encode(['status' => true, "data"=>$respData, 'message' => 'Notification sent successfully']);
+             }
+             else{
+                echo json_encode(['status' => false, 'message' => 'Error while sending notification, please try again']);
+             }
+        }
+
         public function homepage(){
 
             $data = $this->admin->addData($_POST, "homepage");
@@ -636,6 +753,129 @@
                 );
             }
 
+            echo json_encode($response);
+        }
+
+        public function package(){
+            if(isset($_FILES["image"])){
+                if($_FILES["image"]["error"] !== 4){
+                    $folder= './assets/admin/images/';
+                    $temp = explode(".", $_FILES["image"]["name"]);
+                    $target_file_img = $folder. round(microtime(true)).'package.'.$temp[1]; 
+                    $_POST['image'] = round(microtime(true)).'package.'.$temp[1];
+                    move_uploaded_file($_FILES["image"]["tmp_name"], $target_file_img);  
+                }
+                
+            }
+            $_POST['status'] = 1;
+            $_POST['created_at'] = time();
+            $data = $this->admin->addData($_POST, "packages");
+
+            if($data){
+                $response = array(
+                    "status" => true,
+                    "message" => "Package created succesfully"
+                );
+            } 
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while creation"
+                );
+            }
+
+            echo json_encode($response);
+        }
+
+        public function membership(){
+            if(isset($_FILES["image"])){
+                if($_FILES["image"]["error"] !== 4){
+                    $folder= './assets/admin/images/';
+                    $temp = explode(".", $_FILES["image"]["name"]);
+                    $target_file_img = $folder. round(microtime(true)).'membership.'.$temp[1]; 
+                    $_POST['image'] = round(microtime(true)).'membership.'.$temp[1];
+                    move_uploaded_file($_FILES["image"]["tmp_name"], $target_file_img);  
+                }
+                
+            }
+            $_POST['status'] = 1;
+            $_POST['created_at'] = time();
+            $data = $this->admin->addData($_POST, "membership");
+
+            if($data){
+                $response = array(
+                    "status" => true,
+                    "message" => "Membership created succesfully"
+                );
+            } 
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "Error occurred while creation"
+                );
+            }
+
+            echo json_encode($response);
+        }
+
+        public function buymembership(){
+            if($this->admin->checkIfUserBoughtMembership($_POST['membership_id'], $_POST['user_id']) > 0){
+                $response = array(
+                    "status" => false,
+                    "is_bought"=> true,
+                    "message" => "You are already a member."
+                );
+            }
+            else{
+                $_POST['status'] = 1;
+                $_POST['created_at'] = time();
+                $data = $this->admin->addData($_POST, "membership_users");
+
+                if($data){
+                    $response = array(
+                        "status" => true,
+                        "message" => "Congratulations, you have successully bought this membership"
+                    );
+                } 
+                else{
+                    $response = array(
+                        "status" => false,
+                        "message" => "Error occurred while buying"
+                    );
+                }
+            }
+
+            echo json_encode($response);
+        }
+
+        public function buypackage(){
+            if($this->admin->checkIfUserBoughtPackage($_POST['package_id'], $_POST['user_id']) > 0){
+                $response = array(
+                    "status" => false,
+                    "is_bought"=> true,
+                    "message" => "You have already bought this package."
+                );
+            }
+            else{
+                $_POST['status'] = 1;
+                $_POST['created_at'] = time();
+                $data = $this->admin->addData($_POST, "package_users");
+
+                if($data){
+                    $response = array(
+                        "status" => true,
+                        "is_bought"=> false,
+                        "message" => "Congratulations, you have successully bought this package"
+                    );
+                } 
+                else{
+                    $response = array(
+                        "status" => false,
+                        "is_bought"=> false,
+                        "message" => "Error occurred while buying"
+                    );
+                }
+            }
             echo json_encode($response);
         }
 

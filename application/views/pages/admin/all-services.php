@@ -33,6 +33,7 @@
         <table class="table table-bordered" id="dataTable">
             <thead>
                 <tr>
+                    <th>S. No.</th>
                     <th>Name</th>
                     <th>Parent Category</th>
                     <th>Rate (In INR)</th>
@@ -40,8 +41,9 @@
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($allServices['result'] as $service) { ?>
+            <?php $i = 0; foreach ($allServices['result'] as $service) { $i++; ?>
                 <tr id="service_<?php echo $service->id; ?>">
+                    <td><?php echo $i; ?></td>
                     <td><?php echo $service->service_name; ?></td>
                     <td><?php if($service->parent_category == ""){echo "None";}else{echo $this->admin->getServiceById($service->parent_category)->service_name;}  ?></td>
                     <td><?php if($service->rate_per_min == ""){echo "NIL";}else{echo "&#8377;".$service->rate_per_min; if($service->mode=="fixed"){echo " (Fixed)";}else{echo " (Per min)";}} ?></td>
@@ -71,7 +73,7 @@ $(document).ready(function(){
                         $('#service_'+id.split("_")[1]).remove();
                     }
                     else{
-                        alert("Error while updating");
+                        alert("Error while deleting");
                     }
                 }
             });

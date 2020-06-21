@@ -39,6 +39,7 @@
         <table id="dataTable" class="table table-bordered">
             <thead>
                 <tr>
+                    <th>S. No.</th>
                     <th>Request No.</th>
                     <th>Customer Name</th>
                     <th>Vendor Assigned</th>
@@ -51,11 +52,12 @@
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($allRequests as $req) { ?>
+            <?php $i = 0; foreach ($allRequests as $req) { $i++; ?>
                 <tr>
+                    <td><?php echo $i; ?></td>
                     <td><b><?php echo $req->req_no; ?></b></td>
                     <td><?php echo $req->customer_name; ?></td>
-                    <td><?php echo $req->vendor_name; ?></td>
+                    <td><?php echo $req->vendor_name; ?> (ID - <?php echo $req->vendor_id; ?>)</td>
                     <td><b><i>
                     <?php 
                      if($req->services != ""){

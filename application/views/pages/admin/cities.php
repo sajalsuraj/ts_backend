@@ -41,13 +41,15 @@
         <table class="table table-bordered" id="dataTable">
             <thead>
                 <tr>
+                    <th>S. No.</th>
                     <th>City Name</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($allCities['result'] as $city) { ?>
+            <?php $i=0; foreach ($allCities['result'] as $city) { $i++; ?>
                 <tr id="b_<?php echo $city->id; ?>">
+                    <td><?php echo $i; ?></td>
                     <td><?php echo $city->name; ?></td>
                     <td>
                         <a id="update_<?php echo $city->id; ?>" class="btn btn-success btn-update">Update</a>

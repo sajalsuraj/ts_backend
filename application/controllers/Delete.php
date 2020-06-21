@@ -91,6 +91,43 @@
             }
         }
 
+        public function package(){
+            if($this->admin->deleteEntity("packages", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'Package deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
+        public function membership(){
+            if($this->admin->deleteEntity("membership", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'Membership deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
+        public function faqcontent(){
+            if($this->admin->deleteEntity("faq", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'FAQ deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
+        public function faqtitle(){
+            if($this->admin->deleteEntity("faq_title", $_POST['id'])){
+                $this->admin->deletefaqcontentbytitle($_POST['id']);
+                echo json_encode(['status' => true, 'message' => 'FAQ Title deleted & All related FAQ QAs deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
     }
 
 ?>

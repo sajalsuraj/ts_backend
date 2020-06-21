@@ -49,6 +49,43 @@ class Update extends CI_Controller
         }
     }
 
+    public function kycdata()
+    {
+        if(isset($_POST['id_type'])){
+            if($_POST['id_type'] == "PAN"){
+                if(isset($_FILES["img_front_side"]) && $_FILES["img_front_side"]["name"] != ""){
+                    $folder= './assets/admin/images/documents/';
+                    $temp = explode(".", $_FILES["img_front_side"]["name"]);
+                    $target_file_img = $folder. round(microtime(true)).'front.'.$temp[1]; 
+                    $_POST['img_front_side'] = round(microtime(true)).'front.'.$temp[1];
+                    move_uploaded_file($_FILES["img_front_side"]["tmp_name"], $target_file_img); 
+                }
+            }
+            else{
+                if(isset($_FILES["img_front_side"]) && $_FILES["img_front_side"]["name"] != ""){
+                    $folder= './assets/admin/images/documents/';
+                    $temp = explode(".", $_FILES["img_front_side"]["name"]);
+                    $target_file_img = $folder. round(microtime(true)).'front.'.$temp[1]; 
+                    $_POST['img_front_side'] = round(microtime(true)).'front.'.$temp[1];
+                    move_uploaded_file($_FILES["img_front_side"]["tmp_name"], $target_file_img);
+                }
+    
+                if(isset($_FILES["img_back_side"]) && $_FILES["img_back_side"]["name"] != ""){
+                    $folder= './assets/admin/images/documents/';
+                    $temp = explode(".", $_FILES["img_back_side"]["name"]);
+                    $target_file_img = $folder. round(microtime(true)).'back.'.$temp[1]; 
+                    $_POST['img_back_side'] = round(microtime(true)).'back.'.$temp[1];
+                    move_uploaded_file($_FILES["img_back_side"]["tmp_name"], $target_file_img); 
+                }
+            }
+        }
+        if ($this->user->kycupdate('kyc', $_POST, $_POST['user_id'])) {
+            echo json_encode(['status' => true, 'message' => "KYC updated"]);
+        } else {
+            echo json_encode(['status' => false, 'message' => "Not Updated"]);
+        }
+    }
+
     public function send_notification($apiKey, $to, $notification, $data)
     {
         $fields = array(
@@ -111,6 +148,16 @@ class Update extends CI_Controller
         $id = $_POST['user_id'];
         unset($_POST['user_id']);
         if ($this->user->userupdate('worker', $_POST, $id)) {
+            echo json_encode(['status' => true, 'message' => "Profile updated successfully"]);
+        } else {
+            echo json_encode(['status' => false, 'message' => "Nothing updated"]);
+        }
+    }
+
+    public function customer(){
+        $id = $_POST['id'];
+        unset($_POST['id']);
+        if ($this->user->userupdate('customer', $_POST, $id)) {
             echo json_encode(['status' => true, 'message' => "Profile updated successfully"]);
         } else {
             echo json_encode(['status' => false, 'message' => "Nothing updated"]);
@@ -1130,6 +1177,96 @@ class Update extends CI_Controller
     public function homepage()
     {
         if ($this->user->userupdate('homepage', $_POST, $_POST['id'])) {
+            $response = array(
+                "status" => true,
+                "message" => "Data updated"
+            );
+        } else {
+            $response = array(
+                "status" => false,
+                "message" => "Error occurred while updating"
+            );
+        }
+        echo json_encode($response);
+    }
+
+    public function package(){
+        if(isset($_FILES["image"])){
+            if($_FILES["image"]["error"] !== 4){
+                $folder= './assets/admin/images/';
+                $temp = explode(".", $_FILES["image"]["name"]);
+                $target_file_img = $folder. round(microtime(true)).'package.'.$temp[1]; 
+                $_POST['image'] = round(microtime(true)).'package.'.$temp[1];
+                move_uploaded_file($_FILES["image"]["tmp_name"], $target_file_img);  
+            }
+        }
+        $id = $_POST['id'];
+        unset($_POST['id']);
+ 
+        if ($this->user->userupdate('packages', $_POST, $id)) {
+            $response = array(
+                "status" => true,
+                "message" => "Package updated"
+            );
+        } else {
+            $response = array(
+                "status" => false,
+                "message" => "Nothing updated"
+            );
+        }
+        echo json_encode($response);
+    }
+
+    public function membership(){
+        if(isset($_FILES["image"])){
+            if($_FILES["image"]["error"] !== 4){
+                $folder= './assets/admin/images/';
+                $temp = explode(".", $_FILES["image"]["name"]);
+                $target_file_img = $folder. round(microtime(true)).'package.'.$temp[1]; 
+                $_POST['image'] = round(microtime(true)).'package.'.$temp[1];
+                move_uploaded_file($_FILES["image"]["tmp_name"], $target_file_img);  
+            }
+        }
+        $id = $_POST['id'];
+        unset($_POST['id']);
+ 
+        if ($this->user->userupdate('membership', $_POST, $id)) {
+            $response = array(
+                "status" => true,
+                "message" => "Membership updated"
+            );
+        } else {
+            $response = array(
+                "status" => false,
+                "message" => "Nothing updated"
+            );
+        }
+        echo json_encode($response);
+    }
+
+    public function faq()
+    {
+        $id = $_POST['id'];
+        unset($_POST['id']);
+        if ($this->user->userupdate('faq', $_POST, $id)) {
+            $response = array(
+                "status" => true,
+                "message" => "Data updated"
+            );
+        } else {
+            $response = array(
+                "status" => false,
+                "message" => "Error occurred while updating"
+            );
+        }
+        echo json_encode($response);
+    }
+
+    public function faqtitle()
+    {
+        $id = $_POST['id'];
+        unset($_POST['id']);
+        if ($this->user->userupdate('faq_title', $_POST, $id)) {
             $response = array(
                 "status" => true,
                 "message" => "Data updated"

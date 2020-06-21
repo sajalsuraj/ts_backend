@@ -40,13 +40,15 @@
         <table class="table table-bordered" id="dataTable">
             <thead>
                 <tr>
+                    <th>S. No.</th>
                     <th>Vehicle Name</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($allVehicles['result'] as $vehicle) { ?>
+            <?php $i=0; foreach ($allVehicles['result'] as $vehicle) { $i++; ?>
                 <tr id="b_<?php echo $vehicle->id; ?>">
+                    <td><?php echo $i; ?></td>
                     <td><?php echo $vehicle->vehicle_name; ?></td>
                     <td>
                         <a id="del_<?php echo $vehicle->id; ?>" class="btn btn-danger btn-del">Delete</a>

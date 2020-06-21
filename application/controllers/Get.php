@@ -713,7 +713,6 @@
 
             if($this->admin->checkIfUserExists($_POST['phone'], 'customer')){
                 $data = $this->customer->login($_POST);
-    
                 if($data){
 
                     $this->user->userupdate("customer",array("device_id" => $_POST['device_id']),$data->id);
@@ -1471,12 +1470,11 @@
             $data2 = array();
         
             $timeNow = date_create(date("Y-m-d"));
-
             foreach($packages as $package){
                 $timeEnd = date_create($package->to_date);
                 $diff = date_diff($timeNow, $timeEnd);
                 $interval = $diff->format("%R%a");
-                if($interval < 0){
+                if($interval > 0){
                     $package->image = base_url().'assets/admin/images/'.$package->image;
                     $data[] = $package;
                 }

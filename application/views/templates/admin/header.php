@@ -232,8 +232,9 @@ if ($this->session->has_userdata('type') == true) {
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
           <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-faq-title">Add faq title</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-faq-title">View All FAQ Titles</a>
           <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-faq-content">Add faq</a>
-          <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-faq">View All</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-faq">View All FAQs</a>
         </div>
       </li>
 

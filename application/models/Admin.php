@@ -50,7 +50,7 @@
         }
 
         public function getAllNotifications(){
-            $this->db->select('n.*, w.name as vendor_name');
+            $this->db->select('n.*, w.id as vendor_id, w.name as vendor_name');
             $this->db->from('admin_notification as n, worker as w');
             $this->db->where('n.vendor_id = w.id');
             $this->db->order_by('n.vendor_id','DESC');
@@ -101,6 +101,18 @@
         public function membershipById($id){
             $this->db->select('*');
             $query = $this->db->get_where('membership', array('id' => $id));
+            return $query->row();
+        }
+
+        public function faqById($id){
+            $this->db->select('*');
+            $query = $this->db->get_where('faq', array('id' => $id));
+            return $query->row();
+        }
+
+        public function faqTitleById($id){
+            $this->db->select('*');
+            $query = $this->db->get_where('faq_title', array('id' => $id));
             return $query->row();
         }
 
@@ -414,7 +426,7 @@
         }
 
         public function getAllBookingsDashboard(){
-            $this->db->select('c.name as customer_name, b.req_no, b.has_paid, b.started_at, b.paused_at, b.restarted_at, b.completed_at, b.booking_otp as booking_otp, b.is_otp_verified as is_otp_verified, b.booking_id, v.name as vendor_name, b.reached_location_at as reached_location_at, b.reason_to_cancel, b.amount, b.booking_status, b.created_at');
+            $this->db->select('c.name as customer_name, b.req_no, b.has_paid, b.started_at, b.paused_at, b.restarted_at, b.completed_at, b.booking_otp as booking_otp, b.is_otp_verified as is_otp_verified, b.booking_id, v.name as vendor_name, v.id as vendor_id, b.reached_location_at as reached_location_at, b.reason_to_cancel, b.amount, b.booking_status, b.created_at');
             $this->db->from('worker as v, booking as b, request as r, customer as c');
             $this->db->where('v.id = b.vendor_id and b.customer_id=c.id and r.req_no = b.req_no');
             $query = $this->db->get();
@@ -556,6 +568,11 @@
 
         public function deletebookingrequest($table, $req_no){
             $res = $this->db->delete($table, array('req_no' => $req_no, 'request_status' => 0)); 
+            return $res;
+        }
+
+        public function deletefaqcontentbytitle($id){
+            $res = $this->db->delete("faq", array('faq_title' => $id)); 
             return $res;
         }
 

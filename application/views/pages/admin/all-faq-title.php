@@ -28,11 +28,11 @@ a.btn{
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="#">FAQ</a>
+        <a href="#">FAQ Titles</a>
     </li>
     <li class="breadcrumb-item active">View All</li>
 </ol>
-<?php $allFaq = $this->admin->getAllFAQs(); ?>
+<?php $allFaq = $this->admin->getAllFAQTitles(); ?>
 <div class="row">
     <div class="col-md-12">
         <table id="dataTable" class="table table-bordered">
@@ -40,22 +40,18 @@ a.btn{
                 <tr>
                     <th>S. No.</th>
                     <th>Title</th>
-                    <th>Question</th>
-                    <th>Answer</th>
                     <th>Created At</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-            <?php $i=0; foreach ($allFaq as $faq) { $i++; ?>
+            <?php $i=0; foreach ($allFaq['result'] as $faq) { $i++; ?>
                 <tr id="faq_<?php echo $faq->id; ?>">
                     <td><?php echo $i; ?></td>
                     <td><?php echo $faq->title; ?></td>
-                    <td><?php echo $faq->faq_category; ?></td>
-                    <td><?php echo $faq->faq_description; ?></td>
                     <td><?php echo $faq->created_at; ?></td>
                     <td>
-                        <a href="edit-faq/<?php echo $faq->id; ?>" class="btn btn-primary">Edit</a>
+                        <a href="edit-faq-title/<?php echo $faq->id; ?>" class="btn btn-primary">Edit</a>
                         <button id="faq_<?php echo $faq->id; ?>" type="button" class="btn btn-danger btn-delete">Delete</a>
                     </td>
                 </tr>
@@ -68,10 +64,10 @@ a.btn{
 $('#dataTable').DataTable();
 $('#dataTable').on("click", ".btn-delete", function(){
         var id = $(this).attr('id');
-        if (confirm("Do you really want to delete this FAQ?") == true) {
+        if (confirm("Do you really want to delete this FAQ title? All related FAQ content will also get deleted") == true) {
             var obj = {id:id.split("_")[1]};
             $.ajax({
-                url:'<?php echo base_url(); ?>delete/faqcontent',
+                url:'<?php echo base_url(); ?>delete/faqtitle',
                 type: 'POST',
                 data: obj,
                 dataType:'json',

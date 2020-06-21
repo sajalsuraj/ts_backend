@@ -42,7 +42,7 @@
         }
 
         public function getCustomerData($data){
-            $this->db->select('id, name, email, phone, photo, referral, device_id');
+            $this->db->select('id, name, email, phone, photo, otp_verified, referral, device_id');
             $query = $this->db->get_where('customer', array('id' => $data))->row();
             return $query;
         }

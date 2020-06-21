@@ -48,6 +48,7 @@ $amount = $this->admin->getReferralAmount();
         <table id="dataTable" class="table table-bordered">
             <thead>
                 <tr>
+                    <th>S. No.</th>
                     <th>Referrer User ID</th>
                     <th>Referrer Name</th>
                     <th>Referee User ID</th>
@@ -56,8 +57,9 @@ $amount = $this->admin->getReferralAmount();
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($allReferrals as $ref) { ?>
+            <?php $i =0; foreach ($allReferrals as $ref) { $i++; ?>
                 <tr>
+                    <td><?php echo $i; ?></td>
                     <td><b><?php echo $ref->referred_by_id; ?></b></td>
                     <td><?php echo $ref->referred_by_name; ?></td>
                     <td><?php echo $ref->referred_id; ?></td>

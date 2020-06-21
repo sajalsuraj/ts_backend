@@ -39,6 +39,8 @@ td a{
         <table id="dataTable" class="table table-bordered">
             <thead>
                 <tr>
+                    <th>S. No.</th>
+                    <th>Vendor ID</th>
                     <th>Name</th>
                     <th>Phone</th>
                     <th>Email</th>
@@ -50,8 +52,10 @@ td a{
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($allWorker['result'] as $worker) { ?>
+            <?php $i =0; foreach ($allWorker['result'] as $worker) { $i++; ?>
                 <tr>
+                    <td><?php echo $i; ?></td>
+                    <td><?php echo $worker->id; ?></td>
                     <td><?php echo $worker->name; ?></td>
                     <td><?php echo $worker->phone; ?></td>
                     <td><?php echo $worker->email; ?></td>
@@ -118,7 +122,7 @@ td a{
         }
     });
     var workerId = "";
-    $('.edit-worker').click(function(){
+    $("#dataTable").on("click", ".edit-worker", function(){
         workerId = $(this).attr('id');
         $('#verifyPasswordModal').modal('show');
     });

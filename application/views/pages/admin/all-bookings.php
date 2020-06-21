@@ -39,6 +39,7 @@
         <table id="dataTable" class="table table-bordered">
             <thead>
                 <tr>
+                    <td>S. No.</td>
                     <th>Booking No.</th>
                     <th>Request No.</th>
                     <th>Customer Name</th>
@@ -57,12 +58,14 @@
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($allBookings as $book) { ?>
+            
+            <?php $i = 0; foreach ($allBookings as $book) { $i++; ?>
                 <tr>
+                    <td><?php echo $i; ?></td>
                     <td><b><?php echo $book->booking_id; ?></b></td>
                     <td><b><?php echo $book->req_no; ?></b></td>
                     <td><?php echo $book->customer_name; ?></td>
-                    <td><?php echo $book->vendor_name; ?></td>
+                    <td><?php echo $book->vendor_name; ?> (ID - <?php echo $book->vendor_id; ?>)</td>
                     <td>
                     <?php 
                      if($book->reached_location_at != ""){

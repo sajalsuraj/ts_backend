@@ -765,7 +765,6 @@
                     $_POST['image'] = round(microtime(true)).'package.'.$temp[1];
                     move_uploaded_file($_FILES["image"]["tmp_name"], $target_file_img);  
                 }
-                
             }
             $_POST['status'] = 1;
             $_POST['created_at'] = time();

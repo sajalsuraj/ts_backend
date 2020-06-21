@@ -49,6 +49,7 @@ $allNotifications = $this->admin->getAllNotifications();
         <table id="dataTable" class="table table-bordered">
             <thead>
                 <tr>
+                    <td>S. No.</td>
                     <th>Notification ID</th>
                     <th>Vendor Name</th>
                     <th>Notification Title</th>
@@ -57,10 +58,11 @@ $allNotifications = $this->admin->getAllNotifications();
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($allNotifications as $not) { ?>
+            <?php $i = 0; foreach ($allNotifications as $not) { $i++; ?>
                 <tr>
+                    <td><?php echo $i; ?></td>
                     <td><?php echo $not->id; ?></td>
-                    <td><b><?php echo $not->vendor_name; ?></b></td>
+                    <td><b><?php echo $not->vendor_name; ?></b> (ID - <?php echo $not->vendor_id; ?>)</td>
                     <td><?php echo $not->title; ?></td>
                     <td><?php echo $not->message; ?></td>
                     <td><b><?php $timeCreated = new DateTime('@'.$not->created_at); echo $timeCreated->format('Y-m-d H:i'); ?></b></td>
@@ -86,7 +88,7 @@ $allNotifications = $this->admin->getAllNotifications();
                     <label for="exampleInputEmail1">Select a vendor:</label>
                     <select name="vendor_id" class="form-control" id="vendorList">
                         <?php foreach ($allWorkers['result'] as $worker) { ?>
-                            <option value="<?php echo $worker->id; ?>"><?php echo $worker->name; ?></option>
+                            <option value="<?php echo $worker->id; ?>"><?php echo $worker->name; ?> - <?php echo $worker->id; ?></option>
                         <?php } ?>
                     </select>
                 </div>

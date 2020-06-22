@@ -20,6 +20,26 @@
             return $this->db->insert($type, $data) ? true : false ;
         }
 
+        public function crypt($string, $action){
+            // you may change these values to your own
+            $secret_key = 'my_simple_secret_key';
+            $secret_iv = 'my_simple_secret_iv';
+        
+            $output = false;
+            $encrypt_method = "AES-256-CBC";
+            $key = hash( 'sha256', $secret_key );
+            $iv = substr( hash( 'sha256', $secret_iv ), 0, 16 );
+        
+            if( $action == 'e' ) {
+                $output = base64_encode( openssl_encrypt( $string, $encrypt_method, $key, 0, $iv ) );
+            }
+            else if( $action == 'd' ){
+                $output = openssl_decrypt( base64_decode( $string ), $encrypt_method, $key, 0, $iv );
+            }
+        
+            return $output;
+        }
+
         public function getTerms($type){
             $query = $this->db->get_where('static', array('type' => $type));
             return $query->row();
@@ -51,9 +71,10 @@
 
         public function getAllNotifications(){
             $this->db->select('n.*, w.id as vendor_id, w.name as vendor_name');
-            $this->db->from('admin_notification as n, worker as w');
-            $this->db->where('n.vendor_id = w.id');
-            $this->db->order_by('n.vendor_id','DESC');
+            $this->db->from('admin_notification as n');
+            $this->db->join('worker w', 'n.vendor_id = w.id', 'left');
+            // $this->db->where('n.vendor_id = w.id');
+            $this->db->order_by('n.id','DESC');
             $query = $this->db->get();
             return $query->result();
         }
@@ -68,6 +89,12 @@
             $this->db->select('*');
             $query = $this->db->get_where("worker", array('id' => $id));
             return $query->row();
+        }
+
+        public function getAdminByEmail($email){
+            $this->db->select('*');
+            $query = $this->db->get_where("worker", array('email' => $email, 'type'=>'admin'));
+            return $query->num_rows() > 0 ? true: false;
         }
 
         public function getAwards($id){
@@ -405,6 +432,14 @@
             $this->db->select('w.id, w.name, w.phone, w.primary_profession, w.lat, w.lng');
             $this->db->from('worker as w, kyc as k');
             $this->db->where('w.otp_verified = 1 and k.user_id = w.id and k.is_verified = 1 and w.sub_profession REGEXP REPLACE("'.$profession.'", ",", "(\,|$)|")');
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function getAllVerifiedVendors(){
+            $this->db->select('w.id, w.name, w.phone, w.primary_profession, w.device_id, w.lat, w.lng');
+            $this->db->from('worker as w, kyc as k');
+            $this->db->where('w.otp_verified = 1 and k.user_id = w.id and k.is_verified = 1');
             $query = $this->db->get();
             return $query->result();
         }

@@ -62,7 +62,11 @@ $allNotifications = $this->admin->getAllNotifications();
                 <tr>
                     <td><?php echo $i; ?></td>
                     <td><?php echo $not->id; ?></td>
+                    <?php if($not->vendor_name != NULL){ ?>
                     <td><b><?php echo $not->vendor_name; ?></b> (ID - <?php echo $not->vendor_id; ?>)</td>
+                    <?php }else{ ?>
+                        <td><b>All Vendors</b></td>
+                    <?php } ?>
                     <td><?php echo $not->title; ?></td>
                     <td><?php echo $not->message; ?></td>
                     <td><b><?php $timeCreated = new DateTime('@'.$not->created_at); echo $timeCreated->format('Y-m-d H:i'); ?></b></td>
@@ -84,6 +88,10 @@ $allNotifications = $this->admin->getAllNotifications();
       <form id="notificationForm">
         <div class="modal-body">
             <div class="container-fluid">
+                <div class="form-group">
+                    <input name="allchecked" type="checkbox" id="selectAll" />
+                    <label class="form-check-label" for="selectAll">Select all vendors</label>
+                </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Select a vendor:</label>
                     <select name="vendor_id" class="form-control" id="vendorList">
@@ -113,6 +121,17 @@ $allNotifications = $this->admin->getAllNotifications();
 </div>
 <script>
     $('#dataTable').DataTable();
+
+    $('#selectAll').change(function() {
+        if(this.checked) {
+            $('#vendorList').prop('disabled', 'disabled');
+            $(this).prop("checked", returnVal);
+        }
+        else{
+            $('#vendorList').prop('disabled', false);
+        }
+    });
+
     $("#notificationForm").submit(function(event) { 
         event.preventDefault();
     }).validate({

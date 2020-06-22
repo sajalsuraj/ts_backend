@@ -24,6 +24,10 @@ if ($this->session->has_userdata('type') == true) {
     a.edit-worker {
         color: #fff !important;
     }
+    .eye-icon{
+        margin-left: 5px;
+        cursor: pointer;
+    }
 </style>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -43,6 +47,7 @@ if ($this->session->has_userdata('type') == true) {
                     <th>Name</th>
                     <th>Phone</th>
                     <th>Email</th>
+                    <th>Password</th>
                     <th>Photo</th>
                     <th>Verification Status</th>
                     <th>Registered on</th>
@@ -58,6 +63,7 @@ if ($this->session->has_userdata('type') == true) {
                         <td><?php echo $customer->name; ?></td>
                         <td><?php echo $customer->phone; ?></td>
                         <td><?php echo $customer->email; ?></td>
+                        <td><span id="pass_<?php echo $i; ?>">************</span><i data-id="<?php echo $i; ?>" data-password="<?php echo $this->admin->crypt($customer->password, 'd'); ?>" class="fas fa-eye-slash eye-icon"></i></td>
                         <td><?php if ($customer->photo == "") { ?><span class="red-font">Not Uploaded</span><?php } else { ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->img_back_side; ?>" /><?php } ?></td>
                         <td><b><?php if ($customer->otp_verified == "0") {
                                     echo "<span class='red-font'>Not Verified</span>";
@@ -129,6 +135,23 @@ if ($this->session->has_userdata('type') == true) {
                     }
                 }
             });
+        }
+    });
+
+    $("#dataTable").on("click", ".eye-icon", function(){
+
+        if($(this).hasClass('fa-eye-slash')){
+            var pass = $(this).attr('data-password');
+            var id = $(this).attr('data-id');
+            $('#pass_'+id).html(pass);
+            $(this).removeClass('fa-eye-slash');
+            $(this).addClass('fa-eye');
+        }
+        else if($(this).hasClass('fa-eye')){
+            var id = $(this).attr('data-id');
+            $('#pass_'+id).html("************");
+            $(this).addClass('fa-eye-slash');
+            $(this).removeClass('fa-eye');
         }
     });
 

@@ -44,6 +44,7 @@ td a{
                     <th>Name</th>
                     <th>Phone</th>
                     <th>Email</th>
+                    <th>Password</th>
                     <th>Profession</th>
                     <th>City</th>
                     <th>Verification Status</th>
@@ -59,6 +60,7 @@ td a{
                     <td><?php echo $worker->name; ?></td>
                     <td><?php echo $worker->phone; ?></td>
                     <td><?php echo $worker->email; ?></td>
+                    <td><span id="pass_<?php echo $i; ?>">************</span><i data-id="<?php echo $i; ?>" data-password="<?php echo $this->admin->crypt($worker->password, 'd'); ?>" class="fas fa-eye-slash eye-icon"></i></td>
                     <td><?php echo $worker->primary_profession; ?></td>
                     <td><?php echo $worker->city; ?></td>
                     <td><b><?php if($worker->otp_verified == "0"){echo "<span class='red-font'>Not Verified</span>";}else{echo "Verified <i class='fas green-font fa-check-circle'></i>";} ?></b></td>
@@ -125,6 +127,23 @@ td a{
     $("#dataTable").on("click", ".edit-worker", function(){
         workerId = $(this).attr('id');
         $('#verifyPasswordModal').modal('show');
+    });
+
+    $("#dataTable").on("click", ".eye-icon", function(){
+
+        if($(this).hasClass('fa-eye-slash')){
+            var pass = $(this).attr('data-password');
+            var id = $(this).attr('data-id');
+            $('#pass_'+id).html(pass);
+            $(this).removeClass('fa-eye-slash');
+            $(this).addClass('fa-eye');
+        }
+        else if($(this).hasClass('fa-eye')){
+            var id = $(this).attr('data-id');
+            $('#pass_'+id).html("************");
+            $(this).addClass('fa-eye-slash');
+            $(this).removeClass('fa-eye');
+        }
     });
 
     $('#verifyPassword').click(function(){

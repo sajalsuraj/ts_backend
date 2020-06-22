@@ -10,7 +10,7 @@
     <!-- /.content-wrapper -->
    
   </div>
-  <?php if($page !== "login"){ ?>
+  <?php if($page !== "login" && $page !== "forgot-password"){ ?>
       <!-- Sticky Footer -->
       <footer class="sticky-footer">
         <div class="container my-auto">

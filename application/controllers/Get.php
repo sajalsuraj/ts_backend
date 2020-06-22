@@ -65,7 +65,7 @@
 
         public function adminLogin(){   
 
-            $_POST['password'] = md5($_POST['password']);
+            $_POST['password'] = $this->admin->crypt($_POST['password'], 'e');
 
             $data = $this->admin->login($_POST);  
 
@@ -89,7 +89,7 @@
 
         public function verifyadminpassword(){
             $adminData = $this->admin->getAdminProfile($_POST['id']);
-            if ($adminData->password === md5($_POST['password'])) {
+            if ($adminData->password === $this->admin->crypt($_POST['password'], 'e')) {
                 
                 $response = array("message" => "Password is incorrect", "status" => true);
                 
@@ -99,11 +99,47 @@
             echo json_encode($response);
         }
 
+        public function adminemail(){
+            $checkIfAdmin = $this->admin->getAdminByEmail($_POST['email']);
+            if($checkIfAdmin){
+                $newpass = "admin".rand();
+                $data = array("password"=>$this->admin->crypt($newpass, 'e'));
+                if($this->user->updateUserIfByEmail('worker', $data, $_POST['email'])){
+                    $msg = "Your password has been changed. Use this password to login - ".$newpass;
+
+                    $headers = "From: noreply@troubleshooters.services" . "\r\n" .
+                        'X-Mailer: PHP/' . phpversion();
+                    // send email
+
+                    $mail = mail($_POST['email'], "Admin - Troubleshooters", $msg, $headers);
+
+                    if (!$mail) {
+                        $response = array(
+                            "status" => false,
+                            "message" => "Error occurred while updating password, try again"
+                        );
+                    } else {
+                        $response = array(
+                            "status" => true,
+                            "message" => "Password updated, email sent to the admin"
+                        );
+                    }
+                }
+            }
+            else{
+                $response = array(
+                    "status" => false,
+                    "message" => "This user doesn't exist, not a valid email"
+                );
+            }
+            echo json_encode($response); 
+        }
+
         //APIs
         public function userlogin(){
 
             $post = json_decode($this->security->xss_clean($this->input->raw_input_stream), true);
-            $post['password'] = md5($post['password']);
+            $post['password'] = $this->admin->crypt($post['password'], 'e');
 
             if($this->admin->checkIfUserExists($post['phone'], 'worker')){
                 $data = $this->user->login($post);
@@ -709,7 +745,7 @@
         public function customerlogin(){
 
             //$_POST = json_decode($this->security->xss_clean($this->input->raw_input_stream), true);
-            $_POST['password'] = md5($_POST['password']);
+            $_POST['password'] = $this->admin->crypt($_POST['password'], 'e');
 
             if($this->admin->checkIfUserExists($_POST['phone'], 'customer')){
                 $data = $this->customer->login($_POST);
@@ -1259,13 +1295,15 @@
             $tokenData = $this->user->getTokenData($received_Token);
             
             if(isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])){
+                $referal = $this->admin->getReferralAmount();
                 $userData = $this->user->getCustomerData($_POST['user_id']);
 
                 if($userData != NULL){
                     $response = array(
                         "status" => true,
                         "message" => "User info available",
-                        "data" => $userData
+                        "data" => $userData,
+                        'refer_amount'=> $referal->amount
                     );
                 }
             }

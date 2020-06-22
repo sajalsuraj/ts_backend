@@ -75,7 +75,7 @@ if ($this->session->has_userdata('type') == true) {
                             }
                             ?>
                         </td>
-                        <td><?php if ($p->image != "") { ?><img class="p-imags" src="<?php echo base_url() . 'assets/images/' . $p->image; ?>" /><?php } ?></td>
+                        <td><?php if ($p->image != "") { ?><img class="p-imags" src="<?php echo base_url() . 'assets/admin/images/' . $p->image; ?>" /><?php } ?></td>
                         <td><?php if ($p->status == 1) { ?><b><span class="green-font">Activated</span></b><?php } else { ?><span class="red-font">Deactivated</span><?php } ?></td>
                         <td><?php echo $p->from_date; ?></td>
                         <td><?php echo $p->to_date; ?></td>

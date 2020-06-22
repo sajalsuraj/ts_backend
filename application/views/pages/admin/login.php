@@ -7,6 +7,13 @@
 	}
 
 ?>
+<style>
+    a.forgot-pass{
+        float: right;
+        margin-top: 10px;
+        color: #6954e1;
+    }
+</style>
 <div class="container">
     <div class="card card-login mx-auto mt-5">
         <div class="card-header">Login</div>
@@ -32,7 +39,8 @@
                     </label>
                 </div>
             </div> -->
-            <button class="btn btn-primary btn-block" type="submit">Login</a>
+            <button class="btn btn-primary btn-block" type="submit">Login</button>
+            <a class="forgot-pass" href="<?php echo base_url(); ?>users/forgot-password">Forgot Password?</a>
         </form>
         <!-- <div class="text-center">
             <a class="d-block small mt-3" href="register.html">Register an Account</a>

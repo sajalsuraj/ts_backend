@@ -217,8 +217,8 @@ class Update extends CI_Controller
     public function adminpassword()
     {
         $adminData = $this->admin->getAdminProfile($_POST['id']);
-        if ($adminData->password === md5($_POST['old_password'])) {
-            $passwordStatus = $this->user->userupdate("worker", array("password" => md5($_POST['new_password'])), $_POST['id']);
+        if ($adminData->password === $this->admin->crypt($_POST['old_password'], 'e')) {
+            $passwordStatus = $this->user->userupdate("worker", array("password" => $this->admin->crypt($_POST['new_password'], 'e')), $_POST['id']);
             if ($passwordStatus) {
                 $response = array("message" => "Password updated", "status" => $passwordStatus);
             } else {
@@ -997,7 +997,7 @@ class Update extends CI_Controller
     {
         $phone = $_POST['phone'];
         unset($_POST['phone']);
-        $_POST['password'] = md5($_POST['password']);
+        $_POST['password'] = $this->admin->crypt($_POST['password'], 'e');
         if ($this->user->userupdatebyphone('worker', $_POST, $phone)) {
 
             $user = $this->admin->getUserByPhone($phone, "worker");
@@ -1034,7 +1034,7 @@ class Update extends CI_Controller
     {
         $phone = $_POST['phone'];
         unset($_POST['phone']);
-        $_POST['password'] = md5($_POST['password']);
+        $_POST['password'] = $this->admin->crypt($_POST['password'], 'e');
         if ($this->user->userupdatebyphone('customer', $_POST, $phone)) {
 
             $user = $this->admin->getUserByPhone($phone, "customer");

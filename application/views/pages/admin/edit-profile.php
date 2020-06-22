@@ -41,15 +41,15 @@ if ($this->session->has_userdata('type') == true) {
                 <tbody>
                     <tr>
                         <td>Name:</td>
-                        <td><?php echo $user->name; ?></td>
+                        <td> <input name="name" required class="form-control" value="<?php echo $user->name; ?>" type="text"></td>
                     </tr>
                     <tr>
                         <td>Phone No:</td>
-                        <td><?php echo $user->phone; ?></td>
+                        <td> <input name="phone" required class="form-control" value="<?php echo $user->phone; ?>" type="number"></td>
                     </tr>
                     <tr>
                         <td>Email ID:</td>
-                        <td><?php echo $user->email; ?></td>
+                        <td><input name="email" required class="form-control" value="<?php echo $user->email; ?>" type="email"></td>
                     </tr>
                     <?php if (!$usertype) { ?>
                         <tr>

@@ -107,6 +107,12 @@
             return true;
         }
 
+        public function updateUserIfByEmail($table, $data, $email){
+            $this->db->where('email', $email);
+            $this->db->update($table, $data); 
+            return ($this->db->affected_rows() > 0) ? true : false; 
+        }
+
         public function checkUserOtp($phone, $otp, $type){
             $this->db->select('*');
             $query = $this->db->get_where($type, array('phone' => $phone, 'otp' => $otp));

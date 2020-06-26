@@ -15,6 +15,9 @@
 .table{
     font-size: 12px;
 }
+.btn-del{
+    color: #fff !important;
+}
 .grey-font{
     color: grey;
 }
@@ -55,11 +58,12 @@ $allNotifications = $this->admin->getAllNotifications();
                     <th>Notification Title</th>
                     <th>Message</th>
                     <th>Created at</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
             <?php $i = 0; foreach ($allNotifications as $not) { $i++; ?>
-                <tr>
+                <tr id="b_<?php echo $not->id; ?>">
                     <td><?php echo $i; ?></td>
                     <td><?php echo $not->id; ?></td>
                     <?php if($not->vendor_name != NULL){ ?>
@@ -70,6 +74,7 @@ $allNotifications = $this->admin->getAllNotifications();
                     <td><?php echo $not->title; ?></td>
                     <td><?php echo $not->message; ?></td>
                     <td><b><?php $timeCreated = new DateTime('@'.$not->created_at); echo $timeCreated->format('Y-m-d H:i'); ?></b></td>
+                    <td><a id="del_<?php echo $not->id; ?>" class="btn btn-danger btn-del">Delete</a></td>
                 </tr>
             <?php } ?>
             </tbody>
@@ -157,6 +162,30 @@ $allNotifications = $this->admin->getAllNotifications();
                     }
                 }
             });
+            
+        }
+    });
+
+    $('#dataTable').on("click", ".btn-del", function(){
+        var id = $(this).attr('id');
+        if (confirm("Do you really want to delete this notification?") == true) {
+            var obj = {id:id.split("_")[1]};
+            $.ajax({
+                url:'<?php echo base_url(); ?>delete/notification',
+                type: 'POST',
+                data: obj,
+                dataType:'json',
+                success:function(as){
+                    if(as.status == true){
+                        alert(as.message);
+                        $('#b_'+id.split("_")[1]).remove();
+                    }
+                    else{
+                        alert("Error while updating");
+                    }
+                }
+            });
+        } else {
             
         }
     });

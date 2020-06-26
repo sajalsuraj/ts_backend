@@ -55,6 +55,10 @@
                 <input type="text" class="form-control" placeholder="30, 40, 50, etc" name="rate_per_min" />
             </div>
             <div class="form-group rate">
+                <label>Average Service time taken:</label>
+                <input type="text" class="form-control" placeholder="Eg. 30 Min" name="avg_time_taken" />
+            </div>
+            <div class="form-group rate">
                 <label>Rate mode:</label>
                 <select class="form-control" name="mode">
                     <option value="rate_per_min">Rate per minute</option>
@@ -116,6 +120,7 @@
                     formData.append('parent_category', $('#parent').val());
                     formData.append('rate_per_min', $('input[name="rate_per_min"]').val());
                     formData.append('detail', $('input[name="detail"]').val());
+                    formData.append('avg_time_taken', $('input[name="avg_time_taken"]').val());
                 }
                 formData.append('service_name', $('input[name="service_name"]').val());
                 

@@ -95,18 +95,18 @@ class Add extends CI_Controller
                 if (!isset($post->lat) && !isset($post->lng)) {
                     $response = array(
                         "status" => false,
-                        "message" => "User location(Lat, Lng) is missing"
+                        "message" => "Not able to fetch the location. Please turn on your GPS."
                     );
                 } else {
                     if (empty($post->lat) && empty($post->lng)) {
                         $response = array(
                             "status" => false,
-                            "message" => "User location(Lat, Lng) should not be empty"
+                            "message" => "Not able to fetch the location. Please turn on your GPS."
                         );
                     } else if (empty($post->lat) || empty($post->lng)) {
                         $response = array(
                             "status" => false,
-                            "message" => "User location(Lat, Lng) should not be empty, Both latitude and longitude mandatory"
+                            "message" => "Not able to fetch the location. Please turn on your GPS."
                         );
                     } else {
                         $profsarr = "";
@@ -150,6 +150,42 @@ class Add extends CI_Controller
                 }
             }
         }
+        echo json_encode($response);
+    }
+
+    public function admin(){
+
+        if(isset($_POST['phone'])){
+            if($this->admin->checkIfUserExists($_POST['phone'], "worker")){
+                $response = array("message"=>"User already exists", "status"=>false);
+            }
+            else if($this->admin->checkIfUserExistsByEmail($_POST['email'], "worker")){
+                $response = array("message"=>"User already exists", "status"=>false);
+            }
+            else{
+                $roles = "";
+                foreach($_POST['role'] as $role){
+                    $roles .= $role.",";
+                }
+                $roles = rtrim($roles, ",");
+                unset($_POST['role']);
+
+                $_POST['roles'] = $roles;
+                $_POST['type'] = "admin";
+                $_POST['password'] = $this->admin->crypt($_POST['password'], 'e');
+
+                if ($this->admin->addData($_POST, 'worker')) {
+                    $response =  array("message"=>"Admin created", "status"=>true);
+                }
+                else{
+                    $response = array("message"=>"Admin not created, error occurred", "status"=>false);
+                }
+            }
+        }
+        else{
+            $response = array("message"=>"Phone number is required", "status"=>false);
+        }
+
         echo json_encode($response);
     }
 
@@ -469,36 +505,23 @@ class Add extends CI_Controller
         echo json_encode($response);
     }
 
-    public function banner()
+    public function partner()
     {
-        if (isset($_FILES["banner_image"])) {
-            if (!empty($_FILES["banner_image"])) {
+        if (isset($_FILES["image"])) {
+            if ($_FILES["image"]["error"] !== 4) {
                 $folder = './assets/admin/images/banner/';
-                $temp = explode(".", $_FILES["banner_image"]["name"]);
+                $temp = explode(".", $_FILES["image"]["name"]);
                 $target_file_img = $folder . round(microtime(true)) . 'front.' . $temp[1];
-                $_POST['banner_image'] = round(microtime(true)) . 'front.' . $temp[1];
-                move_uploaded_file($_FILES["banner_image"]["tmp_name"], $target_file_img);
-
-                $_POST['status'] = "true";
-
-                $data = $this->admin->addData($_POST, "banner");
-
-                if ($data) {
-                    $response = array(
-                        "status" => true,
-                        "message" => "Banner uploaded succesfully"
-                    );
-                }
-            } else {
-                $response = array(
-                    "status" => false,
-                    "message" => "Error occurred while uploading, image file should not be empty"
-                );
+                $_POST['image'] = round(microtime(true)) . 'front.' . $temp[1];
+                move_uploaded_file($_FILES["image"]["tmp_name"], $target_file_img);
             }
-        } else {
+        }
+        $data = $this->admin->addData($_POST, "partners");
+
+        if ($data) {
             $response = array(
-                "status" => false,
-                "message" => "Error occurred while uploading, image file is mandatory"
+                "status" => true,
+                "message" => "Partner created succesfully"
             );
         }
 
@@ -594,6 +617,19 @@ class Add extends CI_Controller
         $data = $this->admin->addData($_POST, "comments");
 
         if ($data) {
+            $booking = $this->admin->getBookingByID($_POST['booking_id']);
+            $vendor = $this->user->getProfileData($booking->vendor_id);
+            $notificationMessage = array();
+            $notificationMessage = array(
+                "title" => "Customer commented:",
+                "body" => $_POST['comment']
+            );
+            $bodyData = array(
+                'action' => "vendor_notification"
+            );
+            $api_key = "AAAA0W6cR-g:APA91bGr4S_9LPdoWVc9k3aY5_6Nh3e_orRbsj6dLOq59nAC5GmLS9-21Au2figrAoCu9VjrsgWsd3taKiPvj2s2-niwWGDGA0B5KGGjFdCCZMQMcKdelOcexyXyuNcmcm_iRW9qGEJr";
+            $to = $vendor->device_id;
+            $this->send_notification($api_key, $to, $notificationMessage, $bodyData);
             echo json_encode(['status' => true, 'message' => 'Comment added successfully']);
         } else {
             echo json_encode(['status' => false, 'message' => 'Error while adding']);

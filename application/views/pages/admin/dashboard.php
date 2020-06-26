@@ -1,8 +1,12 @@
 <?php
+$roles = [];
 if ($this->session->has_userdata('type') == true) {
     if ($this->session->userdata('type') == "superadmin" || $this->session->userdata('type') == "admin" || $this->session->userdata('type') == "worker") {
-        if($this->session->userdata('type') == "admin"){
+        if($this->session->userdata('type') == "admin" || $this->session->userdata('type') == "superadmin"){
             $usertype = true;
+            if($this->session->userdata('type') == "admin"){
+                $roles = explode(",", $this->session->userdata('roles'));
+            }
         }
         else{
             $usertype = false;
@@ -42,6 +46,7 @@ $allMemberships = $this->admin->getAllMemberships();
  
     
     <?php if($usertype){ ?>
+        <?php if($this->session->userdata('type') == "admin"?(in_array("workers", $roles)?true:false):true){ ?>
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card text-white bg-danger o-hidden h-100">
                 <div class="card-body">
@@ -58,7 +63,9 @@ $allMemberships = $this->admin->getAllMemberships();
                 </a>
             </div>
         </div>
+        <?php } ?>
 
+        <?php if($this->session->userdata('type') == "admin"?(in_array("services", $roles)?true:false):true){ ?>
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card text-white bg-success o-hidden h-100">
                 <div class="card-body">
@@ -75,7 +82,9 @@ $allMemberships = $this->admin->getAllMemberships();
                 </a>
             </div>
         </div>
+        <?php } ?>
 
+        <?php if($this->session->userdata('type') == "admin"?(in_array("customers", $roles)?true:false):true){ ?>
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card text-white bg-primary o-hidden h-100">
                 <div class="card-body">
@@ -92,7 +101,9 @@ $allMemberships = $this->admin->getAllMemberships();
                 </a>
             </div>
         </div>
+        <?php } ?>
 
+        <?php if($this->session->userdata('type') == "admin"?(in_array("service_requests", $roles)?true:false):true){ ?>
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card text-white bg-danger o-hidden h-100">
                 <div class="card-body">
@@ -109,7 +120,9 @@ $allMemberships = $this->admin->getAllMemberships();
                 </a>
             </div>
         </div>
+        <?php } ?>
 
+        <?php if($this->session->userdata('type') == "admin"?(in_array("bookings", $roles)?true:false):true){ ?>
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card text-white bg-primary o-hidden h-100">
                 <div class="card-body">
@@ -126,7 +139,9 @@ $allMemberships = $this->admin->getAllMemberships();
                 </a>
             </div>
         </div>
+        <?php } ?>
 
+        <?php if($this->session->userdata('type') == "admin"?(in_array("referrals", $roles)?true:false):true){ ?>
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card text-white bg-danger o-hidden h-100">
                 <div class="card-body">
@@ -143,7 +158,9 @@ $allMemberships = $this->admin->getAllMemberships();
                 </a>
             </div>
         </div>
+        <?php } ?>
 
+        <?php if($this->session->userdata('type') == "admin"?(in_array("memberships", $roles)?true:false):true){ ?>
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card text-white bg-danger o-hidden h-100">
                 <div class="card-body">
@@ -160,6 +177,7 @@ $allMemberships = $this->admin->getAllMemberships();
                 </a>
             </div>
         </div>
+        <?php } ?>
 
     <?php }else{ ?>
         <?php 

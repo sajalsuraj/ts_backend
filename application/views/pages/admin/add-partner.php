@@ -24,7 +24,7 @@
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="#">Banners</a>
+        <a href="#">Partner</a>
     </li>
     <li class="breadcrumb-item active">Add a new one</li>
 </ol>
@@ -33,8 +33,16 @@
     <div class="col-md-12">
         <form id="addBanners">
             <div class="form-group">
+                <label>Name:</label>
+                <input type="text" placeholder="Enter name" class="form-control" name="name" />
+            </div>
+            <div class="form-group">
                 <label>Upload image:</label>
-                <input type="file" name="banner_image">
+                <input type="file" name="image">
+            </div>
+            <div class="form-group">
+                <label>Show in homepage:</label>
+                <input type="checkbox" name="show_in_homepage">
             </div>
             <div class="form-group">
                 <button class="btn btn-primary" type="submit">Submit</button>
@@ -50,12 +58,12 @@
             event.preventDefault();
         }).validate({
             rules: {
-
+                
             },
             submitHandler: function(form) {
                 
                 $.ajax({
-                    url:'<?php echo base_url(); ?>add/banner',
+                    url:'<?php echo base_url(); ?>add/partner',
                     type: 'POST',
                     data: new FormData(form),
                     dataType:'json',

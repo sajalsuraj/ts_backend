@@ -50,9 +50,9 @@
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="<?php echo base_url(); ?>users/all-package">Package</a>
+        <a href="<?php echo base_url(); ?>users/all-packages">Package</a>
     </li>
-    <li class="breadcrumb-item active">Add a new one</li>
+    <li class="breadcrumb-item active">Edit</li>
 </ol>
 
 <?php $services = $this->admin->getAllServices(); ?>
@@ -66,6 +66,10 @@ $package = $this->admin->packageById($id); $packageServices = json_decode($packa
             <div class="form-group">
                 <label>Name:</label>
                 <input type="text" name="name" value="<?php echo $package->name; ?>" required placeholder="Provide a name..." class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="terms" class="form-control" name="desc_package"><?php echo $package->desc_package; ?></textarea>
             </div>
             <div class="form-group">
                 <label>Select a service:</label>
@@ -86,6 +90,10 @@ $package = $this->admin->packageById($id); $packageServices = json_decode($packa
                 </div>
             </div>
             <div class="form-group">
+                <label>Show in homepage:</label>
+                <input <?php if($package->show_in_homepage == "on"){echo "checked";} ?> type="checkbox" value="<?php echo $package->show_in_homepage; ?>" name="show_in_homepage">
+            </div>
+            <div class="form-group">
                 <label>Price:</label>
                 <input required type="number" value="<?php echo $package->price; ?>" name="price" class="form-control" placeholder="Eg: 5000" />
             </div>
@@ -96,6 +104,8 @@ $package = $this->admin->packageById($id); $packageServices = json_decode($packa
     </div>
 </div>
 <script>
+
+    CKEDITOR.replace( 'desc_package' );
    
     $('input[name=from_date]').datepicker(
         {
@@ -170,6 +180,18 @@ $package = $this->admin->packageById($id); $packageServices = json_decode($packa
         });
     }
 
+    var cbStatus = "";
+    cbStatus = $('input[type=checkbox]').val();
+    
+    $('input[type=checkbox]').click(function(){
+        if(this.checked){
+            cbStatus = "on";
+        }
+        else{
+            cbStatus = "";
+        }
+    });
+
     function addMoreServicesField(){
         count++;
         let opt = "";
@@ -241,9 +263,14 @@ $package = $this->admin->packageById($id); $packageServices = json_decode($packa
                     serArr.push({"service": $('#ser_'+countArr[i]).val(), "price": $('#price_'+countArr[i]).val(), "quantity": $('#quantity_'+countArr[i]).val(), "mode": $('#mode_'+countArr[i]).val()});
                 }
 
+                for ( instance in CKEDITOR.instances ) {
+                    CKEDITOR.instances[instance].updateElement();
+                }
+
                 var fD = new FormData(form);
                 fD.append('services', JSON.stringify(serArr));
                 fD.append('id', <?php echo $id; ?>);
+                fD.append('show_in_homepage', cbStatus);
                 $.ajax({
                     url:'<?php echo base_url(); ?>update/package',
                     type: 'POST',

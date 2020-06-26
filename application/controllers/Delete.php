@@ -42,9 +42,27 @@
             $this->deleteservice($_POST['id']);
         }
 
-        public function banner(){
-            if($this->admin->deleteEntity("banner", $_POST['id'])){
-                echo json_encode(['status' => true, 'message' => 'Banner deleted successfully']);
+        public function partner(){
+            if($this->admin->deleteEntity("partners", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'Partner deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
+        public function admin(){
+            if($this->admin->deleteEntity("worker", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'Admin deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
+        public function notification(){
+            if($this->admin->deleteEntity("admin_notification", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'Notification deleted successfully']);
             }
             else{
                 echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);

@@ -1103,6 +1103,26 @@ class Update extends CI_Controller
         echo json_encode($response);
     }
 
+    public function checkhomepage()
+    {
+        $id = $_POST['id'];
+        $table = $_POST['type'];
+        unset($_POST['id']);
+        unset($_POST['type']);
+        if ($this->user->userupdate($table, $_POST, $id)) {
+            $response = array(
+                "status" => true,
+                "message" => "Data updated"
+            );
+        } else {
+            $response = array(
+                "status" => false,
+                "message" => "Error occurred while updating"
+            );
+        }
+        echo json_encode($response);
+    }
+
     public function banner()
     {
         $banner_id = $_POST['id'];
@@ -1267,6 +1287,31 @@ class Update extends CI_Controller
         $id = $_POST['id'];
         unset($_POST['id']);
         if ($this->user->userupdate('faq_title', $_POST, $id)) {
+            $response = array(
+                "status" => true,
+                "message" => "Data updated"
+            );
+        } else {
+            $response = array(
+                "status" => false,
+                "message" => "Error occurred while updating"
+            );
+        }
+        echo json_encode($response);
+    }
+    public function admin()
+    {
+        $id = $_POST['id'];
+        unset($_POST['id']);
+        $roles = "";
+        foreach($_POST['role'] as $role){
+            $roles .= $role.",";
+        }
+        $roles = rtrim($roles, ",");
+        unset($_POST['role']);
+        $_POST['roles'] = $roles;
+        $_POST['password'] = $this->admin->crypt($_POST['password'], 'e');
+        if ($this->user->userupdate('worker', $_POST, $id)) {
             $response = array(
                 "status" => true,
                 "message" => "Data updated"

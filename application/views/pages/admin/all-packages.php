@@ -43,8 +43,10 @@ if ($this->session->has_userdata('type') == true) {
                     <th>S. No.</th>
                     <th>Package Name</th>
                     <th>Services</th>
+                    <th>Description</th>
                     <th>Image</th>
                     <th>Status</th>
+                    <th>Show on homepage</th>
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Price</th>
@@ -73,8 +75,12 @@ if ($this->session->has_userdata('type') == true) {
                             }
                             ?>
                         </td>
+                        <td><?php echo strip_tags($p->desc_package); ?></td>
                         <td><?php if ($p->image != "") { ?><img class="p-imags" src="<?php echo base_url() . 'assets/admin/images/' . $p->image; ?>" /><?php } ?></td>
                         <td><?php if ($p->status == 1) { ?><b><span class="green-font">Activated</span></b><?php } else { ?><span class="red-font">Deactivated</span><?php } ?></td>
+                        <td><input class="check-home" id="c_<?php echo $p->id; ?>" type="checkbox" <?php if ($p->show_in_homepage == "on") {
+                                                        echo "checked";
+                                                    } ?>></td>
                         <td><?php echo $p->from_date; ?></td>
                         <td><?php echo $p->to_date; ?></td>
                         <td>₹ <?php echo $p->price; ?></td>
@@ -94,7 +100,7 @@ if ($this->session->has_userdata('type') == true) {
     </div>
 </div>
 <script>
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
     $('#dataTable').on("click", ".btn-delete", function() {
         var id = $(this).attr('id');
         if (confirm("Do you really want to delete this package?") == true) {
@@ -112,6 +118,36 @@ if ($this->session->has_userdata('type') == true) {
                         $('#package_' + id.split("_")[1]).remove();
                     } else {
                         alert("Error while deleting");
+                    }
+                }
+            });
+        } else {
+
+        }
+    });
+
+    $('#dataTable').on("click", ".check-home", function() {
+        var id = $(this).attr('id');
+        var status = "";
+        if(this.checked){
+            status = "on";
+        }
+        if (confirm("Do you really want to update this?") == true) {
+            var obj = {
+                id: id.split("_")[1],
+                type: "packages",
+                show_in_homepage: status
+            };
+            $.ajax({
+                url: '<?php echo base_url(); ?>update/checkhomepage',
+                type: 'POST',
+                data: obj,
+                dataType: 'json',
+                success: function(as) {
+                    if (as.status == true) {
+                        alert(as.message);
+                    } else {
+                        alert(as.message);
                     }
                 }
             });

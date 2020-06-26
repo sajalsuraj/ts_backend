@@ -50,7 +50,7 @@
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="#">Package</a>
+        <a href="<?php echo base_url(); ?>users/all-packages">Package</a>
     </li>
     <li class="breadcrumb-item active">Add a new one</li>
 </ol>
@@ -64,6 +64,10 @@
             <div class="form-group">
                 <label>Name:</label>
                 <input type="text" name="name" required placeholder="Provide a name..." class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" name="desc_package"></textarea>
             </div>
             <div class="form-group">
                 <label>Select a service:</label>
@@ -83,6 +87,11 @@
                     <input required type="text" disabled placeholder="Select end date" name="to_date" class="form-control" />
                 </div>
             </div>
+
+            <div class="form-group">
+                <label>Show in homepage:</label>
+                <input type="checkbox" name="show_in_homepage">
+            </div>
             <div class="form-group">
                 <label>Price:</label>
                 <input required type="number" name="price" class="form-control" placeholder="Eg: 5000" />
@@ -94,6 +103,10 @@
     </div>
 </div>
 <script>
+    $(document).ready(function(){
+        CKEDITOR.replace( 'desc_package' );
+    });
+    
 
     $('input[name=from_date]').datepicker(
         {
@@ -180,6 +193,10 @@
                         return;
                     }
                     serArr.push({"service": $('#ser_'+countArr[i]).val(), "price": $('#price_'+countArr[i]).val(), "quantity": $('#quantity_'+countArr[i]).val(), "mode": $('#mode_'+countArr[i]).val()});
+                }
+
+                for ( instance in CKEDITOR.instances ) {
+                    CKEDITOR.instances[instance].updateElement();
                 }
                 var fD = new FormData(form);
                 fD.append('services', JSON.stringify(serArr));

@@ -10,7 +10,7 @@
 
         public function login($data){
 
-            $this->db->select('id, name, type');
+            $this->db->select('id, name, type, roles');
             $query = $this->db->get_where('worker', array('email' => $data['email'], 'password' => $data['password']))->row();
             return $query;
         }
@@ -66,6 +66,11 @@
             $this->db->where('c.id = r.customer_id and r.vendor_id = w.id');
             $this->db->order_by('r.id','DESC');
             $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function getAllAdmins(){
+            $query = $this->db->get_where('worker', array('type' => "admin"));
             return $query->result();
         }
 
@@ -253,6 +258,11 @@
             $data['result'] = $query->result();
             return $data; 
         }
+        public function getAllPartners(){
+            $query = $this->db->get('partners');
+            $data['result'] = $query->result();
+            return $data; 
+        }
 
         public function getAllCities(){
             $query = $this->db->get('city');
@@ -274,7 +284,7 @@
 
         public function getActivatedBanners(){
             $this->db->select('*');
-            $query = $this->db->get_where("banner", array("status"=>'true'));
+            $query = $this->db->get_where("partners", array("show_in_homepage"=>'on'));
             $data['result'] = $query->result();
             return $data; 
         }
@@ -357,6 +367,12 @@
         public function checkIfUserExists($phone, $type){
             $this->db->select('*');
             $query = $this->db->get_where($type, array('phone' => $phone));
+            return $query->num_rows() > 0 ? true : false;
+        }
+
+        public function checkIfUserExistsByEmail($phone, $type){
+            $this->db->select('*');
+            $query = $this->db->get_where($type, array('email' => $phone));
             return $query->num_rows() > 0 ? true : false;
         }
 

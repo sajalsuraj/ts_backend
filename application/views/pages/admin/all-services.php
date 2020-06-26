@@ -37,6 +37,7 @@
                     <th>Name</th>
                     <th>Parent Category</th>
                     <th>Rate (In INR)</th>
+                    <th>Time Taken</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -47,6 +48,7 @@
                     <td><?php echo $service->service_name; ?></td>
                     <td><?php if($service->parent_category == ""){echo "None";}else{echo $this->admin->getServiceById($service->parent_category)->service_name;}  ?></td>
                     <td><?php if($service->rate_per_min == ""){echo "NIL";}else{echo "&#8377;".$service->rate_per_min; if($service->mode=="fixed"){echo " (Fixed)";}else{echo " (Per min)";}} ?></td>
+                    <td><?php if($service->avg_time_taken == ""){echo "NA";}else{echo $service->avg_time_taken; } ?></td>
                     <td><a href="edit-service/<?php echo $service->id; ?>" class="btn btn-primary">Edit</a> <a id="del_<?php echo $service->id; ?>" class="btn btn-danger btn-del">Delete</a></td>
                 </tr>
             <?php } ?>

@@ -58,6 +58,9 @@ $(document).ready(function(){
             if(isFirstTime > 1){
                 url = "<?php echo base_url(); ?>update/static";
             }
+            for ( instance in CKEDITOR.instances ) {
+                CKEDITOR.instances[instance].updateElement();
+            }
             $.ajax({
             url: url,
             type: 'POST',

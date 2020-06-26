@@ -74,7 +74,8 @@
                 $newdata = array(
                     'name'  =>  $data->name,
                     'user_id'     => $data->id,
-                    'type' => $data->type 
+                    'type' => $data->type,
+                    'roles'=>$data->roles
                 );
 
                 $this->session->set_userdata($newdata);  
@@ -1440,17 +1441,17 @@
             }
         }
 
-        public function banners(){
+        public function partners(){
             $banners = $this->admin->getActivatedBanners();
             
             if($banners['result']){
                 for($i=0; $i < count($banners['result']); $i++){
-                    $banners['result'][$i]->banner_image = base_url()."assets/admin/images/banner/".$banners['result'][$i]->banner_image;
+                    $banners['result'][$i]->image = base_url()."assets/admin/images/banner/".$banners['result'][$i]->image;
                 }
-                echo json_encode(['status' => true, 'banners'=> $banners['result'], 'message' => "Banners list"]);
+                echo json_encode(['status' => true, 'banners'=> $banners['result'], 'message' => "Partners list"]);
             }
             else{
-                echo json_encode(['status' => false, 'message' => "Banners not available"]);
+                echo json_encode(['status' => false, 'message' => "Partners not available"]);
             }
             
         }
@@ -1507,22 +1508,15 @@
 
             $data2 = array();
         
-            $timeNow = date_create(date("Y-m-d"));
             foreach($packages as $package){
-                $timeEnd = date_create($package->to_date);
-                $diff = date_diff($timeNow, $timeEnd);
-                $interval = $diff->format("%R%a");
-                if($interval > 0){
+                if($package->show_in_homepage == "on"){
                     $package->image = base_url().'assets/admin/images/'.$package->image;
                     $data[] = $package;
                 }
             }
 
             foreach($memberships as $membership){
-                $timeEnd = date_create($membership->to_date);
-                $diff = date_diff($timeEnd, $timeNow);
-                $interval = $diff->format("%R%a");
-                if($interval < 0){
+                if($membership->show_in_homepage == "on"){
                     $membership->image = base_url().'assets/admin/images/'.$membership->image;
                     $data2[] = $membership;
                 }

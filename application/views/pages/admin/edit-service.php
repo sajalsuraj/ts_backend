@@ -51,6 +51,10 @@
                     </select>
                 </div>
                 <div class="form-group rate">
+                    <label>Average time taken:</label>
+                    <input type="text" value="<?php echo $service->avg_time_taken; ?>" class="form-control" placeholder="Eg. 30 Min" name="avg_time_taken" />
+                </div>
+                <div class="form-group rate">
                     <label>Details (Optional):</label>
                     <input type="text" value="<?php echo $service->detail; ?>" class="form-control" placeholder="Installation, Repair, Replace, etc." name="detail" />
                 </div>

@@ -100,8 +100,10 @@
 
         public function award(){
             if($this->admin->deleteEntity("award", $_POST['id'])){
-                $path = getcwd().'/assets/admin/images/documents/'.$_POST['file'];
-                unlink($path);
+                if(file_exists(getcwd().'/assets/admin/images/documents/'.$_POST['file'])){
+                    $path = getcwd().'/assets/admin/images/documents/'.$_POST['file'];
+                    unlink($path);
+                }
                 echo json_encode(['status' => true, 'message' => 'Award deleted successfully']);
             }
             else{
@@ -130,6 +132,24 @@
         public function faqcontent(){
             if($this->admin->deleteEntity("faq", $_POST['id'])){
                 echo json_encode(['status' => true, 'message' => 'FAQ deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
+        public function about(){
+            if($this->admin->deleteEntity("about", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'Partner business details deleted successfully']);
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);
+            }
+        }
+
+        public function bankdetail(){
+            if($this->admin->deleteEntity("bank_details", $_POST['id'])){
+                echo json_encode(['status' => true, 'message' => 'Partner bank details deleted successfully']);
             }
             else{
                 echo json_encode(['status' => false, 'message' => 'Error occurred, Unable to delete']);

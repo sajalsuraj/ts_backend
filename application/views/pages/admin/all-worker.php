@@ -28,7 +28,7 @@ td a{
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="#">Workers</a>
+        <a href="#">Partners</a>
     </li>
     <li class="breadcrumb-item active">View All</li>
 </ol>
@@ -40,7 +40,7 @@ td a{
             <thead>
                 <tr>
                     <th>S. No.</th>
-                    <th>Vendor ID</th>
+                    <th>Partner ID</th>
                     <th>Name</th>
                     <th>Phone</th>
                     <th>Email</th>
@@ -61,7 +61,10 @@ td a{
                     <td><?php echo $worker->phone; ?></td>
                     <td><?php echo $worker->email; ?></td>
                     <td><span id="pass_<?php echo $i; ?>">************</span><i data-id="<?php echo $i; ?>" data-password="<?php echo $this->admin->crypt($worker->password, 'd'); ?>" class="fas fa-eye-slash eye-icon"></i></td>
-                    <td><?php echo $worker->primary_profession; ?></td>
+                    <td><ul><?php $profs = explode(",",$worker->sub_profession); foreach($profs as $p){ ?>
+                        <li><?php echo isset($this->admin->getServiceById($p)->service_name)?$this->admin->getServiceById($p)->service_name:"NA"; } ?></li>
+                        </ul>
+                    </td>
                     <td><?php echo $worker->city; ?></td>
                     <td><b><?php if($worker->otp_verified == "0"){echo "<span class='red-font'>Not Verified</span>";}else{echo "Verified <i class='fas green-font fa-check-circle'></i>";} ?></b></td>
                     <td><b><?php echo $worker->created_at; ?></b></td>

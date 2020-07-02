@@ -153,6 +153,103 @@ class Add extends CI_Controller
         echo json_encode($response);
     }
 
+    public function vendorsignup(){
+        if ($this->admin->checkIfUserExists($_POST['phone'], 'worker')) {
+            $response = array(
+                "status" => false,
+                "message" => "User already exists!"
+            );
+        } else {
+            if (!isset($_POST['lat']) && !isset($_POST['lng'])) {
+                $response = array(
+                    "status" => false,
+                    "message" => "Not able to fetch the location."
+                );
+            } else {
+                if (empty($_POST['lat']) && empty($_POST['lng'])) {
+                    $response = array(
+                        "status" => false,
+                        "message" => "Not able to fetch the location. "
+                    );
+                } else if (empty($_POST['lat']) || empty($_POST['lng'])) {
+                    $response = array(
+                        "status" => false,
+                        "message" => "Not able to fetch the location."
+                    );
+                } else {
+                    if (isset($_FILES["face_photo"]) && $_FILES["face_photo"]["name"] != "") {
+                        $folder = './assets/admin/images/profile/';
+                        $temp = explode(".", $_FILES["face_photo"]["name"]);
+                        $target_file_img = $folder . round(microtime(true)) . 'face.' . $temp[1];
+                        $_POST['face_photo'] = round(microtime(true)) . 'face.' . $temp[1];
+                        move_uploaded_file($_FILES["face_photo"]["tmp_name"], $target_file_img);
+                    }
+            
+                    if (isset($_FILES["side_face_photo"]) && $_FILES["side_face_photo"]["name"] != "") {
+                        $folder = './assets/admin/images/profile/';
+                        $temp = explode(".", $_FILES["side_face_photo"]["name"]);
+                        $target_file_img = $folder . round(microtime(true)) . 'sideface.' . $temp[1];
+                        $_POST['side_face_photo'] = round(microtime(true)) . 'sideface.' . $temp[1];
+                        move_uploaded_file($_FILES["side_face_photo"]["tmp_name"], $target_file_img);
+                    }
+            
+                    if (isset($_FILES["full_body_photo"]) && $_FILES["full_body_photo"]["name"] != "") {
+                        $folder = './assets/admin/images/profile/';
+                        $temp = explode(".", $_FILES["full_body_photo"]["name"]);
+                        $target_file_img = $folder . round(microtime(true)) . 'fullbody.' . $temp[1];
+                        $_POST['full_body_photo'] = round(microtime(true)) . 'fullbody.' . $temp[1];
+                        move_uploaded_file($_FILES["full_body_photo"]["tmp_name"], $target_file_img);
+                    }
+            
+                    if (isset($_FILES["tool_photo"]) && $_FILES["tool_photo"]["name"] != "") {
+                        $folder = './assets/admin/images/profile/';
+                        $temp = explode(".", $_FILES["tool_photo"]["name"]);
+                        $target_file_img = $folder . round(microtime(true)) . 'tool.' . $temp[1];
+                        $_POST['tool_photo'] = round(microtime(true)) . 'tool.' . $temp[1];
+                        move_uploaded_file($_FILES["tool_photo"]["tmp_name"], $target_file_img);
+                    }
+                    $roles = "";
+                    foreach($_POST['sub_profession'] as $role){
+                        $roles .= $role.",";
+                    }
+                    $roles = rtrim($roles, ",");
+                    $_POST['sub_profession'] = $roles;
+                    $_POST['password'] = $this->admin->crypt($_POST['password'], 'e');
+                    $_POST['type'] = "worker";
+                    $data = $this->admin->addData($_POST, "worker");
+
+                    if ($data) {
+
+                        $otp_status = $this->admin->getUserByPhone($_POST['phone'], 'worker');
+                        $response = array(
+                            "status" => true,
+                            "is_otp_verified" => boolval($otp_status->otp_verified),
+                            "phone" => $_POST['phone'],
+                            "message" => "Successfully added"
+                        );
+
+                        $otp = rand(1000, 9999);
+                        $otpArr = array(
+                            "otp" => $otp,
+                            "phone" => $_POST['phone']
+                        );
+
+                        $otpData = $this->admin->addData($otpArr, "otp");
+
+                        $this->otp($otp, $_POST['phone']);
+                    } else {
+                        $response = array(
+                            "status" => false,
+                            "message" => "Error occurred while adding"
+                        );
+                    }
+                }
+            }
+        }
+
+        echo json_encode($response);
+    }
+
     public function admin(){
 
         if(isset($_POST['phone'])){

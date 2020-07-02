@@ -145,6 +145,13 @@ class Update extends CI_Controller
             $_POST['tool_photo'] = round(microtime(true)) . 'tool.' . $temp[1];
             move_uploaded_file($_FILES["tool_photo"]["tmp_name"], $target_file_img);
         }
+
+        $roles = "";
+        foreach($_POST['sub_profession'] as $role){
+            $roles .= $role.",";
+        }
+        $roles = rtrim($roles, ",");
+        $_POST['sub_profession'] = $roles;
         $id = $_POST['user_id'];
         unset($_POST['user_id']);
         if ($this->user->userupdate('worker', $_POST, $id)) {
@@ -179,6 +186,40 @@ class Update extends CI_Controller
                 echo json_encode(['status' => true, 'message' => "About section updated successfully"]);
             } else {
                 echo json_encode(['status' => false, 'message' => "Error occurred while updating"]);
+            }
+        }
+    }
+
+    public function userbankdetails()
+    {
+        
+        $flag1 = false;
+        if (isset($_FILES["bank_cheque"]) && $_FILES["bank_cheque"]["error"] !== 4) {
+            $folder = './assets/admin/images/bank_cheque/';
+            $temp = explode(".", $_FILES["bank_cheque"]["name"]);
+            $target_file_img = $folder . round(microtime(true)) . '.' . $temp[1];
+            $_POST['bank_cheque'] = round(microtime(true)) . '.' . $temp[1];
+            move_uploaded_file($_FILES["bank_cheque"]["tmp_name"], $target_file_img);
+            $flag1 = true;
+        }
+
+        if ($this->admin->checkKYCById($_POST['user_id'], 'bank_details')) {
+            if ($this->user->aboutupdate('bank_details', $_POST, $_POST['user_id'])) {
+                echo json_encode(['status' => true, 'message' => "Bank details section updated successfully"]);
+            } else {
+                echo json_encode(['status' => false, 'message' => "Error occurred while updating"]);
+            }
+        } else {
+            if($flag1){
+                $data = $this->admin->addData($_POST, 'bank_details');
+                if ($data) {
+                    echo json_encode(['status' => true, 'message' => "Bank details section updated successfully"]);
+                } else {
+                    echo json_encode(['status' => false, 'message' => "Error occurred while updating"]);
+                }
+            }
+            else{
+                echo json_encode(['status' => false, 'message' => "Bank cheque missing"]);
             }
         }
     }

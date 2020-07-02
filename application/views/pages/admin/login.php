@@ -20,16 +20,12 @@
         <div class="card-body">
         <form id="adminLogin">
             <div class="form-group">
-            <div class="form-label-group">
-                <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required="required" autofocus="autofocus">
                 <label for="inputEmail">Username</label>
-            </div>
+                <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required="required" autofocus="autofocus">
             </div>
             <div class="form-group">
-                <div class="form-label-group">
-                    <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required="required">
-                    <label for="inputPassword">Password</label>
-                </div>
+                <label for="inputPassword">Password</label>
+                <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required="required">
             </div>
             <!-- <div class="form-group">
                 <div class="checkbox">

@@ -109,6 +109,12 @@
             return $data; 
         }
 
+        public function getAllAwards(){
+            $this->db->select('*');
+            $query = $this->db->get('award');
+            return $query->result();
+        }
+
         public function getAllFAQTitle(){
             $this->db->select('*');
             $query = $this->db->get('faq_title');
@@ -243,6 +249,21 @@
             $query = $this->db->get('services');
             $data['result'] = $query->result();
             return $data; 
+        }
+
+        public function getAboutSection(){
+            $this->db->select('a.*, w.id as vendor_id, w.name as username');
+            $this->db->from('worker as w, about as a');
+            $this->db->where('w.id = a.user_id');
+            $query = $this->db->get();
+            return $query->result();
+        }
+        public function getAllBankSection(){
+            $this->db->select('a.*');
+            $this->db->from('worker as w, bank_details as a');
+            $this->db->where('w.id = a.user_id');
+            $query = $this->db->get();
+            return $query->result();
         }
 
         public function getAllTrainingVideos(){

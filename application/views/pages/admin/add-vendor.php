@@ -1,21 +1,30 @@
+<?php
+if ($this->session->has_userdata('type') == true) {
+    if ($this->session->userdata('type') == "superadmin" || $this->session->userdata('type') == "admin") {
+    } else {
+        redirect('users/login');
+    }
+} else {
+    redirect('users/login');
+}
+?>
 <style>
    .f-holder{
        float:left;
    }
 </style>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfncHjZ0r15lr_9BOYRg6jAlJ4JO5XQRA&libraries=places&callback=initAutocomplete" async defer></script>
 <?php $services = $this->admin->getServicesLevelWise("3"); $cities = $this->admin->getAllCities(); ?>
-<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
-    <h5 class="my-0 mr-md-auto font-weight-normal"></h5>
-    <nav class="my-2 my-md-0 mr-md-3">
-    <a class="p-2 text-dark" href="#">Help Center</a>
-    <a class="p-2 text-dark" href="users/login">Login</a>
-    </nav>
-</div>
-<div class="container">
-    <h2 class="head-1"><span>Signup</span> as a partner on Troubleshooters</h2>
-
-    <div class="col-md-10 offset-md-1">
-    <form id="addVendors">
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="#">Partner</a>
+    </li>
+    <li class="breadcrumb-item active">Add a new one</li>
+</ol>
+<div class="row">
+    <div class="col-md-12">
+        <form id="addVendors">
             <div class="col-md-6 f-holder">
                 <div class="form-group">
                     <label>Name:</label>
@@ -98,88 +107,32 @@
         </form>
     </div>
 </div>
-<!-- The Modal -->
-<div class="modal" id="otpModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title">OTP Verification</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-
-      <!-- Modal body -->
-      <div class="modal-body">
-        <div class="container-fluid">
-            
-                <div class="form-group">
-                    <label>Enter the OTP which has been sent to your mobile:</label>
-                    <input type="number" class="form-control" id="otp" placeholder="OTP">
-                    <span id="err_msg"></span>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-primary btn-signup" id="verifyOTP" type="button">Verify</button>
-                </div>
-            
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
 <script>
-
-var lat = "",
+    var lat = "",
         lng = "";
+
         $('#profession').select2();
 
-        function initAutocomplete() {
-            
+    function initAutocomplete() {
+        var input = document.getElementById("location");
+        var searchBox = new google.maps.places.Autocomplete(input);
+        searchBox.setComponentRestrictions({
+            'country': ['in']
+        });
 
-            var input = document.getElementById("exampleInputEmail3");
-            var searchBox = new google.maps.places.Autocomplete(input);
-            searchBox.setComponentRestrictions(
-                {'country': ['in']});
+        searchBox.addListener("place_changed", function() {
+            var places = searchBox.getPlace();
+            if (places.length == 0) {
+                return;
+            }
 
-            searchBox.addListener("place_changed", function() {
-                var places = searchBox.getPlace();
-                if (places.length == 0) {
-                    return;
-                }
-
-                lat = places.geometry.location.lat(),
+            lat = places.geometry.location.lat(),
                 lng = places.geometry.location.lng()
 
-            });
+        });
+    }
 
-            
-        }
-
-   
-
-        var ph_no = "";
-
-        
-
-        // $.fn.serializeObject = function()
-        // {
-        //     var o = {};
-        //     var a = this.serializeArray();
-        //     $.each(a, function() {
-        //         if (o[this.name] !== undefined) {
-        //             if (!o[this.name].push) {
-        //                 o[this.name] = [o[this.name]];
-        //             }
-        //             o[this.name].push(this.value || '');
-        //         } else {
-        //             o[this.name] = this.value || '';
-        //         }
-        //     });
-        //     return o;
-        // };
-        $("#addVendors").submit(function(event) {
+    $("#addVendors").submit(function(event) {
         event.preventDefault();
     }).validate({
         rules: {
@@ -210,39 +163,4 @@ var lat = "",
 
         }
     });
-
-        $('#verifyOTP').click(function(){
-            if($('#otp').val() == ""){
-                $('#err_msg').html("Please enter the OTP");
-            }
-            else{
-                $('#err_msg').val("");
-
-                var pData = new FormData();
-                pData.append('otp', $('#otp').val());
-                pData.append('phone', ph_no);
-
-                $.ajax({
-                    url:'<?php echo base_url(); ?>get/verifyotp',
-                    type: 'POST',
-                    data: pData,
-                    processData: false,
-                    contentType: false,
-                    dataType:'json',
-                    success:function(as){
-                        console.log(as);
-                        if(as.status == true){
-                            alert(as.message);
-                            location.reload();
-
-                        }
-                        else if(as.status == false){
-                            alert(as.message);
-                        }
-                    }
-                });
-            }
-        });
-    
-
 </script>

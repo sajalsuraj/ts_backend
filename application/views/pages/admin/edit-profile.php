@@ -1,7 +1,7 @@
 <?php
 if ($this->session->has_userdata('type') == true) {
     if ($this->session->userdata('type') == "superadmin" || $this->session->userdata('type') == "admin" || $this->session->userdata('type') == "worker") {
-        if ($this->session->userdata('type') == "admin") {
+        if ($this->session->userdata('type') == "admin" || $this->session->userdata('type') == "superadmin") {
             $usertype = true;
         } else {
             $usertype = false;
@@ -20,6 +20,8 @@ if ($this->session->has_userdata('type') == true) {
 }
 </style>
 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfncHjZ0r15lr_9BOYRg6jAlJ4JO5XQRA&libraries=places&callback=initAutocomplete" async defer></script>
+
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
@@ -28,7 +30,7 @@ if ($this->session->has_userdata('type') == true) {
     <li class="breadcrumb-item active">Edit</li>
 </ol>
 
-<?php $user = $this->user->getProfileData($this->session->userdata('user_id')); ?>
+<?php $user = $this->user->getProfileData($this->session->userdata('user_id')); $serviceSelected = explode(",",$user->sub_profession); ?>
 <div class="row city-row">
     <div class="col-md-12">
         <button class="btn btn-success" data-toggle="modal" data-target="#passwordChangeModal">Update Password</button>
@@ -52,7 +54,7 @@ if ($this->session->has_userdata('type') == true) {
                         <td><input name="email" required class="form-control" value="<?php echo $user->email; ?>" type="email"></td>
                     </tr>
                     <?php if (!$usertype) { ?>
-                        <tr>
+                        <tr> 
                             <td>Face Image:</td>
                             <td><img style="width: 150px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $user->face_photo; ?>" /><input type="file" name="face_photo" /></td>
                         </tr>
@@ -70,29 +72,27 @@ if ($this->session->has_userdata('type') == true) {
                         </tr>
                         <tr>
                             <td>Work Location:</td>
-                            <td><input type="text" class="form-control" name="work_location" value="<?php echo $user->work_location; ?>" /></td>
+                            <td><input id="location" type="text" class="form-control" name="work_location" value="<?php echo $user->work_location; ?>" /></td>
                         </tr>
                         <tr>
-                            <td>Primary Profession:</td>
+                            <td>Profession:</td>
                             <td>
-                                <?php $allServices = $this->admin->getAllServices(); ?>
-                                <select class="form-control" name="primary_profession">
+                                <?php $allServices = $this->admin->getServicesLevelWise("3"); ?>
+                                <select id="profession" multiple class="form-control" name="sub_profession[]">
                                     <?php foreach ($allServices['result'] as $service) { ?>
-                                        <option <?php if ($user->primary_profession == $service->service_name) {
-                                                    echo "selected";
-                                                }  ?> value="<?php echo $service->service_name; ?>"><?php echo $service->service_name; ?></option>
+                                        <option <?php echo (in_array($service->id, $serviceSelected)?"selected":"");  ?> value="<?php echo $service->id; ?>"><?php echo $service->service_name; ?></option>
                                     <?php } ?>
                                 </select>
                         </tr>
                         <tr>
                             <td>Mode of transportation:</td>
                             <td>
-                                <?php $transport = ["Public Transport", "Car", "Bike"]; ?>
+                                <?php $transport = $this->admin->getAllVehicles(); ?>
                                 <select class="form-control" name="mode_of_transport">
-                                    <?php for ($i = 0; $i < sizeof($transport); $i++) { ?>
-                                        <option <?php if ($user->mode_of_transport == $transport[$i]) {
+                                    <?php foreach($transport['result'] as $vehicle) { ?>
+                                        <option <?php if ($user->mode_of_transport == $vehicle->vehicle_name) {
                                                     echo "selected";
-                                                }  ?> value="<?php echo $transport[$i]; ?>"><?php echo $transport[$i]; ?></option>
+                                                }  ?> value="<?php echo $vehicle->vehicle_name; ?>"><?php echo $vehicle->vehicle_name; ?></option>
                                     <?php } ?>
                                 </select>
                             </td>
@@ -139,6 +139,29 @@ if ($this->session->has_userdata('type') == true) {
     </div>
 </div>
 <script>
+    $('#profession').select2();
+
+    var lat = "<?php echo $user->lat; ?>",
+        lng = "<?php echo $user->lng; ?>";
+
+    function initAutocomplete() {
+        var input = document.getElementById("location");
+        var searchBox = new google.maps.places.Autocomplete(input);
+        searchBox.setComponentRestrictions({
+            'country': ['in']
+        });
+
+        searchBox.addListener("place_changed", function() {
+            var places = searchBox.getPlace();
+            if (places.length == 0) {
+                return;
+            }
+
+            lat = places.geometry.location.lat(),
+                lng = places.geometry.location.lng()
+
+        });
+    }
     $("#updateProfile").submit(function(event) {
         event.preventDefault();
     }).validate({
@@ -147,7 +170,8 @@ if ($this->session->has_userdata('type') == true) {
 
             var formData = new FormData(form);
             formData.append('user_id', <?php echo $this->session->userdata('user_id'); ?>);
-
+            formData.append("lat",lat);
+            formData.append("lng",lng);
             $.ajax({
                 url: '<?php echo base_url(); ?>update/userprofile',
                 type: 'POST',

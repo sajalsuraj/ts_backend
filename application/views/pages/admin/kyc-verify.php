@@ -41,7 +41,7 @@ if ($this->session->has_userdata('type') == true) {
         <table id="dataTable" class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Vendor ID</th>
+                    <th>Partner ID</th>
                     <th>User Name</th>
                     <th>Name Provided</th>
                     <th>ID</th>

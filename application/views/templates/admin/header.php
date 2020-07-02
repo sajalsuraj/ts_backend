@@ -133,51 +133,33 @@ if ($this->session->has_userdata('type') == true) {
         </li>
 
         <?php if ($usertype) { ?>
+          <li class="nav-item active">
+            <a class="nav-link" href="<?php echo base_url(); ?>users/add-vendor">
+              <i class="fas fa-user"></i>
+              <span>Add a partner</span>
+            </a>
+          </li>
+
+          <?php if($this->session->userdata('type') == "admin"?(in_array("workers", $roles)?true:false):true){ ?>
           <li class="nav-item dropdown active">
             <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-users"></i>
-              <span>User Management</span>
+              <i class="fas fa-user-tie"></i>
+              <span>Partners</span>
             </a>
             <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-              <?php if($this->session->userdata('type') == "superadmin"){ ?>
-              <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-admin">Add an admin</a>
-              <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-admins">View All Admins</a>
-              <?php } ?>
-              <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-admin">Add a vendor</a>
+              <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-worker">View all partners</a>
+              <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-about">About section</a>
+              <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-bank-details">Bank details</a>
+              <a class="dropdown-item" href="<?php echo base_url(); ?>users/awards">Awards</a>
             </div>
           </li>
+          <?php } ?>
+          
           <?php if($this->session->userdata('type') == "admin"?(in_array("workers_kyc", $roles)?true:false):true){ ?>
           <li class="nav-item active">
             <a class="nav-link" href="<?php echo base_url(); ?>users/kyc-verify">
               <i class="far fa-address-card"></i>
-              <span>Workers KYC Verify</span>
-            </a>
-          </li>
-          <?php } ?>
-
-          <?php if($this->session->userdata('type') == "admin"?(in_array("app_homepage", $roles)?true:false):true){ ?>
-          <li class="nav-item active">
-            <a class="nav-link" href="<?php echo base_url(); ?>users/home-content">
-              <i class="fas fa-home"></i>
-              <span>App Homepage</span>
-            </a>
-          </li>
-          <?php } ?>
-
-          <?php if($this->session->userdata('type') == "admin"?(in_array("workers", $roles)?true:false):true){ ?>
-          <li class="nav-item active">
-            <a class="nav-link" href="<?php echo base_url(); ?>users/all-worker">
-              <i class="fas fa-user-tie"></i>
-              <span>Workers</span>
-            </a>
-          </li>
-          <?php } ?>
-
-          <?php if($this->session->userdata('type') == "admin"?(in_array("customers", $roles)?true:false):true){ ?>
-          <li class="nav-item active">
-            <a class="nav-link" href="<?php echo base_url(); ?>users/all-customers">
-              <i class="fas fa-users"></i>
-              <span>Customers</span>
+              <span>Partners KYC Verify</span>
             </a>
           </li>
           <?php } ?>
@@ -200,25 +182,12 @@ if ($this->session->has_userdata('type') == true) {
           </li>
           <?php } ?>
 
-          <?php if($this->session->userdata('type') == "admin"?(in_array("referrals", $roles)?true:false):true){ ?>
+          <?php if($this->session->userdata('type') == "admin"?(in_array("customers", $roles)?true:false):true){ ?>
           <li class="nav-item active">
-            <a class="nav-link" href="<?php echo base_url(); ?>users/all-referrals">
-              <i class="fa fa-user-plus" aria-hidden="true"></i>
-              <span>Referrals</span>
+            <a class="nav-link" href="<?php echo base_url(); ?>users/all-customers">
+              <i class="fas fa-users"></i>
+              <span>Customers</span>
             </a>
-          </li>
-          <?php } ?>
-
-          <?php if($this->session->userdata('type') == "admin"?(in_array("partners", $roles)?true:false):true){ ?>
-          <li class="nav-item dropdown active">
-            <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-images"></i>
-              <span>Partners</span>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-              <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-partner">Add a partner</a>
-              <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-partners">View All</a>
-            </div>
           </li>
           <?php } ?>
 
@@ -234,7 +203,7 @@ if ($this->session->has_userdata('type') == true) {
             </div>
           </li>
           <?php } ?>
-          
+
           <?php if($this->session->userdata('type') == "admin"?(in_array("memberships", $roles)?true:false):true){ ?>
           <li class="nav-item dropdown active">
             <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -245,6 +214,15 @@ if ($this->session->has_userdata('type') == true) {
               <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-membership">Create Membership</a>
               <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-memberships">View All</a>
             </div>
+          </li>
+          <?php } ?>
+
+          <?php if($this->session->userdata('type') == "admin"?(in_array("notification", $roles)?true:false):true){ ?>
+          <li class="nav-item active">
+            <a class="nav-link" href="<?php echo base_url(); ?>users/notification">
+              <i class="fas fa-bell" aria-hidden="true"></i>
+              <span>Notifications</span>
+            </a>
           </li>
           <?php } ?>
 
@@ -260,7 +238,54 @@ if ($this->session->has_userdata('type') == true) {
             </div>
           </li>
           <?php } ?>
-          
+
+          <?php if($this->session->userdata('type') == "superadmin"){ ?>
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-users"></i>
+              <span>User Management</span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+              <?php if($this->session->userdata('type') == "superadmin"){ ?>
+              <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-admin">Add an admin</a>
+              <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-admins">View All Admins</a>
+              <?php } ?>
+              
+            </div>
+          </li>
+          <?php } ?>
+
+          <?php if($this->session->userdata('type') == "admin"?(in_array("referrals", $roles)?true:false):true){ ?>
+          <li class="nav-item active">
+            <a class="nav-link" href="<?php echo base_url(); ?>users/all-referrals">
+              <i class="fa fa-user-plus" aria-hidden="true"></i>
+              <span>Referrals</span>
+            </a>
+          </li>
+          <?php } ?>
+
+          <?php if($this->session->userdata('type') == "admin"?(in_array("partners", $roles)?true:false):true){ ?>
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-images"></i>
+              <span>Associates</span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+              <a class="dropdown-item" href="<?php echo base_url(); ?>users/add-partner">Add an associate</a>
+              <a class="dropdown-item" href="<?php echo base_url(); ?>users/all-partners">View All</a>
+            </div>
+          </li>
+          <?php } ?>
+
+          <?php if($this->session->userdata('type') == "admin"?(in_array("app_homepage", $roles)?true:false):true){ ?>
+          <li class="nav-item active">
+            <a class="nav-link" href="<?php echo base_url(); ?>users/home-content">
+              <i class="fas fa-home"></i>
+              <span>App Homepage</span>
+            </a>
+          </li>
+          <?php } ?>
+
           <?php if($this->session->userdata('type') == "admin"?(in_array("faq", $roles)?true:false):true){ ?>
           <li class="nav-item dropdown active">
             <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -281,15 +306,6 @@ if ($this->session->has_userdata('type') == true) {
             <a class="nav-link" href="<?php echo base_url(); ?>users/cities">
               <i class="fa fa-location-arrow" aria-hidden="true"></i>
               <span>Cities</span>
-            </a>
-          </li>
-          <?php } ?>
-
-          <?php if($this->session->userdata('type') == "admin"?(in_array("notification", $roles)?true:false):true){ ?>
-          <li class="nav-item active">
-            <a class="nav-link" href="<?php echo base_url(); ?>users/notification">
-              <i class="fas fa-bell" aria-hidden="true"></i>
-              <span>Notifications</span>
             </a>
           </li>
           <?php } ?>

@@ -6,10 +6,12 @@
     <title>Troubleshooter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="<?php echo base_url(); ?>assets/frontend/css/bootstrap.min.css" />
+    <link href="<?php echo base_url(); ?>assets/admin/css/select2.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" media="screen" href="<?php echo base_url(); ?>assets/frontend/css/style.css" />
 
     <script src="<?php echo base_url(); ?>assets/frontend/js/jquery.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/frontend/js/bootstrap.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/admin/js/select2.min.js"></script>
 
     <script src="<?php echo base_url(); ?>assets/admin/js/jquery.validate.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/admin/js/additional-methods.min.js"></script>

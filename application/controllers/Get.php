@@ -1554,6 +1554,60 @@
             echo json_encode($response); 
         }
 
+        public function getAllPackageMembership(){
+            $packages = $this->admin->getAllPackages();
+            $memberships = $this->admin->getAllMemberships();
+
+            $data = array();
+
+            $data2 = array();
+        
+            foreach($packages as $package){
+    
+                    $package->image = base_url().'assets/admin/images/'.$package->image;
+                    $data[] = $package;
+                
+            }
+
+            foreach($memberships as $membership){
+                
+                    $membership->image = base_url().'assets/admin/images/'.$membership->image;
+                    $data2[] = $membership;
+                
+            }
+            $serviceArr = [];
+            $serviceArr2 = [];
+            foreach($data as $pack){
+                $serviceArr = [];
+                $services = json_decode($pack->services, false);
+                foreach($services as $service){
+                    $serviceArr[] = $this->admin->getServiceById($service->service);
+                }
+                $pack->service_detail = $serviceArr;
+                $pack->type = "package";
+            }
+
+            foreach($data2 as $mem){
+                $serviceArr2 = [];
+                $services = json_decode($mem->services, false);
+                foreach($services as $service){
+                    $serviceArr2[] = $this->admin->getServiceById($service->service);
+                }
+                $mem->service_detail = $serviceArr2;
+                $mem->type = "membership";
+            }
+            $finalArr = array_merge($data, $data2);
+          
+            if(count($finalArr) > 0){
+                $response = array("status"=>true, "message"=>"Packages & memberships available", "data"=>$finalArr);
+            }
+            else{
+                $response = array("status"=>false, "message"=>"Packages & memberships not available");
+            }
+
+            echo json_encode($response); 
+        }
+
         public function checkIfServicesBought(){
             if($_POST['type']=="package"){
                 if($this->admin->checkIfUserBoughtPackage($_POST['package_id'], $_POST['user_id']) > 0){

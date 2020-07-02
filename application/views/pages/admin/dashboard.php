@@ -53,7 +53,7 @@ $allMemberships = $this->admin->getAllMemberships();
                 <div class="card-body-icon">
                     <i class="fas fa-user-tie"></i>
                 </div>
-                <div class="mr-5"><?php echo $totalWorkers; ?> Workers!</div>
+                <div class="mr-5"><?php echo $totalWorkers; ?> Partners!</div>
                 </div>
                 <a class="card-footer text-white clearfix small z-1" href="all-worker">
                 <span class="float-left">View All</span>

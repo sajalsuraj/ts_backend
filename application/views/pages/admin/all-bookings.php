@@ -43,7 +43,7 @@
                     <th>Booking No.</th>
                     <th>Request No.</th>
                     <th>Customer Name</th>
-                    <th>Vendor Assigned</th>
+                    <th>Partner Assigned</th>
                     <th>Reached location at</th>
                     <th>Booking OTP</th>
                     <th>OTP status</th>

@@ -20,10 +20,8 @@
         <div class="card-body">
         <form id="adminLogin">
             <div class="form-group">
-                <div class="form-label-group">
-                    <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required="required" autofocus="autofocus">
-                    <label for="inputEmail">Email</label>
-                </div>
+                <label for="inputEmail">Email</label>
+                <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required="required" autofocus="autofocus">
             </div>
 
             <button class="btn btn-primary btn-block" type="submit">Submit</button>

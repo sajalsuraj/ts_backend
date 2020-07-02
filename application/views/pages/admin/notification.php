@@ -54,7 +54,7 @@ $allNotifications = $this->admin->getAllNotifications();
                 <tr>
                     <td>S. No.</td>
                     <th>Notification ID</th>
-                    <th>Vendor Name</th>
+                    <th>Partner Name</th>
                     <th>Notification Title</th>
                     <th>Message</th>
                     <th>Created at</th>
@@ -69,7 +69,7 @@ $allNotifications = $this->admin->getAllNotifications();
                     <?php if($not->vendor_name != NULL){ ?>
                     <td><b><?php echo $not->vendor_name; ?></b> (ID - <?php echo $not->vendor_id; ?>)</td>
                     <?php }else{ ?>
-                        <td><b>All Vendors</b></td>
+                        <td><b>All Partners</b></td>
                     <?php } ?>
                     <td><?php echo $not->title; ?></td>
                     <td><?php echo $not->message; ?></td>
@@ -95,10 +95,10 @@ $allNotifications = $this->admin->getAllNotifications();
             <div class="container-fluid">
                 <div class="form-group">
                     <input name="allchecked" type="checkbox" id="selectAll" />
-                    <label class="form-check-label" for="selectAll">Select all vendors</label>
+                    <label class="form-check-label" for="selectAll">Select all partners</label>
                 </div>
                 <div class="form-group">
-                    <label for="exampleInputEmail1">Select a vendor:</label>
+                    <label for="exampleInputEmail1">Select a partner:</label>
                     <select name="vendor_id" class="form-control" id="vendorList">
                         <?php foreach ($allWorkers['result'] as $worker) { ?>
                             <option value="<?php echo $worker->id; ?>"><?php echo $worker->name; ?> - <?php echo $worker->id; ?></option>

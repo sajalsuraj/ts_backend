@@ -26,7 +26,7 @@ img{
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="#">Partners</a>
+        <a href="#">Associates</a>
     </li>
     <li class="breadcrumb-item active">View All</li>
 </ol>

@@ -1,7 +1,7 @@
 <?php
 if ($this->session->has_userdata('type') == true) {
     if ($this->session->userdata('type') == "superadmin" || $this->session->userdata('type') == "admin" || $this->session->userdata('type') == "worker") {
-        if($this->session->userdata('type') == "admin"){
+        if($this->session->userdata('type') == "admin" || $this->session->userdata('type') == "superadmin"){
             $usertype = true;
         }
         else{
@@ -75,7 +75,11 @@ a.btn{
                 </tr>
                 <tr>
                     <td>Primary Profession:</td>
-                    <td><?php echo $user->primary_profession; ?></td>
+                    <td>
+                    <ul><?php $profs = explode(",",$user->sub_profession); foreach($profs as $p){ ?>
+                        <li><?php echo isset($this->admin->getServiceById($p)->service_name)?$this->admin->getServiceById($p)->service_name:"NA"; } ?></li>
+                        </ul>
+                    </td>
                 </tr>
                 <tr>
                     <td>Mode of transportation:</td>

@@ -42,9 +42,9 @@
                     <th>S. No.</th>
                     <th>Request No.</th>
                     <th>Customer Name</th>
-                    <th>Vendor Assigned</th>
+                    <th>Partner Assigned</th>
                     <th>Services Requested</th>
-                    <th>Assigned vendors</th>
+                    <th>Assigned Partners</th>
                     <th>Location</th>
                     <th>Request status</th>
                     <th>Accepted At</th>

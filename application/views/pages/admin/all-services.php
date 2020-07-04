@@ -58,7 +58,7 @@
 </div>
 <script>
 $(document).ready(function(){
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
 
     $('#dataTable').on("click", ".btn-del", function(){
         var id = $(this).attr('id');

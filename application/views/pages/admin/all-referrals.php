@@ -97,7 +97,7 @@ $amount = $this->admin->getReferralAmount();
   </div>
 </div>
 <script>
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
     var isFirstTime = 0;
     var amountId = "";
     $('#addReferral').click(function(){

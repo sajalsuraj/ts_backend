@@ -107,7 +107,7 @@ if ($this->session->has_userdata('type') == true) {
     </div>
 </div>
 <script>
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
     var workerId = "";
     $("#dataTable").on("click", ".edit-worker", function(){
         workerId = $(this).attr('id');

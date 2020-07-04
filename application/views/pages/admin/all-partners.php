@@ -62,7 +62,7 @@ img{
 </div>
 <script>
 $(document).ready(function(){
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
 
     // $('.btn-status').click(function(){
     //     var id = $(this).attr('id');

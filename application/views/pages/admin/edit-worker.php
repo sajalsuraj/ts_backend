@@ -23,7 +23,7 @@
 <?php 
     $id = substr($_SERVER['REQUEST_URI'], strrpos($_SERVER['REQUEST_URI'], '/') + 1);
     $worker = $this->user->getProfileData($id); ?>
-    <?php $services = $this->admin->getServicesLevelWise("3"); $serviceSelected = explode(",",$worker->sub_profession); ?>
+    <?php $services = $this->admin->getServicesLevelWise("3"); $serviceSelected = explode(",",$worker->sub_profession); $cities = $this->admin->getAllCities(); ?>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
@@ -41,7 +41,11 @@
             </div>
             <div class="form-group">
                 <label>City:</label>
-                <input type="text" value="<?php echo $worker->city; ?>" class="form-control" required placeholder="Enter city" name="city" />
+                <select class="form-control" name="city">
+                    <?php foreach($cities['result'] as $city){ ?>
+                        <option <?php if($city->name == $worker->city){echo "selected";} ?> value="<?php echo $city->name; ?>"><?php echo $city->name; ?></option>
+                    <?php } ?>
+                </select>
             </div>
             <div class="form-group">
                 <label>Work location:</label>
@@ -109,6 +113,8 @@ var lat = "<?php echo $worker->lat; ?>",
         lng = "<?php echo $worker->lng; ?>";
    
     $('#profession').select2();
+
+    $('select[name=city]').select2();
 
     function initAutocomplete() {
         var input = document.getElementById("location");

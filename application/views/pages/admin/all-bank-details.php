@@ -132,7 +132,7 @@ if ($this->session->has_userdata('type') == true) {
 </div>
 <script>
     $('#vendorList').select2();
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
 
     $('#dataTable').on("click", ".btn-del", function(){
         var id = $(this).attr('id');

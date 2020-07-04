@@ -131,5 +131,5 @@
     </div>
 </div>
 <script>
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
 </script>

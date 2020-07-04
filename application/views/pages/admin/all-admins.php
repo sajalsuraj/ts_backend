@@ -142,7 +142,7 @@ if ($this->session->has_userdata('type') == true) {
     </div>
 </div>
 <script>
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
     $("#dataTable").on("click", ".eye-icon", function(){
 
         if($(this).hasClass('fa-eye-slash')){

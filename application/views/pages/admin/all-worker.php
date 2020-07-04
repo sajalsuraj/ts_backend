@@ -102,7 +102,7 @@ td a{
     </div>
 </div>
 <script>
-    $('#dataTable').DataTable();
+    $('#dataTable').DataTable({"scrollX": true});
     $("#dataTable").on("click", ".btn-del", function(){
         var id = $(this).attr('id');
         if (confirm("Do you really want to delete this user ?") == true) {

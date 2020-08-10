@@ -50,6 +50,10 @@
                 <label>Service Name:</label>
                 <input type="text" class="form-control" required placeholder="Plumber, Carpenter, etc" name="service_name" />
             </div>
+            <div class="form-group">
+                <label>Image:</label>
+                <input type="file" name="image" />
+            </div>
             <div class="form-group rate">
                 <label>Rate:</label>
                 <input type="text" class="form-control" placeholder="30, 40, 50, etc" name="rate_per_min" />
@@ -123,6 +127,7 @@
                     formData.append('avg_time_taken', $('input[name="avg_time_taken"]').val());
                 }
                 formData.append('service_name', $('input[name="service_name"]').val());
+                formData.append('image', $('input[type=file]')[0].files[0]);
                 
                 $.ajax({
                     url:'<?php echo base_url(); ?>add/service',

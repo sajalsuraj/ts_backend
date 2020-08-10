@@ -55,19 +55,19 @@ a.btn{
                 <?php if(!$usertype){ ?>
                 <tr>
                     <td>Face Image:</td>
-                    <td><img style="width: 200px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $user->face_photo; ?>" /></td>
+                    <td><img class="img-dash" style="width: 200px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $user->face_photo; ?>" /></td>
                 </tr>
                 <tr>
                     <td>Side Face Image:</td>
-                    <td><img style="width: 200px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $user->side_face_photo; ?>" /></td>
+                    <td><img class="img-dash" style="width: 200px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $user->side_face_photo; ?>" /></td>
                 </tr>
                 <tr>
                     <td>Full body Image:</td>
-                    <td><img style="width: 200px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $user->full_body_photo; ?>" /></td>
+                    <td><img class="img-dash" style="width: 200px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $user->full_body_photo; ?>" /></td>
                 </tr>
                 <tr>
                     <td>Tool Image:</td>
-                    <td><img style="width: 200px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $user->tool_photo; ?>" /></td>
+                    <td><img class="img-dash" style="width: 200px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $user->tool_photo; ?>" /></td>
                 </tr>
                 <tr>
                     <td>Work Location:</td>
@@ -89,4 +89,31 @@ a.btn{
             </tbody>
         </table>
     </div>
+    <div id="imageModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Image viewer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <img id="img-large" style="width:100%;" src="" alt="">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    $('.img-dash').click(function(){
+        let imgSrc = $(this).attr('src');
+        $('#img-large').attr('src',imgSrc);
+        $('#imageModal').modal('show');
+    });
+</script>

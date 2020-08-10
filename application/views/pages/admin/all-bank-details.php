@@ -72,7 +72,7 @@ if ($this->session->has_userdata('type') == true) {
                     <td><?php echo $about->bank_name; ?></td>
                     <td><?php echo $about->ifsc_code; ?></td>
                     <td><?php echo $about->ac_no; ?></td>
-                    <td><img src="<?php echo base_url().'assets/admin/images/bank_cheque/'.$about->bank_cheque; ?>" style="width:150px;" /></td>
+                    <td><img class="img-dash" src="<?php echo base_url().'assets/admin/images/bank_cheque/'.$about->bank_cheque; ?>" style="width:150px;" /></td>
                     <td><?php echo $about->created_at; ?></td>
                     <td>
                     <a id="<?php echo $about->id; ?>" href="edit-vendor-bank/<?php echo $about->user_id; ?>" class="btn btn-primary edit-worker">Edit</a>
@@ -104,6 +104,10 @@ if ($this->session->has_userdata('type') == true) {
                                 </select>
                             </div>
                             <div class="form-group">
+                                <label for="exampleInputEmail1">Name:</label>
+                                <input name="name" type="text" class="form-control" />
+                            </div>
+                            <div class="form-group">
                                 <label for="exampleInputEmail1">Bank name:</label>
                                 <input name="bank_name" type="text" class="form-control" />
                             </div>
@@ -129,9 +133,34 @@ if ($this->session->has_userdata('type') == true) {
             </div>
         </div>
     </div>
+    <div id="imageModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Image viewer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <img id="img-large" style="width:100%;" src="" alt="">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     $('#vendorList').select2();
+    $('.img-dash').click(function(){
+        let imgSrc = $(this).attr('src');
+        $('#img-large').attr('src',imgSrc);
+        $('#imageModal').modal('show');
+    });
     $('#dataTable').DataTable({"scrollX": true});
 
     $('#dataTable').on("click", ".btn-del", function(){
@@ -162,6 +191,9 @@ if ($this->session->has_userdata('type') == true) {
         event.preventDefault();
     }).validate({
         rules: {
+            name:{
+                required:true
+            },
             bank_name:{
                 required:true
             },
@@ -175,7 +207,7 @@ if ($this->session->has_userdata('type') == true) {
         submitHandler: function(form) {
 
             var formData = new FormData(form);
-            formData.append('name', $('#vendorList option:selected').text().split(" - ")[0]);
+            //formData.append('name', $('#vendorList option:selected').text().split(" - ")[0]);
             
             $.ajax({
                 url:'<?php echo base_url(); ?>update/userbankdetails',

@@ -49,7 +49,7 @@ img{
                 <tr id="b_<?php echo $banner->id; ?>">
                     <td><?php echo $i; ?></td>
                     <td><?php echo $banner->name; ?></td>
-                    <td><?php if($banner->image == ""){echo "NA";}else{ ?><img class="img-responsive" src="<?php echo base_url(); ?>assets/admin/images/banner/<?php echo $banner->image; } ?>" /></td>
+                    <td><?php if($banner->image == ""){echo "NA";}else{ ?><img class="img-dash" class="img-responsive" src="<?php echo base_url(); ?>assets/admin/images/banner/<?php echo $banner->image; } ?>" /></td>
                     <td><input class="check-home" id="c_<?php echo $banner->id; ?>" type="checkbox" <?php if ($banner->show_in_homepage == "on") {
                                                         echo "checked";
                                                     } ?>></td>
@@ -58,6 +58,26 @@ img{
             <?php } ?>
             </tbody>
         </table>
+    </div>
+    <div id="imageModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Image viewer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <img id="img-large" style="width:auto;" src="" alt="">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -143,6 +163,12 @@ $(document).ready(function(){
         } else {
 
         }
+    });
+
+    $('.img-dash').click(function(){
+        let imgSrc = $(this).attr('src');
+        $('#img-large').attr('src',imgSrc);
+        $('#imageModal').modal('show');
     });
 
     $('#dataTable').on("click", ".btn-del", function(){

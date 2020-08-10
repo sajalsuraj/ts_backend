@@ -38,6 +38,10 @@
                 <label>Service Name:</label>
                 <input type="text" value="<?php echo $service->service_name; ?>" class="form-control" required placeholder="Plumber, Carpenter, etc" name="service_name" />
             </div>
+            <div class="form-group">
+                <label>Image:</label>
+                <input type="file" name="image" />
+            </div>
             <?php if($hasCharge){ ?>
                 <div class="form-group rate">
                     <label>Rate:</label>

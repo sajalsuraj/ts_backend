@@ -44,7 +44,7 @@
             </div>
             <div class="form-group">
                 <label>Phone:</label>
-                <input type="number" value="<?php echo $customer->phone; ?>" class="form-control" required placeholder="Enter phone" name="phone" />
+                <input type="number" value="<?php echo $customer->phone; ?>" maxlength="10" minlength="10" class="form-control" required placeholder="Enter phone" name="phone" />
             </div>
             <div class="form-group">
                 <label>Verification status:</label>

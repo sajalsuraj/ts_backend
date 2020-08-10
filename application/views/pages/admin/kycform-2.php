@@ -35,6 +35,43 @@ else{
         redirect('users/dashboard');
     }
 }
+$indianStates = ['AP' => 'Andhra Pradesh',
+'AR' => 'Arunachal Pradesh',
+'AS' => 'Assam',
+'BR' => 'Bihar',
+'CT' => 'Chhattisgarh',
+'GA' => 'Goa',
+'GJ' => 'Gujarat',
+'HR' => 'Haryana',
+'HP' => 'Himachal Pradesh',
+'JK' => 'Jammu and Kashmir',
+'JH' => 'Jharkhand',
+'KA' => 'Karnataka',
+'KL' => 'Kerala',
+'LA' => 'Ladakh',
+'MP' => 'Madhya Pradesh',
+'MH' => 'Maharashtra',
+'MN' => 'Manipur',
+'ML' => 'Meghalaya',
+'MZ' => 'Mizoram',
+'NL' => 'Nagaland',
+'OR' => 'Odisha',
+'PB' => 'Punjab',
+'RJ' => 'Rajasthan',
+'SK' => 'Sikkim',
+'TN' => 'Tamil Nadu',
+'TG' => 'Telangana',
+'TR' => 'Tripura',
+'UP' => 'Uttar Pradesh',
+'UT' => 'Uttarakhand',
+'WB' => 'West Bengal',
+'AN' => 'Andaman and Nicobar Islands',
+'CH' => 'Chandigarh',
+'DN' => 'Dadra and Nagar Haveli',
+'DD' => 'Daman and Diu',
+'LD' => 'Lakshadweep',
+'DL' => 'New Delhi',
+'PY' => 'Puducherry'];
 ?>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -90,7 +127,11 @@ else{
 
             <div class="form-group">
                 <label>State</label>
-                <input type="text" class="form-control" name="p_state" />
+                <select class="form-control" name="p_state">
+                    <?php foreach($indianStates as $ind){ ?>
+                        <option value="<?php echo $ind; ?>"><?php echo $ind; ?></option>
+                    <?php } ?>
+                </select>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Submit</button>

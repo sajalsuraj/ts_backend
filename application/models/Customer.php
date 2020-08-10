@@ -9,7 +9,7 @@
         }
 
         public function login($data){
-            $this->db->select('id, name, phone');
+            $this->db->select('id, name, phone, otp_verified');
             $query = $this->db->get_where('customer', array('phone' => $data['phone'], 'password' => $data['password']))->row();
             return $query;
         }

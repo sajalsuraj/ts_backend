@@ -91,12 +91,12 @@ if ($this->session->has_userdata('type') == true) {
                         <td><?php echo $worker->name; ?></td>
                         <td><?php echo $worker->id_type; ?></td>
                         <td><?php echo $worker->id_number; ?></td>
-                        <td><?php if ($worker->img_front_side !=  "") { ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_front_side; ?>" /><?php } else echo "NA"; ?></td>
-                        <td><?php if ($worker->id_type == "PanCard") { ?><span class="green-font">Not required</span><?php } else { ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_back_side; ?>" /><?php } ?></td>
-                        <td><?php if ($worker->face_photo !=  "") { ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->face_photo; ?>" /><?php } else echo "NA"; ?></td>
-                        <td><?php if ($worker->side_face_photo !=  "") { ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->side_face_photo; ?>" /><?php } else echo "NA"; ?></td>
-                        <td><?php if ($worker->full_body_photo !=  "") { ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->full_body_photo; ?>" /><?php } else echo "NA"; ?></td>
-                        <td><?php if ($worker->tool_photo !=  "") { ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->tool_photo; ?>" /><?php } else echo "NA"; ?></td>
+                        <td><?php if ($worker->img_front_side !=  "") { ?><img class="img-dash" style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_front_side; ?>" /><?php } else echo "NA"; ?></td>
+                        <td><?php if ($worker->id_type == "PanCard") { ?><span class="green-font">Not required</span><?php } else { ?><img class="img-dash" style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/documents/<?php echo $worker->img_back_side; ?>" /><?php } ?></td>
+                        <td><?php if ($worker->face_photo !=  "") { ?><img class="img-dash" style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->face_photo; ?>" /><?php } else echo "NA"; ?></td>
+                        <td><?php if ($worker->side_face_photo !=  "") { ?><img class="img-dash" style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->side_face_photo; ?>" /><?php } else echo "NA"; ?></td>
+                        <td><?php if ($worker->full_body_photo !=  "") { ?><img class="img-dash" style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->full_body_photo; ?>" /><?php } else echo "NA"; ?></td>
+                        <td><?php if ($worker->tool_photo !=  "") { ?><img class="img-dash" style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->tool_photo; ?>" /><?php } else echo "NA"; ?></td>
                         <td><?php echo $worker->parent_name; ?></td>
                         <td><?php echo $worker->vehicle; ?></td>
                         <td><?php echo $worker->gender; ?></td>
@@ -124,12 +124,40 @@ if ($this->session->has_userdata('type') == true) {
             </tbody>
         </table>
     </div>
-</div>
+
+    <div id="imageModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Image viewer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <img id="img-large" style="width:100%;" src="" alt="">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
 
 <script>
     $('#dataTable').DataTable({
         "scrollX": true
     });
+
+    $('.img-dash').click(function(){
+        let imgSrc = $(this).attr('src');
+        $('#img-large').attr('src',imgSrc);
+        $('#imageModal').modal('show');
+    });
+
     //Function to update the status
     $("#dataTable").on("click", ".btn-verify", function() {
         var detail = $(this).attr('id'),

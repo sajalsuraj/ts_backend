@@ -18,12 +18,27 @@
 .btn{
     color: #fff !important;
 }
+.select2-results__group{
+    color: #3b2d76;
+    
+}
+.select2-results__option[aria-disabled=true]{
+    color: #6954e1 !important;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+.select2-results__option[aria-selected=true], .select2-results__option[aria-selected=false]{
+    color: #000 !important;
+    font-size: 1.2rem;
+    padding-left: 1.5em !important;
+}
+
 </style>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfncHjZ0r15lr_9BOYRg6jAlJ4JO5XQRA&libraries=places&callback=initAutocomplete" async defer></script>
 <?php 
     $id = substr($_SERVER['REQUEST_URI'], strrpos($_SERVER['REQUEST_URI'], '/') + 1);
     $worker = $this->user->getProfileData($id); ?>
-    <?php $services = $this->admin->getServicesLevelWise("3"); $serviceSelected = explode(",",$worker->sub_profession); $cities = $this->admin->getAllCities(); ?>
+    <?php $services = $this->admin->getCategoriesWithSubcategories(); $serviceSelected = explode(",",$worker->sub_profession); $cities = $this->admin->getAllCities(); ?>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
@@ -53,7 +68,7 @@
             </div>
             <div class="form-group">
                 <label>Phone:</label>
-                <input type="number" value="<?php echo $worker->phone; ?>" class="form-control" required placeholder="Enter phone no." name="phone" />
+                <input type="number" value="<?php echo $worker->phone; ?>" maxlength="10" minlength="10" class="form-control" required placeholder="Enter phone no." name="phone" />
             </div>
             <div class="form-group">
                 <label>Email:</label>
@@ -79,10 +94,16 @@
                 <label>Services:</label>
                 <select class="form-control" name="sub_profession[]" id="profession" multiple="multiple">
                     <?php
-                    foreach($services['result'] as $service){?>
-                        <option <?php echo (in_array($service->id, $serviceSelected)?"selected":"");  ?> value="<?php echo $service->id; ?>"><?php echo $service->service_name; ?></option>
+                        foreach($services as $category){?>
+                            <optgroup label="<?php echo $category->service_name; ?>">
+                                <?php foreach($category->subcategories as $subcat){?>
+                                    <option disabled><?php echo $subcat->service_name; ?></option>
+                                    <?php foreach($subcat->subcategories as $maincat){  ?>
+                                        <option <?php echo (in_array($maincat->id, $serviceSelected)?"selected":""); ?> class="level3-cat" value="<?php echo $maincat->id; ?>"><?php echo $maincat->service_name; ?></option>
+                                    <?php } ?>
+                                <?php } ?>
+                            </optgroup>
                     <?php } ?>
-                    
                 </select>
             </div>
             <div class="form-group">
@@ -137,7 +158,16 @@ var lat = "<?php echo $worker->lat; ?>",
     $("#addWorker").submit(function(event) {
         event.preventDefault();
     }).validate({
-        rules: {},
+        rules: {
+            password:{
+                pattern:/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,}/
+            }
+        },
+        messages:{
+            password:{
+                pattern: "Password should contain uppercase letter, symbols, and numbers. Should be of minimum 8 characters"
+            }
+        },
         submitHandler: function(form) {
 
             var formData = new FormData(form);

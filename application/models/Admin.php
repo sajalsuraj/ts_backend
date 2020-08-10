@@ -648,6 +648,38 @@
             return $res;
         }
 
+        public function getCategoriesWithSubcategories(){
+            $level1 = $this->getServicesLevelWise("1");
+            $level2 = $this->getServicesLevelWise("2");
+            $level3 = $this->getServicesLevelWise("3");
+
+            $catArr = array();
+            $level1 = $level1['result'];
+            $level2 = $level2['result'];
+            $level3 = $level3['result'];
+
+            for($i = 0; $i < count($level2); $i++){
+                $catArr = array();
+                for($j = 0; $j < count($level3); $j++){
+                    if($level3[$j]->parent_category == $level2[$i]->id){
+                        array_push($catArr, $level3[$j]);
+                    }
+                }
+                $level2[$i]->subcategories = $catArr;
+            }
+
+            for($i = 0; $i < count($level1); $i++){
+                $catArr = array();
+                for($j = 0; $j < count($level2); $j++){
+                    if($level2[$j]->parent_category == $level1[$i]->id){
+                        array_push($catArr, $level2[$j]);
+                    }
+                }
+                $level1[$i]->subcategories = $catArr;
+            }
+            return $level1;
+        }
+
         public function deleteEntity($table, $id){
             $res = $this->db->delete($table, array('id' => $id)); 
             return $res;

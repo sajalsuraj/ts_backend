@@ -686,6 +686,15 @@ class Add extends CI_Controller
 
     public function service()
     {
+        if(isset($_FILES["image"])){
+            if($_FILES["image"]["error"] !== 4){
+                $folder= './assets/admin/images/';
+                $temp = explode(".", $_FILES["image"]["name"]);
+                $target_file_img = $folder. round(microtime(true)).'service.'.$temp[1]; 
+                $_POST['image'] = round(microtime(true)).'service.'.$temp[1];
+                move_uploaded_file($_FILES["image"]["tmp_name"], $target_file_img);  
+            }
+        }
 
         $data = $this->admin->addData($_POST, "services");
 

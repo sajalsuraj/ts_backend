@@ -715,7 +715,7 @@
                 if($this->user->updateUserIfVerified('customer', $POST, $phone)){
                     if($this->user->deleteOTP('otp', $phone)){
 
-                        if($type == "signup"){
+                        if($type == "signup" || $type == "signin"){
                             echo json_encode(['status'=> true, 'message' => "User verified and registered successfully"]);
                         }
                         else if($type == "changepassword"){
@@ -759,7 +759,7 @@
                         'phone' => $data->phone
                     );
                     $jwtToken = $this->objOfJwt->GenerateToken($newdata);
-                    echo json_encode(['status' => true, 'access_token'=>$jwtToken, 'user_id'=> $data->id, 'message' => 'Successful Login']);
+                    echo json_encode(['status' => true, 'otp_verified'=>$data->otp_verified, 'access_token'=>$jwtToken, 'user_id'=> $data->id, 'message' => 'Successful Login']);
     
                 }
                 else{
@@ -776,6 +776,11 @@
             $data = $this->admin->getAllServices();
 
             if($data){
+                foreach($data['result'] as $ser){
+                    if($ser->image !== ""){
+                        $ser->image = base_url()."assets/admin/images/".$ser->image;
+                    }
+                }
                 echo json_encode(['status' => true, 'data' => $data['result'], 'message' => 'Service list']);
             }
             else{
@@ -921,6 +926,11 @@
             $data = $this->admin->getAllParentServices();
 
             if($data){
+                foreach($data['result'] as $ser){
+                    if($ser->image !== ""){
+                        $ser->image = base_url()."assets/admin/images/".$ser->image;
+                    }
+                }
                 echo json_encode(['status' => true, 'data' => $data['result'], 'message' => 'Service list']);
             }
             else{
@@ -931,6 +941,11 @@
         public function services2(){
             $data = $this->admin->getAllParentServicesWithLimit(6);
             if($data){
+                foreach($data['result'] as $ser){
+                    if($ser->image !== ""){
+                        $ser->image = base_url()."assets/admin/images/".$ser->image;
+                    }
+                }
                 echo json_encode(['status' => true, 'data' => $data['result'], 'message' => 'Service list']);
             }
             else{
@@ -941,6 +956,11 @@
         public function subcategories(){
             $data = $this->admin->checkIfServiceIsParent($_POST['id']);
             if($data){
+                foreach($data as $ser){
+                    if($ser->image !== ""){
+                        $ser->image = base_url()."assets/admin/images/".$ser->image;
+                    }
+                }
                 echo json_encode(['status' => true, 'data' => $data, 'message' => 'Subcategories List']);
             }
             else{

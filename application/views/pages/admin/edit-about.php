@@ -26,11 +26,11 @@ if ($this->session->has_userdata('type') == true) {
                 <tbody>
                     <tr>
                         <td>Year:</td>
-                        <td><input type="text" name="year" value="<?php if($user)echo $user->year; ?>" class="form-control" /></td>
+                        <td><input type="number" name="year" maxlength="4" minlength="4" value="<?php if($user)echo $user->year; ?>" class="form-control" /></td>
                     </tr>
                     <tr>
                         <td>Month:</td>
-                        <td><input type="text" name="month" value="<?php if($user)echo $user->month; ?>" class="form-control" /></td>
+                        <td><input type="number" maxlength="2" minlength="1" name="month" value="<?php if($user)echo $user->month; ?>" class="form-control" /></td>
                     </tr>
                     <tr>
                         <td>Business Name:</td>
@@ -38,7 +38,7 @@ if ($this->session->has_userdata('type') == true) {
                     </tr>
                     <tr>
                         <td>Phone No.:</td>
-                        <td><input type="text" name="phone" value="<?php if($user)echo $user->phone; ?>" class="form-control" /></td>
+                        <td><input type="number" maxlength="10" minlength="10" name="phone" value="<?php if($user)echo $user->phone; ?>" class="form-control" /></td>
                     </tr>
                     <tr>
                         <td>Website:</td>

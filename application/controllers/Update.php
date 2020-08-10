@@ -1110,6 +1110,15 @@ class Update extends CI_Controller
 
     public function service()
     {
+        if(isset($_FILES["image"])){
+            if($_FILES["image"]["error"] !== 4){
+                $folder= './assets/admin/images/';
+                $temp = explode(".", $_FILES["image"]["name"]);
+                $target_file_img = $folder. round(microtime(true)).'service.'.$temp[1]; 
+                $_POST['image'] = round(microtime(true)).'service.'.$temp[1];
+                move_uploaded_file($_FILES["image"]["tmp_name"], $target_file_img);  
+            }
+        }
         $service_id = $_POST['id'];
         unset($_POST['id']);
         if ($this->user->userupdate('services', $_POST, $service_id)) {

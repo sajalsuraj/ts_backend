@@ -28,6 +28,13 @@ if ($this->session->has_userdata('type') == true) {
         margin-left: 5px;
         cursor: pointer;
     }
+    .eye-icon1{
+        position: absolute;
+        right: 0;
+        margin-right: 45px;
+        cursor: pointer;
+        margin-top: -25px;
+    }
 </style>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -64,7 +71,7 @@ if ($this->session->has_userdata('type') == true) {
                         <td><?php echo $customer->phone; ?></td>
                         <td><?php echo $customer->email; ?></td>
                         <td><span id="pass_<?php echo $i; ?>">************</span><i data-id="<?php echo $i; ?>" data-password="<?php echo $this->admin->crypt($customer->password, 'd'); ?>" class="fas fa-eye-slash eye-icon"></i></td>
-                        <td><?php if ($customer->photo == "") { ?><span class="red-font">Not Uploaded</span><?php } else { ?><img style="width: 100px;" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->img_back_side; ?>" /><?php } ?></td>
+                        <td><?php if ($customer->photo == "") { ?><span class="red-font">Not Uploaded</span><?php } else { ?><img style="width: 100px;" class="img-dash" src="<?php echo base_url(); ?>assets/admin/images/profile/<?php echo $worker->img_back_side; ?>" /><?php } ?></td>
                         <td><b><?php if ($customer->otp_verified == "0") {
                                     echo "<span class='red-font'>Not Verified</span>";
                                 } else {
@@ -85,7 +92,7 @@ if ($this->session->has_userdata('type') == true) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Verify password before proceeding</h5>
-                    <button type="button" class="close" onclick="$('#err-msg').html('');$('#newPassword').val('');" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" onclick="$('#newPassword').attr('type','password');$('#newPassword').val('');$('.eye-icon1').removeClass('fa-eye');$('.eye-icon1').addClass('fa-eye-slash');" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -94,17 +101,40 @@ if ($this->session->has_userdata('type') == true) {
                         <div class="form-group">
                             <label for="exampleInputEmail">Enter Password:</label>
                             <input id="newPassword" class="form-control" placeholder="Enter password" type="password" />
+                            <i class="fas fa-eye-slash eye-icon1"></i>
                             <span id="err-msg"></span>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="verifyPassword" class="btn btn-primary">Submit</button>
-                    <button type="button" class="btn btn-secondary" onclick="$('#err-msg').html('');$('#newPassword').val('');" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" onclick="$('#newPassword').attr('type','password');$('#newPassword').val('');$('.eye-icon1').removeClass('fa-eye');$('.eye-icon1').addClass('fa-eye-slash');" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div id="imageModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Image viewer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <img id="img-large" style="width:100%;" src="" alt="">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </div>
 <script>
     $('#dataTable').DataTable({"scrollX": true});
@@ -136,6 +166,12 @@ if ($this->session->has_userdata('type') == true) {
                 }
             });
         }
+    });
+
+    $('.img-dash').click(function(){
+        let imgSrc = $(this).attr('src');
+        $('#img-large').attr('src',imgSrc);
+        $('#imageModal').modal('show');
     });
 
     $("#dataTable").on("click", ".eye-icon", function(){
@@ -176,6 +212,19 @@ if ($this->session->has_userdata('type') == true) {
             });
         } else {
             
+        }
+    });
+
+    $('.eye-icon1').click(function(){
+        if($('#newPassword').attr('type') == 'password'){
+            $('#newPassword').attr('type','text');
+            $(this).removeClass('fa-eye-slash');
+            $(this).addClass('fa-eye');
+        }
+        else{
+            $('#newPassword').attr('type','password');
+            $(this).removeClass('fa-eye');
+            $(this).addClass('fa-eye-slash');
         }
     });
 </script>

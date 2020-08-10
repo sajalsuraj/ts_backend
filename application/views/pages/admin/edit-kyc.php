@@ -19,7 +19,45 @@ if ($this->session->has_userdata('type') == true) {
 </style>
 <?php
 $id = substr($_SERVER['REQUEST_URI'], strrpos($_SERVER['REQUEST_URI'], '/') + 1);
-$kyc = $this->admin->getKycByID($id); ?>
+$kyc = $this->admin->getKycByID($id); 
+$indianStates = ['AP' => 'Andhra Pradesh',
+'AR' => 'Arunachal Pradesh',
+'AS' => 'Assam',
+'BR' => 'Bihar',
+'CT' => 'Chhattisgarh',
+'GA' => 'Goa',
+'GJ' => 'Gujarat',
+'HR' => 'Haryana',
+'HP' => 'Himachal Pradesh',
+'JK' => 'Jammu and Kashmir',
+'JH' => 'Jharkhand',
+'KA' => 'Karnataka',
+'KL' => 'Kerala',
+'LA' => 'Ladakh',
+'MP' => 'Madhya Pradesh',
+'MH' => 'Maharashtra',
+'MN' => 'Manipur',
+'ML' => 'Meghalaya',
+'MZ' => 'Mizoram',
+'NL' => 'Nagaland',
+'OR' => 'Odisha',
+'PB' => 'Punjab',
+'RJ' => 'Rajasthan',
+'SK' => 'Sikkim',
+'TN' => 'Tamil Nadu',
+'TG' => 'Telangana',
+'TR' => 'Tripura',
+'UP' => 'Uttar Pradesh',
+'UT' => 'Uttarakhand',
+'WB' => 'West Bengal',
+'AN' => 'Andaman and Nicobar Islands',
+'CH' => 'Chandigarh',
+'DN' => 'Dadra and Nagar Haveli',
+'DD' => 'Daman and Diu',
+'LD' => 'Lakshadweep',
+'DL' => 'New Delhi',
+'PY' => 'Puducherry'];
+?>
 
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -93,7 +131,11 @@ $kyc = $this->admin->getKycByID($id); ?>
 
             <div class="form-group">
                 <label>State:</label>
-                <input type="text" value="<?php echo $kyc[0]->p_state; ?>" class="form-control" required placeholder="Enter state" name="p_state" />
+                <select class="form-control" name="p_state">
+                    <?php foreach($indianStates as $ind){ ?>
+                        <option <?php if($kyc[0]->p_state == $ind){echo "selected";} ?> value="<?php echo $ind; ?>"><?php echo $ind; ?></option>
+                    <?php } ?>
+                </select>
             </div>
 
             <h5>Current Address -</h5>
@@ -118,7 +160,11 @@ $kyc = $this->admin->getKycByID($id); ?>
 
             <div class="form-group">
                 <label>State:</label>
-                <input type="text" value="<?php echo $kyc[0]->c_state; ?>" class="form-control" required placeholder="Enter state" name="c_state" />
+                <select class="form-control" name="c_state">
+                    <?php foreach($indianStates as $ind){ ?>
+                        <option <?php if($kyc[0]->c_state == $ind){echo "selected";} ?> value="<?php echo $ind; ?>"><?php echo $ind; ?></option>
+                    <?php } ?>
+                </select>
             </div>
 
             <div class="form-group">

@@ -24,6 +24,13 @@
 td a{
     color: #fff !important;
 }
+.eye-icon1{
+    position: absolute;
+    right: 0;
+    margin-right: 45px;
+    cursor: pointer;
+    margin-top: -25px;
+}
 </style> 
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -80,7 +87,7 @@ td a{
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Verify password before proceeding</h5>
-                    <button type="button" class="close" onclick="$('#err-msg').html('');$('#newPassword').val('');" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" onclick="$('#newPassword').attr('type','password');$('#newPassword').val('');$('.eye-icon1').removeClass('fa-eye');$('.eye-icon1').addClass('fa-eye-slash');" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -89,13 +96,14 @@ td a{
                         <div class="form-group">
                             <label for="exampleInputEmail">Enter Password:</label>
                             <input id="newPassword" class="form-control" placeholder="Enter password" type="password" />
+                            <i class="fas fa-eye-slash eye-icon1"></i>
                             <span id="err-msg"></span>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="verifyPassword" class="btn btn-primary">Submit</button>
-                    <button type="button" class="btn btn-secondary" onclick="$('#err-msg').html('');$('#newPassword').val('');" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" onclick="$('#newPassword').attr('type','password');$('#newPassword').val('');$('.eye-icon1').removeClass('fa-eye');$('.eye-icon1').addClass('fa-eye-slash');" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -172,6 +180,18 @@ td a{
                     }
                 }
             });
+        }
+    });
+    $('.eye-icon1').click(function(){
+        if($('#newPassword').attr('type') == 'password'){
+            $('#newPassword').attr('type','text');
+            $(this).removeClass('fa-eye-slash');
+            $(this).addClass('fa-eye');
+        }
+        else{
+            $('#newPassword').attr('type','password');
+            $(this).removeClass('fa-eye');
+            $(this).addClass('fa-eye-slash');
         }
     });
 </script>

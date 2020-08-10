@@ -18,6 +18,20 @@ if ($this->session->has_userdata('type') == true) {
 .city-row{
     margin-bottom: 50px;
 }
+.select2-results__group{
+    color: #3b2d76;
+    
+}
+.select2-results__option[aria-disabled=true]{
+    color: #6954e1 !important;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+.select2-results__option[aria-selected=true], .select2-results__option[aria-selected=false]{
+    color: #000 !important;
+    font-size: 1.2rem;
+    padding-left: 1.5em !important;
+}
 </style>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfncHjZ0r15lr_9BOYRg6jAlJ4JO5XQRA&libraries=places&callback=initAutocomplete" async defer></script>
@@ -43,15 +57,15 @@ if ($this->session->has_userdata('type') == true) {
                 <tbody>
                     <tr>
                         <td>Name:</td>
-                        <td> <input name="name" required class="form-control" value="<?php echo $user->name; ?>" type="text"></td>
+                        <td> <input name="name" required class="form-control" value="<?php echo $user->name; ?>" required type="text"></td>
                     </tr>
                     <tr>
                         <td>Phone No:</td>
-                        <td> <input name="phone" required class="form-control" value="<?php echo $user->phone; ?>" type="number"></td>
+                        <td> <input name="phone" required maxlength="10" minlength="10" required class="form-control" value="<?php echo $user->phone; ?>" type="number"></td>
                     </tr>
                     <tr>
                         <td>Email ID:</td>
-                        <td><input name="email" required class="form-control" value="<?php echo $user->email; ?>" type="email"></td>
+                        <td><input name="email" required required class="form-control" value="<?php echo $user->email; ?>" type="email"></td>
                     </tr>
                     <?php if (!$usertype) { ?>
                         <tr> 
@@ -77,10 +91,18 @@ if ($this->session->has_userdata('type') == true) {
                         <tr>
                             <td>Profession:</td>
                             <td>
-                                <?php $allServices = $this->admin->getServicesLevelWise("3"); ?>
+                                <?php $allServices = $this->admin->getCategoriesWithSubcategories(); ?>
                                 <select id="profession" multiple class="form-control" name="sub_profession[]">
-                                    <?php foreach ($allServices['result'] as $service) { ?>
-                                        <option <?php echo (in_array($service->id, $serviceSelected)?"selected":"");  ?> value="<?php echo $service->id; ?>"><?php echo $service->service_name; ?></option>
+                                <?php
+                                    foreach($allServices as $category){?>
+                                        <optgroup label="<?php echo $category->service_name; ?>">
+                                            <?php foreach($category->subcategories as $subcat){?>
+                                                <option disabled><?php echo $subcat->service_name; ?></option>
+                                                <?php foreach($subcat->subcategories as $maincat){  ?>
+                                                    <option <?php echo (in_array($maincat->id, $serviceSelected)?"selected":""); ?> class="level3-cat" value="<?php echo $maincat->id; ?>"><?php echo $maincat->service_name; ?></option>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </optgroup>
                                     <?php } ?>
                                 </select>
                         </tr>
@@ -165,7 +187,9 @@ if ($this->session->has_userdata('type') == true) {
     $("#updateProfile").submit(function(event) {
         event.preventDefault();
     }).validate({
-        rules: {},
+        rules: {
+
+        },
         submitHandler: function(form) {
 
             var formData = new FormData(form);
@@ -197,26 +221,33 @@ if ($this->session->has_userdata('type') == true) {
             alert('None of the fields can be empty');
         }
         else{
-            let formData = new FormData();
-            formData.append('id', "<?php echo $this->session->userdata('user_id'); ?>");
-            formData.append('old_password', $('#oldPassword').val());
-            formData.append('new_password', $('#newPassword').val());
-            $.ajax({
-                url: '<?php echo base_url(); ?>update/adminpassword',
-                type: 'POST',
-                data: formData,
-                dataType: 'json',
-                processData: false,
-                contentType: false,
-                success: function(as) {
-                    if (as.status == true) {
-                        alert(as.message);
-                        location.reload();
-                    } else if (as.status == false) {
-                        alert(as.message);
+            var pattern = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,}/;
+            var tst = pattern.test($('#newPassword').val());
+            if(tst){
+                let formData = new FormData();
+                formData.append('id', "<?php echo $this->session->userdata('user_id'); ?>");
+                formData.append('old_password', $('#oldPassword').val());
+                formData.append('new_password', $('#newPassword').val());
+                $.ajax({
+                    url: '<?php echo base_url(); ?>update/adminpassword',
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    success: function(as) {
+                        if (as.status == true) {
+                            alert(as.message);
+                            location.reload();
+                        } else if (as.status == false) {
+                            alert(as.message);
+                        }
                     }
-                }
-            });
+                });
+            } 
+            else{
+                alert('Password should contain uppercase letter, symbols, and numbers. Should be of minimum 8 characters');
+            }
         }
     });
 </script>

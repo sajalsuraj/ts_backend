@@ -78,7 +78,7 @@ if ($this->session->has_userdata('type') == true) {
                             ?>
                         </td>
                         <td><?php echo strip_tags($p->desc_membership); ?></td>
-                        <td><?php if ($p->image != "") { ?><img class="p-imags" src="<?php echo base_url() . 'assets/admin/images/' . $p->image; ?>" /><?php } ?></td>
+                        <td><?php if ($p->image != "") { ?><img class="img-dash" class="p-imags" src="<?php echo base_url() . 'assets/admin/images/' . $p->image; ?>" /><?php } ?></td>
                         <td><input class="check-home" id="c_<?php echo $p->id; ?>" type="checkbox" <?php if ($p->show_in_homepage == "on") {
                                                         echo "checked";
                                                     } ?>></td>
@@ -100,6 +100,26 @@ if ($this->session->has_userdata('type') == true) {
             </tbody>
         </table>
     </div>
+    <div id="imageModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Image viewer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <img id="img-large" style="width:100%;" src="" alt="">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     $('#dataTable').DataTable({"scrollX": true});
@@ -109,7 +129,7 @@ if ($this->session->has_userdata('type') == true) {
         if (confirm("Do you really want to delete this membership?") == true) {
             var obj = {
                 id: id.split("_")[1]
-            };
+            }; 
             $.ajax({
                 url: '<?php echo base_url(); ?>delete/membership',
                 type: 'POST',
@@ -127,6 +147,12 @@ if ($this->session->has_userdata('type') == true) {
         } else {
 
         }
+    });
+
+    $('.img-dash').click(function(){
+        let imgSrc = $(this).attr('src');
+        $('#img-large').attr('src',imgSrc);
+        $('#imageModal').modal('show');
     });
 
     $('#dataTable').on("click", ".check-home", function() {

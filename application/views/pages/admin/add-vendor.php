@@ -12,9 +12,30 @@ if ($this->session->has_userdata('type') == true) {
    .f-holder{
        float:left;
    }
+   .select2-results__group{
+       color: #3b2d76;
+       
+   }
+   .select2-results__option[aria-disabled=true]{
+        color: #6954e1 !important;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+    .select2-results__option[aria-selected=true], .select2-results__option[aria-selected=false]{
+        color: #000 !important;
+        font-size: 1.2rem;
+        padding-left: 1.5em !important;
+    }
+    .eye-icon{
+        position: absolute;
+        right: 0;
+        margin-right: 25px;
+        cursor: pointer;
+        margin-top: -24px;
+    }
 </style>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfncHjZ0r15lr_9BOYRg6jAlJ4JO5XQRA&libraries=places&callback=initAutocomplete" async defer></script>
-<?php $services = $this->admin->getServicesLevelWise("3"); $cities = $this->admin->getAllCities(); ?>
+<?php $services = $this->admin->getCategoriesWithSubcategories(); $cities = $this->admin->getAllCities(); ?>
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
@@ -44,12 +65,19 @@ if ($this->session->has_userdata('type') == true) {
                 </div>
                 <div class="form-group">
                     <label>Select Profession:</label>
-                    <select class="form-control" name="sub_profession[]" id="profession" multiple="multiple">
+                    <?php  ?>
+                    <select required class="form-control" name="sub_profession[]" id="profession" multiple="multiple">
                         <?php
-                        foreach($services['result'] as $service){?>
-                            <option value="<?php echo $service->id; ?>"><?php echo $service->service_name; ?></option>
+                        foreach($services as $category){?>
+                            <optgroup label="<?php echo $category->service_name; ?>">
+                                <?php foreach($category->subcategories as $subcat){?>
+                                    <option disabled><?php echo $subcat->service_name; ?></option>
+                                    <?php foreach($subcat->subcategories as $maincat){  ?>
+                                        <option class="level3-cat" value="<?php echo $maincat->id; ?>"><?php echo $maincat->service_name; ?></option>
+                                    <?php } ?>
+                                <?php } ?>
+                            </optgroup>
                         <?php } ?>
-                        
                     </select>
                 </div>
                 <div class="form-group">
@@ -64,6 +92,7 @@ if ($this->session->has_userdata('type') == true) {
                 <div class="form-group">
                     <label>Password:</label>
                     <input type="password" required placeholder="Enter password" class="form-control" name="password" />
+                    <i class="fas fa-eye-slash eye-icon"></i>
                 </div>
             </div>
 
@@ -136,7 +165,14 @@ if ($this->session->has_userdata('type') == true) {
         event.preventDefault();
     }).validate({
         rules: {
-
+            password:{
+                pattern:/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,}/
+            }
+        },
+        messages:{
+            password:{
+                pattern: "Password should contain uppercase letter, symbols, and numbers. Should be of minimum 8 characters"
+            }
         },
         submitHandler: function(form) {
 
@@ -161,6 +197,19 @@ if ($this->session->has_userdata('type') == true) {
                 }
             });
 
+        }
+    });
+
+    $('.eye-icon').click(function(){
+        if($('input[name=password]').attr('type') == 'password'){
+            $('input[name=password]').attr('type','text');
+            $(this).removeClass('fa-eye-slash');
+            $(this).addClass('fa-eye');
+        }
+        else{
+            $('input[name=password]').attr('type','password');
+            $(this).removeClass('fa-eye');
+            $(this).addClass('fa-eye-slash');
         }
     });
 </script>

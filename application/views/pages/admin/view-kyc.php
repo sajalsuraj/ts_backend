@@ -63,7 +63,7 @@ if ($this->session->has_userdata('type') == true) {
                     <td><?php echo $worker->p_house_no.", ".$worker->p_street.", ".$worker->p_city.", ".$worker->p_pincode; ?></td>
                     <td><?php echo $worker->c_house_no.", ".$worker->c_street.", ".$worker->c_city.", ".$worker->c_pincode; ?></td>
                     <?php if($worker->is_verified != 1){ ?>
-                        <td>Not verified</td>
+                        <td><a href="edit-kyc/<?php echo $worker->user_id; ?>" class="btn btn-primary">Edit</a></td>
                     <?php }else{ ?>
                         <td>Verified</td>
                     <?php } ?>

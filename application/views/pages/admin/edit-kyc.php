@@ -1,6 +1,6 @@
 <?php
 if ($this->session->has_userdata('type') == true) {
-    if ($this->session->userdata('type') == "superadmin" || $this->session->userdata('type') == "admin") {
+    if ($this->session->userdata('type') == "superadmin" || $this->session->userdata('type') == "admin" || $this->session->userdata('type') == "worker") {
     } else {
         redirect('users/login');
     }
@@ -166,7 +166,7 @@ $indianStates = ['AP' => 'Andhra Pradesh',
                     <?php } ?>
                 </select>
             </div>
-
+            <?php if($this->session->userdata('type') !== "worker"){ ?>
             <div class="form-group">
                 <label>Verification status:</label>
                 <select class="form-control" name="is_verified">
@@ -178,6 +178,7 @@ $indianStates = ['AP' => 'Andhra Pradesh',
                             } ?> value="1">Verified</option>
                 </select>
             </div>
+            <?php } ?>
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -214,7 +215,7 @@ $indianStates = ['AP' => 'Andhra Pradesh',
                 success: function(as) {
                     if (as.status == true) {
                         alert(as.message);
-                        location.reload();
+                        window.history.back();
                     } else if (as.status == false) {
                         alert(as.message);
                     }

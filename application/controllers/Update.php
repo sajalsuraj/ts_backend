@@ -436,21 +436,19 @@ class Update extends CI_Controller
         $tokenData = $this->user->getTokenData($received_Token);
 
         if (isset($tokenData['user_id']) && ($tokenData['user_id'] == $_POST['user_id'])) {
-            if (isset($_FILES["photo"])) {
-                $folder = './assets/admin/images/profile/';
-                $temp = explode(".", $_FILES["photo"]["name"]);
-                $target_file_img = $folder . round(microtime(true)) . '.' . $temp[1];
-                $_POST['photo'] = round(microtime(true)) . '.' . $temp[1];
-                move_uploaded_file($_FILES["photo"]["tmp_name"], $target_file_img);
-            }
+            // if (isset($_FILES["photo"])) {
+            //     $folder = './assets/admin/images/profile/';
+            //     $temp = explode(".", $_FILES["photo"]["name"]);
+            //     $target_file_img = $folder . round(microtime(true)) . '.' . $temp[1];
+            //     $_POST['photo'] = round(microtime(true)) . '.' . $temp[1];
+            //     move_uploaded_file($_FILES["photo"]["tmp_name"], $target_file_img);
+            // }
 
             $id = $_POST['user_id'];
             unset($_POST['user_id']);
             if ($this->user->userupdate('customer', $_POST, $id)) {
                 $userdata = $this->customer->getProfileData($id);
-                if ($userdata->photo != "") {
-                    $userdata->photo = base_url() . "assets/admin/images/profile/" . $userdata->photo;
-                }
+                
                 echo json_encode(['status' => true, 'data' => $userdata, 'message' => "Profile updated successfully"]);
             } else {
                 echo json_encode(['status' => false, 'message' => "Error occurred while updating"]);

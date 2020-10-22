@@ -234,7 +234,50 @@
                             foreach($tempServices as $ser){
                                 $serviceArr[] = $this->admin->getServiceById($ser);
                             }
-                            $data->sub_profession = $serviceArr;
+                            //$data->sub_profession = $serviceArr;
+                            $level1 = $this->admin->getServicesLevelWise("1");
+                            $level2 = $this->admin->getServicesLevelWise("2");
+
+                            $level1 = $level1['result'];
+                            $level2 = $level2['result'];
+                            $level3 = $serviceArr;
+                            
+                            for($i = 0; $i < count($level2); $i++){
+                                $catArr = array();
+                                for($j = 0; $j < count($level3); $j++){
+                                    if($level3[$j]->parent_category == $level2[$i]->id){
+                                        array_push($catArr, $level3[$j]);
+                                    }
+                                }
+                                if(count($catArr)>0){
+                                    $level2[$i]->subcategories = $catArr;
+                                }
+                            }
+                            
+                            foreach($level2 as $k=>$l){
+                                if(!(isset($l->subcategories))){
+                                    unset($level2[$k]);
+                                }
+                            }
+                           
+                            for($i = 0; $i < count($level1); $i++){
+                                $catArr = array();
+                                foreach($level2 as $k1=>$val){
+                                    if($level2[$k1]->parent_category == $level1[$i]->id){
+                                        array_push($catArr, $level2[$k1]);
+                                    }
+                                }
+                                if(count($catArr)>0){
+                                    $level1[$i]->subcategories = $catArr;
+                                }
+                            }
+                            
+                            foreach($level1 as $k=>$l){
+                                if(!(isset($l->subcategories))){
+                                    unset($level1[$k]);
+                                }
+                            }
+                            $data->profession = $level1;
                         }
                     }
                     
